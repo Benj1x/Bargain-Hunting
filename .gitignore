@@ -60,6 +60,7 @@ cmake-build*
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
+\build
 
 # Local History for Visual Studio Code
 .history/
