@@ -29,8 +29,6 @@ void sortByPrice(product* productList, int listLen) {
     qsort(productList, listLen, sizeof(product), cmpfunc);
 }
 
-
->>>>>>> Stashed changes
 int main() {
     printf("Hello, Joe!\n");
     char* aifa = "hehea";
