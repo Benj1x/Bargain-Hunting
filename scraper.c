@@ -1,14 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
-#include <unistd.h> //access()
 #include "scraper.h"
 
 void store_choice();
 
 
 int main() {
-    printf("Hello, I will sell your personal information\n");
+    printf("Hello\n");
 
     store_choice();
 
@@ -21,6 +20,7 @@ void store_choice() {
     char store_id [5];
     char store_name [25];
 
+    //Might be 無駄
     /*if (access(stores, F_OK) != 0) {
         stores = fopen("stores.txt", "w+");
     } 
@@ -28,13 +28,13 @@ void store_choice() {
         stores = fopen("stores.txt", "r+");
     }*/
 
-
-    stores = fopen("C:\\Users\\rasmu\\Documents\\GitHub\\Bargain-Hunting\\stores.txt", "a+");
+    stores = fopen("./stores.txt", "a+");
     
+    //Might be 無駄
     if (stores == NULL) {
         printf("File couldn't be opened. Creating new file\n");
         fclose(stores);
-        stores = fopen("C:\\Users\\rasmu\\Documents\\GitHub\\Bargain-Hunting\\stores.txt", "a+");        
+        stores = fopen("./stores.txt", "a+");       
     }
 
 
@@ -45,18 +45,18 @@ void store_choice() {
         if (store_name[0] == 'q') {
             break;
         }
-        else fprintf(stores, "%s\n", store_name);
+        else fprintf(stores, "\n%s", store_name);
 
     }  
     fclose(stores);
 
-    stores = fopen("C:\\Users\\rasmu\\Documents\\GitHub\\Bargain-Hunting\\stores.txt", "r");
+    stores = fopen("./stores.txt", "r");
     int i = 0;
     while (!feof(stores)) {
         ++i;
-        fscanf(stores, "%[^\n]", store_name);
+        //fscanf(stores, "%[^\n]", &store_name);
+        fgets(store_name, "%[^\n]", stores);
         printf("Store number %d: %s\n", i, store_name);
     }
     fclose(stores);
-
 }
