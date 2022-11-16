@@ -111,3 +111,4 @@ int storeCheck(char curretInput[]) {
         fclose(stores);
         stores = fopen("./stores.txt", "a+");       
     }*/
+    
