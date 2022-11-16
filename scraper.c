@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "external/curl/curl.h"
+#include "include/curl/curl.h"
 
-#include "scraper.h"
 
 typedef struct {
     char* name;
@@ -85,20 +84,6 @@ void GetKardexNumbers(char* Stores, char* KardexNumbers)
     Content-Type: application/json
     Ocp-Apim-Subscription-Key: fefba58d42c4456ca7182cc307574653
 
-    {
-        Paging: { Size: 10, Page: 1 },
-        Querystring: "",
-            Filters:
-        [
-        {
-            Type: "RetailGroup",
-                RetailGroups: [ "fakta" ]
-        }
-        ]
-    }
-
-*/
-}
 int main() {
     printf("Hello, Joe!\n");
     char* aifa = "hehea";
