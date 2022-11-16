@@ -1,8 +1,7 @@
 #include <stdio.h>
-#include "scraper.h"
 #include <stdlib.h>
-#include <stdio.h>
 #include "include/curl/curl.h"
+
 
 typedef struct {
     char* name;
@@ -28,6 +27,70 @@ int cmpfunc(const void* a, const void* b) {
 void sortByPrice(product* productList, int listLen) {
     qsort(productList, listLen, sizeof(product), cmpfunc);
 }
+/*
+int main() {
+    printf("Hello, Joe!\n");
+    char* aifa = "hehea";
+    GetSallingProducts(aifa);
+    GetCoopProducts(aifa, aifa);
+    return 0;
+}*/
+
+void GetSallingProducts(char* Item)
+{
+    printf("Hello, Salling!\n");
+}
+
+void GetCoopProducts(char* Item, char* Stores)
+{
+    char* StoreNumbers;
+    GetKardexNumbers(Stores, StoreNumbers);
+
+
+
+    printf("Hello, Coop!\n");
+}
+
+void GetKardexNumbers(char* Stores, char* KardexNumbers)
+{
+    CURL *curl;
+    CURLcode res;
+
+    char* store = "Fakta";
+
+    char* Query = "https://api.cl.coop.dk/storeapi/v1/stores?RetailGroupFilter=";
+
+    char *strcat(char *query, const char *store);
+
+    curl = curl_easy_init();
+    if(curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, Query);
+        /* example.com is redirected, so we tell libcurl to follow redirection */
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+
+        /* Perform the request, res will get the return code */
+        res = curl_easy_perform(curl);
+        /* Check for errors */
+        if (res != CURLE_OK)
+            fprintf(stderr, "curl_easy_perform() failed: %s\n",
+                    curl_easy_strerror(res));
+
+        /* always cleanup */
+        curl_easy_cleanup(curl);
+    }
+    /*
+    POST https://api.cl.coop.dk/storeapi/v1/stores?RetailGroupFilter=Fakta HTTP/1.1
+    Host: api.cl.coop.dk
+    Content-Type: application/json
+    Ocp-Apim-Subscription-Key: fefba58d42c4456ca7182cc307574653
+
+int main() {
+    printf("Hello, Joe!\n");
+    char* aifa = "hehea";
+    GetSallingProducts(aifa);
+    GetCoopProducts(aifa, aifa);
+    return 0;
+}
 
 
 product* getRemaProducts(char* query) {
@@ -37,15 +100,4 @@ product* getRemaProducts(char* query) {
 
     curl = curl_easy_init();
 
-    if (curl) {
-        curl_easy_setopt(curl, CURLOPT_URL, "https://flwdn2189e-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%%20for%%20vanilla%%20JavaScript%%203.21.1&x-algolia-application-id=FLWDN2189E&x-algolia-api-key=fa20981a63df668e871a87a8fbd0caed");
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "{\"requests\":[{\"indexName\":\"aws-prod-products\",\"params\":\"query=&hitsPerPage=5000&facets=%%5B%%22labels%%22%%5D&filters=&page=0\"}]}");
-
-    }
 }
-
-int main() {
-    printf("Hello, Joe!\n");
-    return 0;
-}
-
