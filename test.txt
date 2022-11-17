@@ -1,0 +1,101 @@
+Pragma: no-cache
+Cache-Control: no-cache
+Date: Wed, 16 Nov 2022 11:40:37 GMT
+X-AspNet-Version: 4.0.30319
+X-Powered-By: ASP.NET
+Content-Length: 297224
+Content-Type: application/json; charset=utf-8
+Expires: -1
+
+[{
+  "Ean": "2019160000001",
+  "Navn": "FLÆSKESTEG 1,2-2,4 KG",
+  "Navn2": "MED SVÆR",
+  "Pris": 49.90,
+  "VareHierakiId": 3021
+}, {
+  "Ean": "2467500000004",
+  "Navn": "OKSEGRYDESTEG DK",
+  "Navn2": "",
+  "Pris": 119.90,
+  "VareHierakiId": 3021
+}, {
+  "Ean": "5700380825600",
+  "Navn": "HAKKET OKSEKØD",
+  "Navn2": "8-12% 450G",
+  "Pris": 49.95,
+  "VareHierakiId": 3021
+}, {
+  "Ean": "5700381570912",
+  "Navn": "HAKKET GRISE-& KALVEKØD",
+  "Navn2": "8-12% 500G",
+  "Pris": 41.95,
+  "VareHierakiId": 3021
+}, {
+  "Ean": "5700382238569",
+  "Navn": "HAKKET OKSEKØD 4-7% 400G",
+  "Navn2": "",
+  "Pris": 49.50,
+  "VareHierakiId": 3021
+}, {
+  "Ean": "5700382922062",
+  "Navn": "ENTRECOTE 350G",
+  "Navn2": "",
+  "Pris": 89.95,
+  "VareHierakiId": 3021
+}, {
+  "Ean": "5700383066659",
+  "Navn": "KOTELETTER 500G",
+  "Navn2": "",
+  "Pris": 45.95,
+  "VareHierakiId": 3021
+}, {
+  "Ean": "5700383419899",
+  "Navn": "STEGEFLÆSK",
+  "Navn2": "GRIS 400G",
+  "Pris": 45.95,
+  "VareHierakiId": 3021
+}, {
+  "Ean": "5700383761707",
+  "Navn": "JULEMEDISTER 500G",
+  "Navn2": "",
+  "Pris": 32.95,
+  "VareHierakiId": 3021
+}, {
+  "Ean": "5700384235023",
+  "Navn": "BRONTOSAURUS STEAK",
+  "Navn2": "400 G",
+  "Pris": 69.95,
+  "VareHierakiId": 3021
+}, {
+  "Ean": "5700384575662",
+  "Navn": "HAKKET GRISEKØD",
+  "Navn2": "8-12% 500G",
+  "Pris": 39.95,
+  "VareHierakiId": 3021
+}, {
+  "Ean": "5700381118770",
+  "Navn": "LÅRMIX 800G",
+  "Navn2": "",
+  "Pris": 36.95,
+  "VareHierakiId": 3023
+}, {
+  "Ean": "5700381684299",
+  "Navn": "MIDDAGSKALKUN MED OST 500G",
+  "Navn2": "",
+  "Pris": 39.95,
+  "VareHierakiId": 3023
+}, {
+  "Ean": "5700382855421",
+  "Navn": "KYLLINGE INDERFILET",
+  "Navn2": "290 G",
+  "Pris": 34.95,
+  "VareHierakiId": 3023
+}, {
+  "Ean": "5700384577628",
+  "Navn": "KYLLINGEBRYST 13 %",
+  "Navn2": "450 G",
+  "Pris": 42.95,
+  "VareHierakiId": 3023
+}, {
+... (327 KB left)
