@@ -48,10 +48,7 @@ void GetCoopProducts(char* Item, char* Stores)
 
     printf("\n\n\n\n\n\n\n\n\n________________________________________\n\n\n%s", r);
 
-
     free(r);
-
-
 
     printf("Hello, Coop!\n");
 }
@@ -67,10 +64,27 @@ void GetKardexNumbers(char* Stores, char* KardexNumbers)
     char* r = APICall(SKardex);
     printf("\n\n\n\n\n\n\n\n\n________________________________________\n\n\n%s", r);
 
-
     free(r);
-    //printf("\n\n\n\n\n\n\n\n\n________________________________________\n\n\n%s", &c);
 }
+
+product* GetRemaProducts(char* query) {
+    CURL* curl;
+    CURLcode res;
+    curl_global_init(CURL_GLOBAL_ALL);
+
+    curl = curl_easy_init();
+
+    if (curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, "https://flwdn2189e-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%%20for%%20vanilla%%20JavaScript%%203.21.1&x-algolia-application-id=FLWDN2189E&x-algolia-api-key=fa20981a63df668e871a87a8fbd0caed");
+
+        char* params[142];
+        sprintf(params, "{\"requests\":[{\"indexName\":\"aws-prod-products\",\"params\":\"query=toast&hitsPerPage=5000&facets=%%5B%%22labels%%22%%5D&filters=&page=0\"}]}", query);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, params);
+        res = curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+    }
+}
+
 
 char* APICall(APIStruct Params)
 {
@@ -118,8 +132,8 @@ char* APICall(APIStruct Params)
 
     return s.ptr;
 }
-//This code is how the documentation said to do so (spørg Henrik om how to declare)
 
+//This code is how the documentation said to do so (spørg Henrik om how to declare)
 void init_string(struct string *s) {
     s->len = 0;
     s->ptr = malloc(s->len+1);
@@ -129,12 +143,13 @@ void init_string(struct string *s) {
     }
     s->ptr[0] = '\0';
 }
+
 /*
  * @param *ptr
  * @param size
  * @param nmemb
  * @param string *s
- */
+ */ 
 size_t writefunc(void *ptr, size_t size, size_t nmemb, struct string *s)
 {
     size_t new_len = s->len + size*nmemb;
@@ -150,10 +165,13 @@ size_t writefunc(void *ptr, size_t size, size_t nmemb, struct string *s)
     return size*nmemb;
 }
 
-int main() {
+int main() 
+{
     printf("Hello, Joe!\n");
     char* aifa = "hehea";
     GetSallingProducts(aifa);
     GetCoopProducts(aifa, aifa);
+    char query[5] = "toast";
+    product* productArray = GetRemaProducts(query);
     return 0;
 }
