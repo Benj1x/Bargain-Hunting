@@ -5,10 +5,10 @@
 #include "include/curl/curl.h"
 
 typedef struct {
-    char* name;
-    char* description;
+    char name[20];
+    char description[50];
     double price;
-    char* store;
+    char store[10];
 }product;
 
 
@@ -30,7 +30,7 @@ void sortByPrice(product* productList, int listLen) {
 }
 
 
-product* GetRemaProducts(char* query) {
+product* GetRemaProducts(char query[]) {
     CURL* curl;
     CURLcode res;
     curl_global_init(CURL_GLOBAL_ALL);
@@ -40,9 +40,13 @@ product* GetRemaProducts(char* query) {
     if (curl) {
         curl_easy_setopt(curl, CURLOPT_URL, "https://flwdn2189e-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%%20for%%20vanilla%%20JavaScript%%203.21.1&x-algolia-application-id=FLWDN2189E&x-algolia-api-key=fa20981a63df668e871a87a8fbd0caed");
 
-        char* params[142];
-        sprintf(params, "{\"requests\":[{\"indexName\":\"aws-prod-products\",\"params\":\"query=toast&hitsPerPage=5000&facets=%%5B%%22labels%%22%%5D&filters=&page=0\"}]}", query);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, params);
+        char entireQuery[200] = "{\"requests\":[{\"indexName\":\"aws-prod-products\",\"params\":\"query=";
+        char rest[200] = "&hitsPerPage=5000&"
+            "page=0&"
+            "attributesToRetrieve=%%5B%%22name%%22%%2C%%22labels%%22%%2C%%22pricing%%22%%5D&attributesToSnippet=%%5B%%5D\"}]}";
+        strcat(entireQuery, query);
+        strcat(entireQuery, rest);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, entireQuery);
         res = curl_easy_perform(curl);
         curl_easy_cleanup(curl);
     }
@@ -50,7 +54,7 @@ product* GetRemaProducts(char* query) {
 
 int main() {
     printf("Hello, Joe!\n");
-    char query[5] = "toast";
+    char query[6] = "toast";
     product* productArray = GetRemaProducts(query);
     return 0;
 }
