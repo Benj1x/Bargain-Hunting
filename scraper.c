@@ -172,6 +172,7 @@ int main()
     GetSallingProducts(aifa);
     GetCoopProducts(aifa, aifa);
     char query[5] = "toast";
+    printf("\n\n\n\n\n\n\n\n\nHER KOMMER REMA: \n\n");
     product* productArray = GetRemaProducts(query);
     return 0;
 }
