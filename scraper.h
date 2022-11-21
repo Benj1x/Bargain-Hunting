@@ -16,9 +16,9 @@ typedef struct string {
     size_t len;
 } string;
 
-void GetSallingProducts(char* Item);
-void GetCoopProducts(char* Item, char* Stores);
-void GetKardexNumbers(char* Stores, char* KardexNumbers);
+char* GetSallingProducts(char* Item);
+char* GetCoopProducts(char* Item, char* Stores);
+void GetData(char* Items);
 char* APICall(APIStruct params);
 void init_string(struct string *s);
 size_t writefunc(void *ptr, size_t size, size_t nmemb, struct string *s);
