@@ -72,15 +72,18 @@ product* GetRemaProducts(char query[]) {
     char entireQuery[300] = "{\"requests\":[{\"indexName\":\"aws-prod-products\",\"params\":\"query=";
     char rest[200] = "&hitsPerPage=5000&"
         "page=0&"
-        "attributesToRetrieve=%%5B%%22name%%22%%2C%%22labels%%22%%2C%%22pricing%%22%%5D&attributesToSnippet=%%5B%%5D\"}]}";
+        "&attributesToRetrieve=%5B%22name%22%2C%22labels%22%2C%22pricing%22%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D\"}]}";
     strcat(entireQuery, query);
     strcat(entireQuery, rest);
-    strcpy(SProducts.URL, "https://flwdn2189e-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%%20for%%20vanilla%%20JavaScript%%203.21.1&x-algolia-application-id=FLWDN2189E&x-algolia-api-key=fa20981a63df668e871a87a8fbd0caed");
+    strcpy(SProducts.URL, "https://flwdn2189e-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%20for%20vanilla%20JavaScript%203.21.1&x-algolia-application-id=FLWDN2189E&x-algolia-api-key=fa20981a63df668e871a87a8fbd0caed");
     strcpy(SProducts.RequestType, "POST");
     strcpy(SProducts.PostFields, entireQuery);
-    char* r = APICall(SProducts);
+    char* response = APICall(SProducts);
 
-    printf("%s", r);
+    FILE* remaproducts = fopen("remaproducts.txt", "w");
+    fputs(response, remaproducts);
+
+    // printf("%s", r);
 
 }
 
@@ -98,6 +101,8 @@ char* APICall(APIStruct Params)
     if (curl) {
 
         init_string(&s);
+        curl_easy_setopt(curl, CURLOPT_CAINFO, "cacert.pem");
+        curl_easy_setopt(curl, CURLOPT_CAPATH, "cacert.pem");
         curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, Params.RequestType);
         curl_easy_setopt(curl, CURLOPT_URL, Params.URL);
         if (Params.PostFields != "") curl_easy_setopt(curl, CURLOPT_POSTFIELDS, Params.PostFields);
@@ -166,7 +171,7 @@ size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s)
 int main()
 {
     printf("Hello, Joe!\n");
-    char query[6] = "toast";
+    char query[6] = "kål";
     char* aifa = "hehea";
     // GetSallingProducts(aifa);
     // GetCoopProducts(aifa, aifa);
