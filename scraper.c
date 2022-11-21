@@ -4,15 +4,6 @@
 #include <string.h>
 #include "include/curl/curl.h"
 
-<<<<<<< Updated upstream
-typedef struct {
-    char name[20];
-    char description[50];
-    double price;
-    char store[10];
-}product;
-
-=======
 enum {
     ae = -86, oe = -87, aa = -111, AE = -91, OE = -65, AA = -96
 };
@@ -171,7 +162,6 @@ void correct_DK_char(char *string, int position, int str_len, int type) {
     string[str_len] = '\000';
 }
 
->>>>>>> Stashed changes
 int cmpfunc(const void* a, const void* b) {
 
     double priceA = ((product*)a)->price;
@@ -207,15 +197,7 @@ char* GetSallingProducts(char* Item)
 char* GetCoopProducts(char* Item, char* Stores)
 {
     char* StoreNumbers;
-<<<<<<< Updated upstream
-    
-=======
-<<<<<<< Updated upstream
-    //GetKardexNumbers(Stores, StoreNumbers);
-=======
->>>>>>> Stashed changes
 
->>>>>>> Stashed changes
     APIStruct SProducts;
     strcpy(SProducts.URL, "https://api.cl.coop.dk/productapi/v1/product/1290");
     strcpy(SProducts.RequestType, "GET");
@@ -223,8 +205,6 @@ char* GetCoopProducts(char* Item, char* Stores)
     strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
     strcpy(SProducts.KeyTypeAndKey, "Ocp-Apim-Subscription-Key: fefba58d42c4456ca7182cc307574653");
     char* r = APICall(SProducts);
-  
-    printf("%s", r);
 
     return r;
     free(r);
@@ -355,13 +335,7 @@ int main()
     //printf("\nThis was salling \n\n\n\n");
     //GetCoopProducts(aifa, aifa);
     //printf("\nThis was coop \n\n\n\n");
-<<<<<<< Updated upstream
-
     GetData('x');
-
-=======
-<<<<<<< Updated upstream
-=======
 
     //GetData('x');
     char name[30];
@@ -372,8 +346,6 @@ int main()
     for (int i = 0; i < 3; ++i) {
         printf("%s %lf i %s\n", array[i].name, array[i].price, array[i].store);
     }
->>>>>>> Stashed changes
->>>>>>> Stashed changes
     //char query[5] = "toast";
     //product* productArray = GetRemaProducts(query);
 
