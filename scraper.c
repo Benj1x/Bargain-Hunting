@@ -11,7 +11,6 @@ typedef struct {
     char store[10];
 }product;
 
-
 int cmpfunc(const void* a, const void* b) {
 
     double priceA = ((product*)a)->price;
@@ -28,16 +27,26 @@ void sortByPrice(product* productList, int listLen) {
     qsort(productList, listLen, sizeof(product), cmpfunc);
 }
 
-void GetSallingProducts(char* Item)
+char* GetSallingProducts(char* Item)
 {
-    printf("Hello, Salling!\n");
+    APIStruct SProducts;
+    strcpy(SProducts.URL, "https://api.sallinggroup.com/v1-beta/product-suggestions/relevant-products?query=");
+    strcat(SProducts.URL, Item);
+    strcpy(SProducts.RequestType, "GET");
+    strcpy(SProducts.ContentLength, "Content-Length=20");
+    strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
+    strcpy(SProducts.KeyTypeAndKey, "Authorization: Bearer dc6422b7-166d-41e8-94c1-6804da7e17d5");
+    char* r = APICall(SProducts);
+
+    return r;
+    //printf("Hello, Salling!\n");
+    free(r);
 }
 
-void GetCoopProducts(char* Item, char* Stores)
+char* GetCoopProducts(char* Item, char* Stores)
 {
     char* StoreNumbers;
-    //GetKardexNumbers(Stores, StoreNumbers);
-
+    
     APIStruct SProducts;
     strcpy(SProducts.URL, "https://api.cl.coop.dk/productapi/v1/product/1290");
     strcpy(SProducts.RequestType, "GET");
@@ -45,26 +54,13 @@ void GetCoopProducts(char* Item, char* Stores)
     strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
     strcpy(SProducts.KeyTypeAndKey, "Ocp-Apim-Subscription-Key: fefba58d42c4456ca7182cc307574653");
     char* r = APICall(SProducts);
+  
+    printf("%s", r);
 
-    printf("\n\n\n\n\n\n\n\n\n________________________________________\n\n\n%s", r);
-
+    return r;
     free(r);
 
-    printf("Hello, Coop!\n");
-}
-
-void GetKardexNumbers(char* Stores, char* KardexNumbers)
-{
-    APIStruct SKardex;
-    strcpy(SKardex.URL, "https://api.cl.coop.dk/storeapi/v1/stores?Content-Length=50");
-    strcpy(SKardex.RequestType, "POST");
-    strcpy(SKardex.ContentLength, "Content-Length=20");
-    strcpy(SKardex.CheckData, "RetailGroup: \"Kvickly\"");
-    strcpy(SKardex.KeyTypeAndKey, "Ocp-Apim-Subscription-Key: fefba58d42c4456ca7182cc307574653");
-    char* r = APICall(SKardex);
-    printf("\n\n\n\n\n\n\n\n\n________________________________________\n\n\n%s", r);
-
-    free(r);
+    //printf("Hello, Coop!\n");
 }
 
 product* GetRemaProducts(char query[]) {
@@ -98,10 +94,10 @@ char* APICall(APIStruct Params)
     curl_global_init(CURL_GLOBAL_ALL);
     /* get a curl handle */
     curl = curl_easy_init();
-    char* Result[100000];
-    struct string s;
-    if(curl) {
 
+    struct string s;
+    if(curl)
+    {
         init_string(&s);
         curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, Params.RequestType);
         curl_easy_setopt(curl, CURLOPT_URL, Params.URL);
@@ -137,7 +133,8 @@ char* APICall(APIStruct Params)
     return s.ptr;
 }
 
-//This code is how the documentation said to do so (spørg Henrik om how to declare)
+//This code is from stackoverflow - this seems like the only way to really do this
+//https://stackoverflow.com/a/2329792
 void init_string(struct string *s) {
     s->len = 0;
     s->ptr = malloc(s->len+1);
@@ -165,19 +162,90 @@ size_t writefunc(void *ptr, size_t size, size_t nmemb, struct string *s)
     memcpy(s->ptr+s->len, ptr, size*nmemb);
     s->ptr[new_len] = '\0';
     s->len = new_len;
-
     return size*nmemb;
 }
 
-int main() 
+void GetData(char* Items)
 {
-    printf("Hello, Joe!\n");
-    char query[6] = "toast";
-    char* aifa = "hehea";
-    GetSallingProducts(aifa);
-    GetCoopProducts(aifa, aifa);
-    char query[5] = "toast";
-    printf("\n\n\n\n\n\n\n\n\nHER KOMMER REMA: \n\n");
-    product* productArray = GetRemaProducts(query);
+    FILE *QFile;
+    QFile = fopen("QueryResults.txt", "w+");
+
+    char* c = GetSallingProducts("m%C3%A6lk");
+    fputs(c, QFile);
+    fputs("????", QFile);
+    c = GetCoopProducts("aifa", "aifa");
+    fputs(c, QFile);
+
+    fclose(QFile);
+}
+int main()
+{
+    //printf("Hello, %c!\n", (char) 0x86);
+    //char* aifa = "hehea";
+
+    //printf("\nThis was salling \n\n\n\n");
+    //GetCoopProducts(aifa, aifa);
+    //printf("\nThis was coop \n\n\n\n");
+
+    GetData('x');
+
+    //char query[5] = "toast";
+    //product* productArray = GetRemaProducts(query);
+
+
     return 0;
+}
+
+char* PRScraper()
+{
+    CURL *curl;
+    CURLcode res;
+
+    struct string s;
+    if(curl)
+    {
+        init_string(&s);
+        curl = curl_easy_init();
+        curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, 102400L);
+        curl_easy_setopt(curl, CURLOPT_URL, "https://www.pricerunner.dk/pl/35-3202851516/Motherboard/ASUS-PRIME-Z790-P-WIFI-Sammenlign-Priser");
+        curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
+        curl_easy_setopt(curl, CURLOPT_USERAGENT, "Joe");
+        curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 50L);
+        curl_easy_setopt(curl, CURLOPT_FTP_SKIP_PASV_IP, 1L);
+        curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
+        /*-----------------------------------------------------------*/
+        /*Callback will take an argument that is set (This is our string)*/
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
+
+        /* Here is a list of options the curl code used that cannot get generated
+           as source easily. You may choose to either not use them or implement
+           them yourself.
+
+        CURLOPT_WRITEDATA set to a objectpointer
+        CURLOPT_WRITEFUNCTION set to a functionpointer
+        CURLOPT_READDATA set to a objectpointer
+        CURLOPT_READFUNCTION set to a functionpointer
+        CURLOPT_SEEKDATA set to a objectpointer
+        CURLOPT_SEEKFUNCTION set to a functionpointer
+        CURLOPT_ERRORBUFFER set to a objectpointer
+        CURLOPT_STDERR set to a objectpointer
+        CURLOPT_HEADERFUNCTION set to a functionpointer
+        CURLOPT_HEADERDATA set to a objectpointer
+
+        */
+
+        res = curl_easy_perform(curl);
+
+        curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, 1002400L);
+
+        curl_easy_setopt(curl, CURLOPT_URL, "<div class=\"EUXXvl3ByR pr-cv9jbm\">.^"/*(?<div class=\"products\">).*?(?</div>)"*/);
+        curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
+        curl_easy_setopt(curl, CURLOPT_USERAGENT, "joe");
+        curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 50L);
+        curl_easy_setopt(curl, CURLOPT_FTP_SKIP_PASV_IP, 1L);
+        curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
+    }
+
+    return s.ptr;
 }
