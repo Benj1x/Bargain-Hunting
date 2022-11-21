@@ -54,13 +54,13 @@ dkms.conf
 .idea
 ..cmake-build
 CMakeFiles*
-.Testing
+Testing*
 .cmake*
 .ninja_deps
 .ninja_log
 build.ninja
 cmake_install.cmake
-.CMakeCache.txt
+CMakeCache.txt
 
 .vscode
 !.vscode/settings.json
