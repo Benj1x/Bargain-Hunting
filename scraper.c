@@ -55,7 +55,7 @@ void GetCoopProducts(char* Item, char* Stores)
     strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
     strcpy(SProducts.KeyTypeAndKey, "Ocp-Apim-Subscription-Key: fefba58d42c4456ca7182cc307574653");
     char* r = APICall(SProducts);
-
+  
     printf("%s", r);
 
     free(r);
@@ -72,9 +72,10 @@ void GetKardexNumbers(char* Stores, char* KardexNumbers)
     strcpy(SKardex.CheckData, "RetailGroup: \"Kvickly\"");
     strcpy(SKardex.KeyTypeAndKey, "Ocp-Apim-Subscription-Key: fefba58d42c4456ca7182cc307574653");
     char* r = APICall(SKardex);
-    printf("%s", r);
 
-    free(r);
+  printf("%s", r);
+
+  free(r);
 }
 
 product* GetRemaProducts(char* query) {
@@ -104,6 +105,7 @@ char* APICall(APIStruct Params)
     curl_global_init(CURL_GLOBAL_ALL);
     /* get a curl handle */
     curl = curl_easy_init();
+
     struct string s;
     if(curl)
     {
@@ -123,7 +125,6 @@ char* APICall(APIStruct Params)
         headers = curl_slist_append(headers, Params.KeyTypeAndKey);
         headers = curl_slist_append(headers, Params.CheckData);
         headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
-        headers = curl_slist_append(headers, "Retry-After");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         const char *data = Params.ContentLength;
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
@@ -160,7 +161,7 @@ void init_string(struct string *s) {
  * @param size
  * @param nmemb
  * @param string *s
- */
+ */ 
 size_t writefunc(void *ptr, size_t size, size_t nmemb, struct string *s)
 {
     size_t new_len = s->len + size*nmemb;
@@ -172,7 +173,6 @@ size_t writefunc(void *ptr, size_t size, size_t nmemb, struct string *s)
     memcpy(s->ptr+s->len, ptr, size*nmemb);
     s->ptr[new_len] = '\0';
     s->len = new_len;
-
     return size*nmemb;
 }
 
@@ -232,4 +232,6 @@ char* PRScraper()
     curl_easy_setopt(hnd, CURLOPT_MAXREDIRS, 50L);
     curl_easy_setopt(hnd, CURLOPT_FTP_SKIP_PASV_IP, 1L);
     curl_easy_setopt(hnd, CURLOPT_TCP_KEEPALIVE, 1L);
+
+    return size*nmemb;
 }

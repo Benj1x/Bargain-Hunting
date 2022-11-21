@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 3.23)
 project(Bargain_Hunting C)
-include_directories(include)
 
-set(CURL_LIBRARY "-lcurl")
-FIND_PACKAGE(CURL REQUIRED)
+
+FIND_PACKAGE(CURL)
 #FIND_PACKAGE(CURL)
 set(CMAKE_C_STANDARD 99)
 
