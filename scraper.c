@@ -4,6 +4,7 @@
 #include <string.h>
 #include "include/curl/curl.h"
 
+<<<<<<< Updated upstream
 typedef struct {
     char name[20];
     char description[50];
@@ -11,6 +12,166 @@ typedef struct {
     char store[10];
 }product;
 
+=======
+enum {
+    ae = -86, oe = -87, aa = -111, AE = -91, OE = -65, AA = -96
+};
+
+product *salling_scan(FILE *file) {
+    int counter = -1;
+    while (1) {
+        char b = fgetc(file);
+        if (feof(file)) {
+            break;
+        }
+        if (b == '}') {
+            counter += 1;
+        }
+
+    }
+    rewind(file);
+    product *array = malloc(sizeof(product) * counter);
+    while (fgetc(file) != '[') {
+    }
+    char c;
+    int i = 0;
+    while (1) {
+        c = fgetc(file);
+        if (feof(file)) {
+            break;
+        }
+        if (c == '"') {
+            char ctgry[100];
+            char desc[100];
+            double price;
+            fscanf(file, "%[^\"]%*c", ctgry);
+            if (strcmp(ctgry, "title") == 0) {
+                fscanf(file, "%*2s%[^\"]%*c", desc);
+                check_DK_char(desc);
+                strcpy(array[i].name, desc);
+                strcpy(array[i].store, "Bilka");
+            }
+            if ((strcmp(ctgry, "price") == 0)) {
+                fscanf(file, "%*c%lf", &price);
+                array[i].price = price;
+                i += 1;
+            }
+        }
+    }
+    return array;
+}
+
+product *rema100_scan(FILE *file) {
+    int counter = -1;
+    while (1) {
+        char b = fgetc(file);
+        if (feof(file)) {
+            break;
+        }
+        if (b == '}') {
+            counter += 1;
+        }
+
+    }
+    rewind(file);
+    product *array = malloc(sizeof(product) * counter);
+    while (fgetc(file) != '[') {
+    }
+    char c;
+    int i = 0;
+    while (1) {
+        c = fgetc(file);
+        if (feof(file)) {
+            break;
+        }
+        if (c == '"') {
+            char ctgry[100];
+            char desc[100];
+            double price;
+            fscanf(file, "%[^\"]%*c", ctgry);
+            if (strcmp(ctgry, "name") == 0) {
+                fscanf(file, "%*2s%[^\"]%*c", desc);
+                check_DK_char(desc);
+                strcpy(array[i].name, desc);
+                strcpy(array[i].store, "Rema1000");
+            }
+            if ((strcmp(ctgry, "price") == 0)) {
+                fscanf(file, "%*c%lf", &price);
+                array[i].price = price;
+                i += 1;
+            }
+        }
+    }
+    return array;
+}
+
+void scan_input(char *name, double *max_price) {
+
+    printf("Indtast produktets navn, saasom 'banan yogurt'>");
+    scanf("%[^\n]s", name);
+    while ((getchar()) != '\n');
+    printf("Indtast maksimal pris i DDK>");
+    scanf("%lf", max_price);
+}
+
+void check_DK_char(char *string) {
+    int len = strlen(string);
+    for (int i = 0; i < len; ++i) {
+        switch ((int) string[i]) {
+            case ae:
+                correct_DK_char(string, i, len, ae);
+                break;
+            case oe:
+                correct_DK_char(string, i, len, oe);
+                break;
+            case aa:
+                correct_DK_char(string, i, len, aa);
+                break;
+            case AE:
+                correct_DK_char(string, i, len, AE);
+                break;
+            case OE:
+                correct_DK_char(string, i, len, OE);
+                break;
+            case AA:
+                correct_DK_char(string, i, len, AA);
+                break;
+        }
+    }
+}
+
+
+void correct_DK_char(char *string, int position, int str_len, int type) {
+
+    if (type == ae) {
+        string[position - 4] = 'a';
+        string[position - 3] = 'e';
+    } else if (type == oe) {
+        string[position - 4] = 'o';
+        string[position - 3] = 'e';
+    } else if (type == aa) {
+        string[position - 4] = 'a';
+        string[position - 3] = 'a';
+    } else if (type == AE) {
+        string[position - 4] = 'A';
+        string[position - 3] = 'E';
+    } else if (type == OE) {
+        string[position - 4] = 'O';
+        string[position - 3] = 'E';
+    } else if (type == AA) {
+        string[position - 4] = 'A';
+        string[position - 3] = 'A';
+    }
+
+    int i = 1;
+    for (int j = position - 2; j < str_len; ++j) {
+        string[j] = string[position + i];
+        ++i;
+    }
+    string[str_len] = '\000';
+}
+
+>>>>>>> Stashed changes
 int cmpfunc(const void* a, const void* b) {
 
     double priceA = ((product*)a)->price;
@@ -46,7 +207,15 @@ char* GetSallingProducts(char* Item)
 char* GetCoopProducts(char* Item, char* Stores)
 {
     char* StoreNumbers;
+<<<<<<< Updated upstream
     
+=======
+<<<<<<< Updated upstream
+    //GetKardexNumbers(Stores, StoreNumbers);
+=======
+>>>>>>> Stashed changes
+
+>>>>>>> Stashed changes
     APIStruct SProducts;
     strcpy(SProducts.URL, "https://api.cl.coop.dk/productapi/v1/product/1290");
     strcpy(SProducts.RequestType, "GET");
@@ -186,9 +355,25 @@ int main()
     //printf("\nThis was salling \n\n\n\n");
     //GetCoopProducts(aifa, aifa);
     //printf("\nThis was coop \n\n\n\n");
+<<<<<<< Updated upstream
 
     GetData('x');
 
+=======
+<<<<<<< Updated upstream
+=======
+
+    //GetData('x');
+    char name[30];
+    double max_price;
+    // scan_input(name, &max_price);
+    FILE *test = fopen("test.txt", "r");
+    product *array = salling_scan(test);
+    for (int i = 0; i < 3; ++i) {
+        printf("%s %lf i %s\n", array[i].name, array[i].price, array[i].store);
+    }
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
     //char query[5] = "toast";
     //product* productArray = GetRemaProducts(query);
 
