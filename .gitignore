@@ -52,7 +52,15 @@ Mkfile.old
 dkms.conf
 
 .idea
-cmake-build*
+..cmake-build
+CMakeFiles*
+.Testing
+.cmake*
+.ninja_deps
+.ninja_log
+.build.ninja
+.cmake_install
+.CMakeCache
 
 .vscode
 !.vscode/settings.json
