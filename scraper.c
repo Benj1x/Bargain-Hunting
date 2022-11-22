@@ -8,7 +8,7 @@ enum {
     ae = -86, oe = -87, aa = -111, AE = -91, OE = -65, AA = -96
 };
 
-product *salling_scan(FILE *file) {
+product* salling_scan(FILE* file) {
     int counter = -1;
     while (1) {
         char b = fgetc(file);
@@ -21,7 +21,7 @@ product *salling_scan(FILE *file) {
 
     }
     rewind(file);
-    product *array = malloc(sizeof(product) * counter);
+    product* array = malloc(sizeof(product) * counter);
     while (fgetc(file) != '[') {
     }
     char c;
@@ -52,7 +52,7 @@ product *salling_scan(FILE *file) {
     return array;
 }
 
-product *rema100_scan(FILE *file) {
+product* rema100_scan(FILE* file) {
     int counter = -1;
     while (1) {
         char b = fgetc(file);
@@ -65,7 +65,7 @@ product *rema100_scan(FILE *file) {
 
     }
     rewind(file);
-    product *array = malloc(sizeof(product) * counter);
+    product* array = malloc(sizeof(product) * counter);
     while (fgetc(file) != '[') {
     }
     char c;
@@ -96,7 +96,7 @@ product *rema100_scan(FILE *file) {
     return array;
 }
 
-void scan_input(char *name, double *max_price) {
+void scan_input(char* name, double* max_price) {
 
     printf("Indtast produktets navn, saasom 'banan yogurt'>");
     scanf("%[^\n]s", name);
@@ -105,10 +105,10 @@ void scan_input(char *name, double *max_price) {
     scanf("%lf", max_price);
 }
 
-void check_DK_char(char *string) {
+void check_DK_char(char* string) {
     int len = strlen(string);
     for (int i = 0; i < len; ++i) {
-        switch ((int) string[i]) {
+        switch ((int)string[i]) {
             case ae:
                 correct_DK_char(string, i, len, ae);
                 break;
@@ -132,24 +132,29 @@ void check_DK_char(char *string) {
 }
 
 
-void correct_DK_char(char *string, int position, int str_len, int type) {
+void correct_DK_char(char* string, int position, int str_len, int type) {
 
     if (type == ae) {
         string[position - 4] = 'a';
         string[position - 3] = 'e';
-    } else if (type == oe) {
+    }
+    else if (type == oe) {
         string[position - 4] = 'o';
         string[position - 3] = 'e';
-    } else if (type == aa) {
+    }
+    else if (type == aa) {
         string[position - 4] = 'a';
         string[position - 3] = 'a';
-    } else if (type == AE) {
+    }
+    else if (type == AE) {
         string[position - 4] = 'A';
         string[position - 3] = 'E';
-    } else if (type == OE) {
+    }
+    else if (type == OE) {
         string[position - 4] = 'O';
         string[position - 3] = 'E';
-    } else if (type == AA) {
+    }
+    else if (type == AA) {
         string[position - 4] = 'A';
         string[position - 3] = 'A';
     }
@@ -184,7 +189,7 @@ char* GetSallingProducts(char* Item)
     strcpy(SProducts.URL, "https://api.sallinggroup.com/v1-beta/product-suggestions/relevant-products?query=");
     strcat(SProducts.URL, Item);
     strcpy(SProducts.RequestType, "GET");
-    strcpy(SProducts.ContentLength, "Content-Length=20");
+    strcpy(SProducts.PostFields, "Content-Length=20");
     strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
     strcpy(SProducts.KeyTypeAndKey, "Authorization: Bearer dc6422b7-166d-41e8-94c1-6804da7e17d5");
     char* r = APICall(SProducts);
@@ -257,11 +262,10 @@ char* APICall(APIStruct Params)
     /* get a curl handle */
     curl = curl_easy_init();
     char* Result[100000];
-    struct string s;
-    if (curl) {
+
 
     struct string s;
-    if(curl)
+    if (curl)
     {
         init_string(&s);
         curl_easy_setopt(curl, CURLOPT_CAINFO, "cacert.pem");
@@ -300,10 +304,10 @@ char* APICall(APIStruct Params)
 }
 
 //This code is how the documentation said to do so (spørg Henrik om how to declare)
-void init_string(struct string* s) {
+
 //This code is from stackoverflow - this seems like the only way to really do this
 //https://stackoverflow.com/a/2329792
-void init_string(struct string *s) {
+void init_string(struct string* s) {
     s->len = 0;
     s->ptr = malloc(s->len + 1);
     if (s->ptr == NULL) {
@@ -343,12 +347,12 @@ int main()
     printf("\n\n\n\n\n\n\n\n\nHER KOMMER REMA: \n\n");
     // // product* productArray = GetRemaProducts(query);
     GetRemaProducts(query);
-    return size*nmemb;
+    return 0;
 }
 
 void GetData(char* Items)
 {
-    FILE *QFile;
+    FILE* QFile;
     QFile = fopen("QueryResults.txt", "w+");
 
     char* c = GetSallingProducts("m%C3%A6lk");
@@ -359,39 +363,14 @@ void GetData(char* Items)
 
     fclose(QFile);
 }
-int main()
-{
-    //printf("Hello, %c!\n", (char) 0x86);
-    //char* aifa = "hehea";
-
-    //printf("\nThis was salling \n\n\n\n");
-    //GetCoopProducts(aifa, aifa);
-    //printf("\nThis was coop \n\n\n\n");
-    GetData('x');
-
-    //GetData('x');
-    char name[30];
-    double max_price;
-    // scan_input(name, &max_price);
-    FILE *test = fopen("test.txt", "r");
-    product *array = salling_scan(test);
-    for (int i = 0; i < 3; ++i) {
-        printf("%s %lf i %s\n", array[i].name, array[i].price, array[i].store);
-    }
-    //char query[5] = "toast";
-    //product* productArray = GetRemaProducts(query);
-
-
-    return 0;
-}
 
 char* PRScraper()
 {
-    CURL *curl;
+    CURL* curl;
     CURLcode res;
 
     struct string s;
-    if(curl)
+    if (curl)
     {
         init_string(&s);
         curl = curl_easy_init();
