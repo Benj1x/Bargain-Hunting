@@ -103,6 +103,12 @@ void scan_input(char *name, double *max_price)
     while ((getchar()) != '\n');
     printf("Indtast maksimal pris i DKK>");
     scanf("%lf", max_price);
+
+    FILE *SFile = fopen("ShoppingList.txt", "w");
+    fputs(name, SFile);
+    fprintf(SFile, "%s_%.2lf", name, max_price);
+
+    fclose(SFile);
 }
 
 void check_DK_char(char *string)
@@ -336,7 +342,7 @@ size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s)
 }
 
 
-void GetData(char* Items)
+void WriteAPIDataToFile(char* Items)
 {
     FILE* QFile;
     QFile = fopen("QueryResults.txt", "w+");
@@ -358,7 +364,7 @@ int main()
     //printf("\nThis was salling \n\n\n\n");
     //GetCoopProducts(aifa, aifa);
     //printf("\nThis was coop \n\n\n\n");
-    //GetData('x');
+    //WriteAPIDataToFile('x');
 
     char query[6] = "kål";
 
@@ -367,11 +373,7 @@ int main()
     char name[30];
     double max_price;
     scan_input(name, &max_price);
-    FILE *SFile = fopen("ShoppingList.txt", "w");
-    fputs(name, SFile);
-    putc(max_price, SFile);
 
-    fclose(SFile);
     FILE *test = fopen("test.txt", "r");
     /*product *array = salling_scan(test);
     for (int i = 0; i < 3; ++i) {
