@@ -96,7 +96,7 @@ product* rema100_scan(FILE* file) {
     return array;
 }
 
-void scan_input(char *name, double *max_price)
+void scan_input(char* name, double* max_price)
 {
     printf("Indtast produktets navn, saasom 'banan yogurt'>");
     scanf("%[^\n]s", name);
@@ -105,7 +105,7 @@ void scan_input(char *name, double *max_price)
     scanf("%lf", max_price);
 }
 
-void check_DK_char(char *string)
+void check_DK_char(char* string)
 {
     int len = strlen(string);
     for (int i = 0; i < len; ++i) {
@@ -132,7 +132,7 @@ void check_DK_char(char *string)
     }
 }
 
-void correct_DK_char(char *string, int position, int str_len, int type)
+void correct_DK_char(char* string, int position, int str_len, int type)
 {
     if (type == ae) {
         string[position - 4] = 'a';
@@ -352,7 +352,7 @@ void GetData(char* Items)
 
 int main()
 {
-    printf("Hello, %c!\n", (char) 0x86);
+    printf("Hello, %c!\n", (char)0x86);
     //char* aifa = "hehea";
 
     //printf("\nThis was salling \n\n\n\n");
@@ -367,12 +367,12 @@ int main()
     char name[30];
     double max_price;
     scan_input(name, &max_price);
-    FILE *SFile = fopen("ShoppingList.txt", "w");
+    FILE* SFile = fopen("ShoppingList.txt", "w");
     fputs(name, SFile);
     putc(max_price, SFile);
 
     fclose(SFile);
-    FILE *test = fopen("test.txt", "r");
+    FILE* test = fopen("test.txt", "r");
     /*product *array = salling_scan(test);
     for (int i = 0; i < 3; ++i) {
         printf("%s %lf i %s\n", array[i].name, array[i].price, array[i].store);
