@@ -96,16 +96,17 @@ product* rema100_scan(FILE* file) {
     return array;
 }
 
-void scan_input(char* name, double* max_price) {
-
+void scan_input(char *name, double *max_price)
+{
     printf("Indtast produktets navn, saasom 'banan yogurt'>");
     scanf("%[^\n]s", name);
     while ((getchar()) != '\n');
-    printf("Indtast maksimal pris i DDK>");
+    printf("Indtast maksimal pris i DKK>");
     scanf("%lf", max_price);
 }
 
-void check_DK_char(char* string) {
+void check_DK_char(char *string)
+{
     int len = strlen(string);
     for (int i = 0; i < len; ++i) {
         switch ((int)string[i]) {
@@ -131,9 +132,8 @@ void check_DK_char(char* string) {
     }
 }
 
-
-void correct_DK_char(char* string, int position, int str_len, int type) {
-
+void correct_DK_char(char *string, int position, int str_len, int type)
+{
     if (type == ae) {
         string[position - 4] = 'a';
         string[position - 3] = 'e';
@@ -167,8 +167,8 @@ void correct_DK_char(char* string, int position, int str_len, int type) {
     string[str_len] = '\000';
 }
 
-int cmpfunc(const void* a, const void* b) {
-
+int cmpfunc(const void* a, const void* b)
+{
     double priceA = ((product*)a)->price;
     double priceB = ((product*)b)->price;
     if (priceA > priceB)
@@ -179,7 +179,8 @@ int cmpfunc(const void* a, const void* b) {
         return 0;
 }
 
-void sortByPrice(product* productList, int listLen) {
+void sortByPrice(product* productList, int listLen)
+{
     qsort(productList, listLen, sizeof(product), cmpfunc);
 }
 
@@ -230,8 +231,8 @@ void GetKardexNumbers(char* Stores, char* KardexNumbers)
     //printf("Hello, Coop!\n");
 }
 
-product* GetRemaProducts(char query[]) {
-
+product* GetRemaProducts(char query[])
+{
     APIStruct SProducts;
 
     char entireQuery[300] = "{\"requests\":[{\"indexName\":\"aws-prod-products\",\"params\":\"query=";
@@ -248,6 +249,7 @@ product* GetRemaProducts(char query[]) {
     FILE* remaproducts = fopen("remaproducts.txt", "w");
     fputs(response, remaproducts);
 
+    fclose(remaproducts);
     // printf("%s", r);
 
 }
@@ -261,8 +263,6 @@ char* APICall(APIStruct Params)
     curl_global_init(CURL_GLOBAL_ALL);
     /* get a curl handle */
     curl = curl_easy_init();
-    char* Result[100000];
-
 
     struct string s;
     if (curl)
@@ -275,7 +275,6 @@ char* APICall(APIStruct Params)
         if (Params.PostFields != "") curl_easy_setopt(curl, CURLOPT_POSTFIELDS, Params.PostFields);
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
-        /*https://stackoverflow.com/a/2329792*/
         /*Set's a callback function to receive incoming data myfunc);*/
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
         /*-----------------------------------------------------------*/
@@ -294,7 +293,6 @@ char* APICall(APIStruct Params)
             fprintf(stderr, "curl_easy_perform() failed: %s\n",
                 curl_easy_strerror(res));
         }
-        //printf("\n\n\n\n\n\n\n\n\n________________________________________\n\n\n%s", s.ptr);
         //free(s.ptr);
         curl_easy_cleanup(curl);
     }
@@ -337,18 +335,6 @@ size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s)
     return size * nmemb;
 }
 
-int main()
-{
-    printf("Hello, Joe!\n");
-    char query[6] = "kål";
-    char* aifa = "hehea";
-    // GetSallingProducts(aifa);
-    // GetCoopProducts(aifa, aifa);
-    printf("\n\n\n\n\n\n\n\n\nHER KOMMER REMA: \n\n");
-    // // product* productArray = GetRemaProducts(query);
-    GetRemaProducts(query);
-    return 0;
-}
 
 void GetData(char* Items)
 {
@@ -362,6 +348,40 @@ void GetData(char* Items)
     fputs(c, QFile);
 
     fclose(QFile);
+}
+
+int main()
+{
+    printf("Hello, %c!\n", (char) 0x86);
+    //char* aifa = "hehea";
+
+    //printf("\nThis was salling \n\n\n\n");
+    //GetCoopProducts(aifa, aifa);
+    //printf("\nThis was coop \n\n\n\n");
+    //GetData('x');
+
+    char query[6] = "kål";
+
+    GetRemaProducts(query);
+
+    char name[30];
+    double max_price;
+    scan_input(name, &max_price);
+    FILE *SFile = fopen("ShoppingList.txt", "w");
+    fputs(name, SFile);
+    putc(max_price, SFile);
+
+    fclose(SFile);
+    FILE *test = fopen("test.txt", "r");
+    /*product *array = salling_scan(test);
+    for (int i = 0; i < 3; ++i) {
+        printf("%s %lf i %s\n", array[i].name, array[i].price, array[i].store);
+    }*/
+    //char query[5] = "toast";
+    //product* productArray = GetRemaProducts(query);
+
+    fclose(test);
+    return 0;
 }
 
 char* PRScraper()
