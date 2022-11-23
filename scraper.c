@@ -418,6 +418,14 @@ void WriteAPIDataToFile(char* Items)
     FILE* QFile;
     QFile = fopen("QueryResults.txt", "w+");
 
+     //Create struct Dict with char* StoreName & char* Kardex
+    
+    //init struct for all stores
+    //Loop through structs and get the store that matches the one we are reading from the file
+    //do query
+    //for all new lines -> do it again
+    //done
+    
     char* c = GetSallingProducts("m%C3%A6lk");
     fputs(c, QFile);
     fputs("????", QFile);
@@ -441,7 +449,7 @@ int main()
     // char query[6] = "kål";
 
     // GetRemaProducts(query);
-
+    
     // char name[30];
     // double max_price;
     // scan_input(name, &max_price);
