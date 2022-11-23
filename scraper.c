@@ -104,7 +104,7 @@ void scan_input(char* name, double* max_price)
     printf("Indtast maksimal pris i DKK>");
     scanf("%lf", max_price);
 
-    FILE *SFile = fopen("ShoppingList.txt", "w");
+    FILE* SFile = fopen("ShoppingList.txt", "w");
     fputs(name, SFile);
     fprintf(SFile, "%s_%.2lf", name, max_price);
 
@@ -260,11 +260,10 @@ product* GetRemaProducts(char query[])
 
 }
 
-void storeChoice()
-{
-    FILE *stores;
-    char storeID [5];
-    char storeName [25];
+void storeChoice() {
+    FILE* stores;
+    char storeID[5];
+    char storeName[25];
 
     stores = fopen("./stores.txt", "a+");
 
@@ -274,15 +273,17 @@ void storeChoice()
         scanf("%[^\n]", &storeName);
         while (getchar() != '\n');
 
+        //Breaks loop
+        if (strcmp(storeName, "q") == 0) {
+            break;
+        }
+
         //Check if entered store already is in list
         if (storeCheck(storeName) == 1) {
             printf("\nSame store is already in list\n");
         }
-            //Breaks loop
-        else if (storeName[0] == 'q') {
-            break;
-        }
-            //Prints given store to list
+
+        //Prints given store to list
         else {
             fprintf(stores, "\n%s", storeName);
             printf("Given store is added to list\n\n");
@@ -296,7 +297,7 @@ void storeChoice()
 
     while (!feof(stores)) {
         ++i;
-        fgets(storeName, "%[^\n]", stores);
+        fgets(storeName, 25, stores);
         printf("Store number %d: %s\n", i, storeName);
     }
     fclose(stores);
@@ -305,7 +306,7 @@ void storeChoice()
 //Function for checking if input store is already in list
 int storeCheck(char curretInput[])
 {
-    FILE *stores;
+    FILE* stores;
     int storeExists = 0;
     char searchString[20];
     strcpy(searchString, curretInput);
@@ -314,9 +315,9 @@ int storeCheck(char curretInput[])
 
     char buffer[20];
 
-    while(fgets(buffer, 20, stores)) {
-        char *checkForStore = strstr(buffer, searchString);
-        if(checkForStore != NULL) {
+    while (fgets(buffer, 20, stores)) {
+        char* checkForStore = strstr(buffer, searchString);
+        if (checkForStore != NULL) {
             storeExists = 1;
             break;
         }
@@ -430,33 +431,34 @@ int main()
 {
     printf("Hello, %c!\n", (char)0x86);
     //char* aifa = "hehea";
+    storeChoice();
 
     //printf("\nThis was salling \n\n\n\n");
     //GetCoopProducts(aifa, aifa);
     //printf("\nThis was coop \n\n\n\n");
     //GetData('x');
 
-    char query[6] = "kål";
+    // char query[6] = "kål";
 
-    GetRemaProducts(query);
+    // GetRemaProducts(query);
 
-    char name[30];
-    double max_price;
-    scan_input(name, &max_price);
-    FILE* SFile = fopen("ShoppingList.txt", "w");
-    fputs(name, SFile);
-    putc(max_price, SFile);
+    // char name[30];
+    // double max_price;
+    // scan_input(name, &max_price);
+    // FILE* SFile = fopen("ShoppingList.txt", "w");
+    // fputs(name, SFile);
+    // putc(max_price, SFile);
 
-    fclose(SFile);
-    FILE* test = fopen("test.txt", "r");
-    /*product *array = salling_scan(test);
-    for (int i = 0; i < 3; ++i) {
-        printf("%s %lf i %s\n", array[i].name, array[i].price, array[i].store);
-    }*/
-    //char query[5] = "toast";
-    //product* productArray = GetRemaProducts(query);
+    // fclose(SFile);
+    // FILE* test = fopen("test.txt", "r");
+    // /*product *array = salling_scan(test);
+    // for (int i = 0; i < 3; ++i) {
+    //     printf("%s %lf i %s\n", array[i].name, array[i].price, array[i].store);
+    // }*/
+    // //char query[5] = "toast";
+    // //product* productArray = GetRemaProducts(query);
 
-    fclose(test);
+    // fclose(test);
     return 0;
 }
 
