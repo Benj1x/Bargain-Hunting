@@ -15,9 +15,9 @@ int main() {
 }
 
 void storeChoice() {
-    FILE *stores;
-    char storeID [5];
-    char storeName [25];
+    FILE* stores;
+    char storeID[5];
+    char storeName[25];
 
     stores = fopen("./stores.txt", "a+");
 
@@ -27,28 +27,31 @@ void storeChoice() {
         scanf("%[^\n]", &storeName);
         while (getchar() != '\n');
 
+        //Breaks loop
+        if (strcmp(storeName, "q") == 0) {
+            break;
+        }
+
         //Check if entered store already is in list
         if (storeCheck(storeName) == 1) {
             printf("\nSame store is already in list\n");
         }
-        //Breaks loop
-        else if (storeName[0] == 'q') {
-            break;
-        }
+
         //Prints given store to list
         else {
             fprintf(stores, "\n%s", storeName);
             printf("Given store is added to list\n\n");
         }
-    }  
+    }
     fclose(stores);
 
     //Prints stores present in list file
     stores = fopen("./stores.txt", "r");
     int i = 0;
+
     while (!feof(stores)) {
         ++i;
-        fgets(storeName, "%[^\n]", stores);
+        fgets(storeName, 25, stores);
         printf("Store number %d: %s\n", i, storeName);
     }
     fclose(stores);
@@ -81,34 +84,4 @@ int storeCheck(char curretInput[]) {
   //Returns 0 if store is not found in list
   return storeExists;
 }
-
-//Might be 無駄
-//Solution for printing list content 1
-//Needs char buffer[20];
-    /*while (fgets(buffer, 20, stores)) {
-        ++i;
-        sscanf(buffer, "%s", storeName);
-        printf("Store number %d: %s\n", i, storeName);
-    }*/
-//Solution for printing list content 2
-    /*while (!feof(stores)) {
-        ++i;
-        fgets(storeName, "%[^\n]", stores);
-        printf("Store number %d: %s\n", i, storeName);
-    }*/
-
-//Might be 無駄
-//Solution 1 for checking whether or not list file exists
-    /*if (access(stores, F_OK) != 0) {
-        stores = fopen("stores.txt", "w+");
-    } 
-    else {
-        stores = fopen("stores.txt", "r+");
-    }*/
-//Solution 2 for checking whether or not list file exists
-    /*if (stores == NULL) {
-        printf("File couldn't be opened. Creating new file\n");
-        fclose(stores);
-        stores = fopen("./stores.txt", "a+");       
-    }*/
-    
+  
