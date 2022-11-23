@@ -4,15 +4,177 @@
 #include <string.h>
 #include "include/curl/curl.h"
 
-typedef struct {
-    char name[20];
-    char description[50];
-    double price;
-    char store[10];
-}product;
+enum {
+    ae = -86, oe = -87, aa = -111, AE = -91, OE = -65, AA = -96
+};
 
-int cmpfunc(const void* a, const void* b) {
+product* salling_scan(FILE* file) {
+    int counter = -1;
+    while (1) {
+        char b = fgetc(file);
+        if (feof(file)) {
+            break;
+        }
+        if (b == '}') {
+            counter += 1;
+        }
 
+    }
+    rewind(file);
+    product* array = malloc(sizeof(product) * counter);
+    while (fgetc(file) != '[') {
+    }
+    char c;
+    int i = 0;
+    while (1) {
+        c = fgetc(file);
+        if (feof(file)) {
+            break;
+        }
+        if (c == '"') {
+            char ctgry[100];
+            char desc[100];
+            double price;
+            fscanf(file, "%[^\"]%*c", ctgry);
+            if (strcmp(ctgry, "title") == 0) {
+                fscanf(file, "%*2s%[^\"]%*c", desc);
+                check_DK_char(desc);
+                strcpy(array[i].name, desc);
+                strcpy(array[i].store, "Bilka");
+            }
+            if ((strcmp(ctgry, "price") == 0)) {
+                fscanf(file, "%*c%lf", &price);
+                array[i].price = price;
+                i += 1;
+            }
+        }
+    }
+    return array;
+}
+
+product* rema100_scan(FILE* file) {
+    int counter = -1;
+    while (1) {
+        char b = fgetc(file);
+        if (feof(file)) {
+            break;
+        }
+        if (b == '}') {
+            counter += 1;
+        }
+
+    }
+    rewind(file);
+    product* array = malloc(sizeof(product) * counter);
+    while (fgetc(file) != '[') {
+    }
+    char c;
+    int i = 0;
+    while (1) {
+        c = fgetc(file);
+        if (feof(file)) {
+            break;
+        }
+        if (c == '"') {
+            char ctgry[100];
+            char desc[100];
+            double price;
+            fscanf(file, "%[^\"]%*c", ctgry);
+            if (strcmp(ctgry, "name") == 0) {
+                fscanf(file, "%*2s%[^\"]%*c", desc);
+                check_DK_char(desc);
+                strcpy(array[i].name, desc);
+                strcpy(array[i].store, "Rema1000");
+            }
+            if ((strcmp(ctgry, "price") == 0)) {
+                fscanf(file, "%*c%lf", &price);
+                array[i].price = price;
+                i += 1;
+            }
+        }
+    }
+    return array;
+}
+
+void scan_input(char* name, double* max_price)
+{
+    printf("Indtast produktets navn, saasom 'banan yogurt'>");
+    scanf("%[^\n]s", name);
+    while ((getchar()) != '\n');
+    printf("Indtast maksimal pris i DKK>");
+    scanf("%lf", max_price);
+
+    FILE* SFile = fopen("ShoppingList.txt", "w");
+    fputs(name, SFile);
+    fprintf(SFile, "%s_%.2lf", name, max_price);
+
+    fclose(SFile);
+}
+
+void check_DK_char(char* string)
+{
+    int len = strlen(string);
+    for (int i = 0; i < len; ++i) {
+        switch ((int)string[i]) {
+            case ae:
+                correct_DK_char(string, i, len, ae);
+                break;
+            case oe:
+                correct_DK_char(string, i, len, oe);
+                break;
+            case aa:
+                correct_DK_char(string, i, len, aa);
+                break;
+            case AE:
+                correct_DK_char(string, i, len, AE);
+                break;
+            case OE:
+                correct_DK_char(string, i, len, OE);
+                break;
+            case AA:
+                correct_DK_char(string, i, len, AA);
+                break;
+        }
+    }
+}
+
+void correct_DK_char(char* string, int position, int str_len, int type)
+{
+    if (type == ae) {
+        string[position - 4] = 'a';
+        string[position - 3] = 'e';
+    }
+    else if (type == oe) {
+        string[position - 4] = 'o';
+        string[position - 3] = 'e';
+    }
+    else if (type == aa) {
+        string[position - 4] = 'a';
+        string[position - 3] = 'a';
+    }
+    else if (type == AE) {
+        string[position - 4] = 'A';
+        string[position - 3] = 'E';
+    }
+    else if (type == OE) {
+        string[position - 4] = 'O';
+        string[position - 3] = 'E';
+    }
+    else if (type == AA) {
+        string[position - 4] = 'A';
+        string[position - 3] = 'A';
+    }
+
+    int i = 1;
+    for (int j = position - 2; j < str_len; ++j) {
+        string[j] = string[position + i];
+        ++i;
+    }
+    string[str_len] = '\000';
+}
+
+int cmpfunc(const void* a, const void* b)
+{
     double priceA = ((product*)a)->price;
     double priceB = ((product*)b)->price;
     if (priceA > priceB)
@@ -23,7 +185,8 @@ int cmpfunc(const void* a, const void* b) {
         return 0;
 }
 
-void sortByPrice(product* productList, int listLen) {
+void sortByPrice(product* productList, int listLen)
+{
     qsort(productList, listLen, sizeof(product), cmpfunc);
 }
 
@@ -33,7 +196,7 @@ char* GetSallingProducts(char* Item)
     strcpy(SProducts.URL, "https://api.sallinggroup.com/v1-beta/product-suggestions/relevant-products?query=");
     strcat(SProducts.URL, Item);
     strcpy(SProducts.RequestType, "GET");
-    strcpy(SProducts.ContentLength, "Content-Length=20");
+    strcpy(SProducts.PostFields, "Content-Length=20");
     strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
     strcpy(SProducts.KeyTypeAndKey, "Authorization: Bearer dc6422b7-166d-41e8-94c1-6804da7e17d5");
     char* r = APICall(SProducts);
@@ -46,49 +209,132 @@ char* GetSallingProducts(char* Item)
 char* GetCoopProducts(char* Item, char* Stores)
 {
     char* StoreNumbers;
-    
+
     APIStruct SProducts;
     strcpy(SProducts.URL, "https://api.cl.coop.dk/productapi/v1/product/1290");
     strcpy(SProducts.RequestType, "GET");
-    strcpy(SProducts.ContentLength, "Content-Length=20");
     strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
     strcpy(SProducts.KeyTypeAndKey, "Ocp-Apim-Subscription-Key: fefba58d42c4456ca7182cc307574653");
     char* r = APICall(SProducts);
-  
-    printf("%s", r);
 
     return r;
     free(r);
 
+    printf("Hello, Coop!\n");
+}
+
+void GetKardexNumbers(char* Stores, char* KardexNumbers)
+{
+    APIStruct SKardex;
+    strcpy(SKardex.URL, "https://api.cl.coop.dk/storeapi/v1/stores?Content-Length=50");
+    strcpy(SKardex.RequestType, "POST");
+    strcpy(SKardex.CheckData, "RetailGroup: \"Kvickly\"");
+    strcpy(SKardex.KeyTypeAndKey, "Ocp-Apim-Subscription-Key: fefba58d42c4456ca7182cc307574653");
+    char* r = APICall(SKardex);
+    printf("\n\n\n\n\n\n\n\n\n________________________________________\n\n\n%s", r);
+
+    free(r);
     //printf("Hello, Coop!\n");
 }
 
-product* GetRemaProducts(char query[]) {
-    CURL* curl;
-    CURLcode res;
-    curl_global_init(CURL_GLOBAL_ALL);
+product* GetRemaProducts(char query[])
+{
+    APIStruct SProducts;
 
-    curl = curl_easy_init();
+    char entireQuery[300] = "{\"requests\":[{\"indexName\":\"aws-prod-products\",\"params\":\"query=";
+    char rest[200] = "&hitsPerPage=5000&"
+        "page=0&"
+        "&attributesToRetrieve=%5B%22name%22%2C%22labels%22%2C%22pricing%22%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D\"}]}";
+    strcat(entireQuery, query);
+    strcat(entireQuery, rest);
+    strcpy(SProducts.URL, "https://flwdn2189e-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%20for%20vanilla%20JavaScript%203.21.1&x-algolia-application-id=FLWDN2189E&x-algolia-api-key=fa20981a63df668e871a87a8fbd0caed");
+    strcpy(SProducts.RequestType, "POST");
+    strcpy(SProducts.PostFields, entireQuery);
+    char* response = APICall(SProducts);
 
-    if (curl) {
-        curl_easy_setopt(curl, CURLOPT_URL, "https://flwdn2189e-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%%20for%%20vanilla%%20JavaScript%%203.21.1&x-algolia-application-id=FLWDN2189E&x-algolia-api-key=fa20981a63df668e871a87a8fbd0caed");
+    FILE* remaproducts = fopen("remaproducts.txt", "w");
+    fputs(response, remaproducts);
 
-        char entireQuery[200] = "{\"requests\":[{\"indexName\":\"aws-prod-products\",\"params\":\"query=";
-        char rest[200] = "&hitsPerPage=5000&"
-            "page=0&"
-            "attributesToRetrieve=%%5B%%22name%%22%%2C%%22labels%%22%%2C%%22pricing%%22%%5D&attributesToSnippet=%%5B%%5D\"}]}";
-        strcat(entireQuery, query);
-        strcat(entireQuery, rest);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, entireQuery);
-        res = curl_easy_perform(curl);
-        curl_easy_cleanup(curl);
-    }
+    fclose(remaproducts);
+    // printf("%s", r);
+
 }
 
+void storeChoice() {
+    FILE* stores;
+    char storeID[5];
+    char storeName[25];
+
+    stores = fopen("./stores.txt", "a+");
+
+    //Loop for entering wanted stores
+    while (1) {
+        printf("Enter store name, break with 'q':");
+        scanf("%[^\n]", &storeName);
+        while (getchar() != '\n');
+
+        //Breaks loop
+        if (strcmp(storeName, "q") == 0) {
+            break;
+        }
+
+        //Check if entered store already is in list
+        if (storeCheck(storeName) == 1) {
+            printf("\nSame store is already in list\n");
+        }
+
+        //Prints given store to list
+        else {
+            fprintf(stores, "\n%s", storeName);
+            printf("Given store is added to list\n\n");
+        }
+    }
+    fclose(stores);
+
+    //Prints stores present in list file
+    stores = fopen("./stores.txt", "r");
+    int i = 0;
+
+    while (!feof(stores)) {
+        ++i;
+        fgets(storeName, 25, stores);
+        printf("Store number %d: %s\n", i, storeName);
+    }
+    fclose(stores);
+}
+
+//Function for checking if input store is already in list
+int storeCheck(char curretInput[])
+{
+    FILE* stores;
+    int storeExists = 0;
+    char searchString[20];
+    strcpy(searchString, curretInput);
+
+    stores = fopen("./stores.txt", "r");
+
+    char buffer[20];
+
+    while (fgets(buffer, 20, stores)) {
+        char* checkForStore = strstr(buffer, searchString);
+        if (checkForStore != NULL) {
+            storeExists = 1;
+            break;
+        }
+        else {
+            storeExists = 0;
+        }
+    }
+    fclose(stores);
+
+    //Returns 1 if store is found in list
+    //Returns 0 if store is not found in list
+    return storeExists;
+}
 
 char* APICall(APIStruct Params)
 {
-    CURL *curl;
+    CURL* curl;
     CURLcode res;
     /*This will init winsock stuff -> Windows only*/
     curl_global_init(CURL_GLOBAL_ALL);
@@ -96,35 +342,34 @@ char* APICall(APIStruct Params)
     curl = curl_easy_init();
 
     struct string s;
-    if(curl)
+    if (curl)
     {
         init_string(&s);
+        curl_easy_setopt(curl, CURLOPT_CAINFO, "cacert.pem");
+        curl_easy_setopt(curl, CURLOPT_CAPATH, "cacert.pem");
         curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, Params.RequestType);
         curl_easy_setopt(curl, CURLOPT_URL, Params.URL);
+        if (Params.PostFields != "") curl_easy_setopt(curl, CURLOPT_POSTFIELDS, Params.PostFields);
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
-        /*https://stackoverflow.com/a/2329792*/
         /*Set's a callback function to receive incoming data myfunc);*/
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
         /*-----------------------------------------------------------*/
         /*Callback will take an argument that is set (This is our string)*/
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
         /*-----------------------------------------------------------*/
-        struct curl_slist *headers = NULL;
-        headers = curl_slist_append(headers, Params.KeyTypeAndKey);
-        headers = curl_slist_append(headers, Params.CheckData);
+        struct curl_slist* headers = NULL;
+        if (Params.KeyTypeAndKey != "") headers = curl_slist_append(headers, Params.KeyTypeAndKey);
+        if (Params.CheckData != "") headers = curl_slist_append(headers, Params.CheckData);
         headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        const char *data = Params.ContentLength;
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
         res = curl_easy_perform(curl);
         /* Check for errors */
-        if(res != CURLE_OK)
+        if (res != CURLE_OK)
         {
             fprintf(stderr, "curl_easy_perform() failed: %s\n",
-                    curl_easy_strerror(res));
+                curl_easy_strerror(res));
         }
-        //printf("\n\n\n\n\n\n\n\n\n________________________________________\n\n\n%s", s.ptr);
         //free(s.ptr);
         curl_easy_cleanup(curl);
     }
@@ -133,11 +378,13 @@ char* APICall(APIStruct Params)
     return s.ptr;
 }
 
+//This code is how the documentation said to do so (spørg Henrik om how to declare)
+
 //This code is from stackoverflow - this seems like the only way to really do this
 //https://stackoverflow.com/a/2329792
-void init_string(struct string *s) {
+void init_string(struct string* s) {
     s->len = 0;
-    s->ptr = malloc(s->len+1);
+    s->ptr = malloc(s->len + 1);
     if (s->ptr == NULL) {
         fprintf(stderr, "malloc() failed\n");
         exit(EXIT_FAILURE);
@@ -150,24 +397,25 @@ void init_string(struct string *s) {
  * @param size
  * @param nmemb
  * @param string *s
- */ 
-size_t writefunc(void *ptr, size_t size, size_t nmemb, struct string *s)
+ */
+size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s)
 {
-    size_t new_len = s->len + size*nmemb;
-    s->ptr = realloc(s->ptr, new_len+1);
+    size_t new_len = s->len + size * nmemb;
+    s->ptr = realloc(s->ptr, new_len + 1);
     if (s->ptr == NULL) {
         fprintf(stderr, "realloc() failed\n");
         exit(EXIT_FAILURE);
     }
-    memcpy(s->ptr+s->len, ptr, size*nmemb);
+    memcpy(s->ptr + s->len, ptr, size * nmemb);
     s->ptr[new_len] = '\0';
     s->len = new_len;
-    return size*nmemb;
+    return size * nmemb;
 }
 
-void GetData(char* Items)
+
+void WriteAPIDataToFile(char* Items)
 {
-    FILE *QFile;
+    FILE* QFile;
     QFile = fopen("QueryResults.txt", "w+");
 
     char* c = GetSallingProducts("m%C3%A6lk");
@@ -178,31 +426,49 @@ void GetData(char* Items)
 
     fclose(QFile);
 }
+
 int main()
 {
-    //printf("Hello, %c!\n", (char) 0x86);
+    printf("Hello, %c!\n", (char)0x86);
     //char* aifa = "hehea";
+    storeChoice();
 
     //printf("\nThis was salling \n\n\n\n");
     //GetCoopProducts(aifa, aifa);
     //printf("\nThis was coop \n\n\n\n");
+    //GetData('x');
 
-    GetData('x');
+    // char query[6] = "kål";
 
-    //char query[5] = "toast";
-    //product* productArray = GetRemaProducts(query);
+    // GetRemaProducts(query);
 
+    // char name[30];
+    // double max_price;
+    // scan_input(name, &max_price);
+    // FILE* SFile = fopen("ShoppingList.txt", "w");
+    // fputs(name, SFile);
+    // putc(max_price, SFile);
 
+    // fclose(SFile);
+    // FILE* test = fopen("test.txt", "r");
+    // /*product *array = salling_scan(test);
+    // for (int i = 0; i < 3; ++i) {
+    //     printf("%s %lf i %s\n", array[i].name, array[i].price, array[i].store);
+    // }*/
+    // //char query[5] = "toast";
+    // //product* productArray = GetRemaProducts(query);
+
+    // fclose(test);
     return 0;
 }
 
 char* PRScraper()
 {
-    CURL *curl;
+    CURL* curl;
     CURLcode res;
 
     struct string s;
-    if(curl)
+    if (curl)
     {
         init_string(&s);
         curl = curl_easy_init();
