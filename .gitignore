@@ -49,18 +49,15 @@ Mkfile.old
 dkms.conf
 
 .idea
-.cmake-build
+..cmake-build
 CMakeFiles*
 Testing*
-#.cmake*
-cmake-build*
-#cmake-build-debug/*
+.cmake*
 .ninja_deps
 .ninja_log
 build.ninja
 cmake_install.cmake
 CMakeCache.txt
-
 
 .vscode
 !.vscode/settings.json
