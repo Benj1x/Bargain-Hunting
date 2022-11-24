@@ -192,7 +192,7 @@ void sortByPrice(product* productList, int listLen)
 
 char* GetSallingProducts(char* Item)
 {
-    APIStruct SProducts;
+    SAPIStruct SProducts;
     strcpy(SProducts.URL, "https://api.sallinggroup.com/v1-beta/product-suggestions/relevant-products?query=");
     strcat(SProducts.URL, Item);
     strcpy(SProducts.RequestType, "GET");
@@ -202,7 +202,6 @@ char* GetSallingProducts(char* Item)
     char* r = APICall(SProducts);
 
     return r;
-    //printf("Hello, Salling!\n");
     free(r);
 }
 
@@ -210,7 +209,7 @@ char* GetCoopProducts(char* Item, char* Stores)
 {
     char* StoreNumbers;
 
-    APIStruct SProducts;
+    SAPIStruct SProducts;
     strcpy(SProducts.URL, "https://api.cl.coop.dk/productapi/v1/product/1290");
     strcpy(SProducts.RequestType, "GET");
     strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
@@ -220,12 +219,11 @@ char* GetCoopProducts(char* Item, char* Stores)
     return r;
     free(r);
 
-    printf("Hello, Coop!\n");
 }
 
 void GetKardexNumbers(char* Stores, char* KardexNumbers)
 {
-    APIStruct SKardex;
+    SAPIStruct SKardex;
     strcpy(SKardex.URL, "https://api.cl.coop.dk/storeapi/v1/stores?Content-Length=50");
     strcpy(SKardex.RequestType, "POST");
     strcpy(SKardex.CheckData, "RetailGroup: \"Kvickly\"");
@@ -239,7 +237,7 @@ void GetKardexNumbers(char* Stores, char* KardexNumbers)
 
 product* GetRemaProducts(char query[])
 {
-    APIStruct SProducts;
+    SAPIStruct SProducts;
 
     char entireQuery[300] = "{\"requests\":[{\"indexName\":\"aws-prod-products\",\"params\":\"query=";
     char rest[200] = "&hitsPerPage=5000&"
@@ -283,7 +281,7 @@ void storeChoice() {
             printf("\nSame store is already in list\n");
         }
 
-        //Prints given store to list
+            //Prints given store to list
         else {
             fprintf(stores, "\n%s", storeName);
             printf("Given store is added to list\n\n");
@@ -332,7 +330,7 @@ int storeCheck(char curretInput[])
     return storeExists;
 }
 
-char* APICall(APIStruct Params)
+char* APICall(SAPIStruct Params)
 {
     CURL* curl;
     CURLcode res;
@@ -412,21 +410,20 @@ size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s)
     return size * nmemb;
 }
 
-
 void WriteAPIDataToFile(char* Items)
 {
     FILE* QFile;
     QFile = fopen("QueryResults.txt", "w+");
 
-     //Create struct Dict with char* StoreName & char* Kardex
+    //Create struct Dict with char* StoreName & char* Kardex
     
     //init struct for all stores
     //Loop through structs and get the store that matches the one we are reading from the file
     //do query
     //for all new lines -> do it again
     //done
-    
-    char* c = GetSallingProducts("m%C3%A6lk");
+
+    char *c = GetSallingProducts("m%C3%A6lk");
     fputs(c, QFile);
     fputs("????", QFile);
     c = GetCoopProducts("aifa", "aifa");
@@ -435,21 +432,68 @@ void WriteAPIDataToFile(char* Items)
     fclose(QFile);
 }
 
+/*This initializes our dictionary (Gives it all of the entries with keys and values)*/
+SDictionary InitDictionary(){
+    //Create the dictionary
+    SDictionary Dictionary;
+    Dictionary.entry = NULL;
+    /*Creates our entry for Dagli'Brugsen*/
+    SDictEntry EntryDagliBrugs;
+    strcpy(EntryDagliBrugs.Key, "Dagli'Brugsen");
+    strcpy(EntryDagliBrugs.Value, "2082");
+
+    /*Update the dictionary, first update the length, then update the entry*/
+    Dictionary.DictLength = 1;
+    Dictionary.DictMaxSize = 10;
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize+1 * sizeof(EntryDagliBrugs));
+    Dictionary.entry[0] = EntryDagliBrugs;
+
+    /*Creates our entry for Fakta*/
+    SDictEntry EntryFakta;
+    strcpy(EntryFakta.Key, "Fakta");
+    strcpy(EntryFakta.Value, "24080");
+
+    /*Updates our dictonaries length, and adds the new entry to the dictionary*/
+    Dictionary.DictLength = 2;
+    Dictionary.DictMaxSize = 10;
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize+1 * sizeof(EntryFakta));
+    Dictionary.entry[1] = EntryFakta;
+
+    return Dictionary;
+}
+
+/*This is a given, it looks up in our dictionary, this is done with a "Key"*/
+char* DictionaryLookup(SDictionary Dictionary, char Key[20]){
+    //For the size of our dictionary
+    for (int i = 0; i < Dictionary.DictLength; i++)
+    {
+        //If equal, it returns 0, therefor we want !strcmp (Some might be used to it returning 1)
+        /*This checks if our key, is equal to the set key, of the dictionary entry*/
+        if (!strcmp(Dictionary.entry[i].Key, Key))
+        {
+            //If they are equal, return the value
+            return Dictionary.entry[i].Value;
+        }
+    }
+}
+
 int main()
 {
-    printf("Hello, %c!\n", (char)0x86);
-    //char* aifa = "hehea";
-    storeChoice();
+    SDictionary Dictionary = InitDictionary();
+    printf(DictionaryLookup(Dictionary, "Fakta"));
 
-    //printf("\nThis was salling \n\n\n\n");
-    //GetCoopProducts(aifa, aifa);
-    //printf("\nThis was coop \n\n\n\n");
     //GetData('x');
-
-    // char query[6] = "kål";
+    //FILE *test = fopen("test.txt", "r");
+    //WriteAPIDataToFile('x');
+    /*product *array = salling_scan(test);
+    for (int i = 0; i < 3; ++i) {
+        printf("%s %lf i %s\n", array[i].name, array[i].price, array[i].store);
+    }*/
+    //char query[5] = "toast";
+    //product* productArray = GetRemaProducts(query);
 
     // GetRemaProducts(query);
-    
+
     // char name[30];
     // double max_price;
     // scan_input(name, &max_price);
@@ -466,7 +510,8 @@ int main()
     // //char query[5] = "toast";
     // //product* productArray = GetRemaProducts(query);
 
-    // fclose(test);
+    //fclose(test);
+   // free(Dictionary.entry);
     return 0;
 }
 

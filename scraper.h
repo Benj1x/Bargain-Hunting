@@ -4,28 +4,46 @@ typedef struct {
     char store[20];
 } product;
 
+/*Dictonary entry*/
+typedef struct DictionaryEntry {
+    char Key[20];
+    char Value[20];
+} SDictEntry;
+
+/*Our dictonary*/
+typedef struct Dictionary {
+    int DictLength;
+    int DictMaxSize;
+    SDictEntry *entry;
+} SDictionary;
+
 typedef struct Params {
     char RequestType[7];
     char URL[250];
     char KeyTypeAndKey[100];
     char CheckData[300];
     char PostFields[300];
-} APIStruct;
+} SAPIStruct;
+
 
 typedef struct string {
     char* ptr;
     size_t len;
 } string;
 
+typedef enum Store {Fakta = 24080, DagliBrugsen = 2082} EStore;
+const char* KardexValue[] = { [Fakta] = "24080", [DagliBrugsen] = "2082"};
+
 char* GetSallingProducts(char* Item);
 char* GetCoopProducts(char* Item, char* Stores);
 void WriteAPIDataToFile(char* Items);
 void storeChoice();
 int storeCheck(char currentInput[]);
-char* APICall(APIStruct params);
+char* APICall(SAPIStruct params);
+char* DictionaryLookup(SDictionary Dictionary, char Key[20]);
+SDictionary InitDictionary();
 void init_string(struct string* s);
 size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s);
-
 product* salling_scan(FILE* file);
 void scan_input(char* name, double* max_price);
 void check_DK_char(char* string);
