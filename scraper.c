@@ -436,6 +436,7 @@ void WriteAPIDataToFile(char* Items)
 SDictionary InitDictionary(){
     //Create the dictionary
     SDictionary Dictionary;
+    Dictionary.entry = NULL;
     /*Creates our entry for Dagli'Brugsen*/
     SDictEntry EntryDagliBrugs;
     strcpy(EntryDagliBrugs.Key, "Dagli'Brugsen");
@@ -444,7 +445,7 @@ SDictionary InitDictionary(){
     /*Update the dictionary, first update the length, then update the entry*/
     Dictionary.DictLength = 1;
     Dictionary.DictMaxSize = 10;
-    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize * sizeof(EntryDagliBrugs));
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize+1 * sizeof(EntryDagliBrugs));
     Dictionary.entry[0] = EntryDagliBrugs;
 
     /*Creates our entry for Fakta*/
@@ -455,7 +456,7 @@ SDictionary InitDictionary(){
     /*Updates our dictonaries length, and adds the new entry to the dictionary*/
     Dictionary.DictLength = 2;
     Dictionary.DictMaxSize = 10;
-    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize * sizeof(EntryFakta));
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize+1 * sizeof(EntryFakta));
     Dictionary.entry[1] = EntryFakta;
 
     return Dictionary;
@@ -510,6 +511,7 @@ int main()
     // //product* productArray = GetRemaProducts(query);
 
     //fclose(test);
+   // free(Dictionary.entry);
     return 0;
 }
 
