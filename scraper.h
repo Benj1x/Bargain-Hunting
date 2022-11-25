@@ -1,12 +1,12 @@
 typedef struct {
     char name[50];
     double price;
-    char store[20];
+    char store[15];
 } product;
 
 /*Dictonary entry*/
 typedef struct DictionaryEntry {
-    char Key[20];
+    char Key[15];
     char Value[20];
 } SDictEntry;
 
@@ -36,11 +36,11 @@ const char* KardexValue[] = { [Fakta] = "24080", [DagliBrugsen] = "2082"};
 
 char* GetSallingProducts(char* Item);
 char* GetCoopProducts(char* Item, char* Stores);
-void WriteAPIDataToFile(char* Items);
+void WriteAPIDataToFile(char* Items, SDictionary Dictionary);
 void storeChoice();
 int storeCheck(char currentInput[]);
 char* APICall(SAPIStruct params);
-char* DictionaryLookup(SDictionary Dictionary, char Key[20]);
+SDictEntry DictionaryLookup(SDictionary Dictionary, char Key[20]);
 SDictionary InitDictionary();
 void init_string(struct string* s);
 size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s);

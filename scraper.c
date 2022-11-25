@@ -410,10 +410,23 @@ size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s)
     return size * nmemb;
 }
 
-void WriteAPIDataToFile(char* Items)
+/*Calls the API's and writes the data to a file*/
+void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
 {
     FILE* QFile;
     QFile = fopen("QueryResults.txt", "w+");
+
+    FILE* StoreFile;
+    StoreFile = fopen("stores.txt", "r");
+
+    char buffer[15];
+    char* value[15];
+    while (fgets(buffer, 15, StoreFile))
+    {
+        SDictEntry Entry = DictionaryLookup(Dictionary, buffer);
+
+        printf("%s", Entry.Value);
+    }
 
     //Create struct Dict with char* StoreName & char* Kardex
     
@@ -422,20 +435,25 @@ void WriteAPIDataToFile(char* Items)
     //do query
     //for all new lines -> do it again
     //done
-
+/*
     char *c = GetSallingProducts("m%C3%A6lk");
     fputs(c, QFile);
     fputs("????", QFile);
     c = GetCoopProducts("aifa", "aifa");
     fputs(c, QFile);
 
-    fclose(QFile);
+    fclose(QFile);*/
 }
 
 /*This initializes our dictionary (Gives it all of the entries with keys and values)*/
 SDictionary InitDictionary(){
     //Create the dictionary
     SDictionary Dictionary;
+    /*https://stackoverflow.com/a/62004489*/
+    //If you pass NULL to realloc(),
+    //then realloc tries to allocate a completely new block,
+    //but if you pass something different than NULL it
+    //consider it represents an already allocated block (which it isn't) and the computer explodes.
     Dictionary.entry = NULL;
     /*Creates our entry for Dagli'Brugsen*/
     SDictEntry EntryDagliBrugs;
@@ -463,16 +481,16 @@ SDictionary InitDictionary(){
 }
 
 /*This is a given, it looks up in our dictionary, this is done with a "Key"*/
-char* DictionaryLookup(SDictionary Dictionary, char Key[20]){
+SDictEntry DictionaryLookup(SDictionary Dictionary, char Key[]){
     //For the size of our dictionary
-    for (int i = 0; i < Dictionary.DictLength; i++)
+    for (int i = 0; i < Dictionary.DictLength-1; i++)
     {
         //If equal, it returns 0, therefor we want !strcmp (Some might be used to it returning 1)
         /*This checks if our key, is equal to the set key, of the dictionary entry*/
         if (!strcmp(Dictionary.entry[i].Key, Key))
         {
             //If they are equal, return the value
-            return Dictionary.entry[i].Value;
+            return Dictionary.entry[i];
         }
     }
 }
@@ -480,11 +498,12 @@ char* DictionaryLookup(SDictionary Dictionary, char Key[20]){
 int main()
 {
     SDictionary Dictionary = InitDictionary();
-    printf(DictionaryLookup(Dictionary, "Fakta"));
+    WriteAPIDataToFile("x", Dictionary);
+
 
     //GetData('x');
     //FILE *test = fopen("test.txt", "r");
-    //WriteAPIDataToFile('x');
+
     /*product *array = salling_scan(test);
     for (int i = 0; i < 3; ++i) {
         printf("%s %lf i %s\n", array[i].name, array[i].price, array[i].store);
@@ -514,7 +533,7 @@ int main()
    // free(Dictionary.entry);
     return 0;
 }
-
+/*Pricerunner scraper, currently not in use, but also does not scrape anything they don't want us to*/
 char* PRScraper()
 {
     CURL* curl;
@@ -568,3 +587,39 @@ char* PRScraper()
 
     return s.ptr;
 }
+
+/* CURL *curl;
+    CURLcode res;
+    curl = curl_easy_init();
+    struct string s;
+    if(curl) {
+        init_string(&s);
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
+        curl_easy_setopt(curl, CURLOPT_CAINFO, "cacert.pem");
+        curl_easy_setopt(curl, CURLOPT_CAPATH, "cacert.pem");
+        curl_easy_setopt(curl, CURLOPT_URL, "https://api.sallinggroup.com/v1/food-waste/?zip=8000");
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+        curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
+        /*Set's a callback function to receive incoming data myfunc);*/
+/*
+curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
+/*-----------------------------------------------------------*/
+/*Callback will take an argument that is set (This is our string)*/
+/*curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
+/*-----------------------------------------------------------*/
+/*struct curl_slist *headers = NULL;
+headers = curl_slist_append(headers, "Authorization: Bearer dc6422b7-166d-41e8-94c1-6804da7e17d5");
+headers = curl_slist_append(headers, "Cookie: TiPMix=92.20528390749058; x-ms-routing-name=self");
+curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+res = curl_easy_perform(curl);
+
+/* Check for errors */
+/*if (res != CURLE_OK)
+{
+fprintf(stderr, "curl_easy_perform() failed: %s\n",
+curl_easy_strerror(res));
+}
+}
+curl_easy_cleanup(curl);
+
+printf("%s", s.ptr);*/
