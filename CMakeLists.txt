@@ -3,4 +3,12 @@ project(Bargain_Hunting C)
 
 set(CMAKE_C_STANDARD 99)
 
+#link curl with Bargain_Hunting
+# set( CURL_LIBRARY ${CMAKE_SOURCE_DIR}/lib )
+# set( CURL_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include )
+include_directories( ${CMAKE_SOURCE_DIR}/include )
+link_directories(${CMAKE_SOURCE_DIR}/lib/libcurl.dll.a)
+FIND_PACKAGE(CURL REQUIRED)
+
+
 add_executable(Bargain_Hunting scraper.c scraper.h)
