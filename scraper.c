@@ -52,7 +52,7 @@ product* salling_scan(FILE* file) {
     return array;
 }
 
-product* rema100_scan(FILE* file) {
+product* rema1000_scan(FILE* file, int* nbHits) {
     int counter = -1;
     while (1) {
         char b = fgetc(file);
@@ -64,6 +64,8 @@ product* rema100_scan(FILE* file) {
         }
 
     }
+
+    *nbHits = counter;
     rewind(file);
     product* array = malloc(sizeof(product) * counter);
     while (fgetc(file) != '[') {
@@ -200,7 +202,9 @@ char* GetSallingProducts(char* Item)
     strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
     strcpy(SProducts.KeyTypeAndKey, "Authorization: Bearer dc6422b7-166d-41e8-94c1-6804da7e17d5");
     char* r = APICall(SProducts);
-
+    FILE* aaaa = fopen("salling.txt", "w");
+    fputs(r, aaaa);
+    fclose(aaaa);
     return r;
     free(r);
 }
@@ -235,7 +239,7 @@ void GetKardexNumbers(char* Stores, char* KardexNumbers)
     //printf("Hello, Coop!\n");
 }
 
-product* GetRemaProducts(char query[])
+product* GetRemaProducts(char query[], int* nbHits)
 {
     SAPIStruct SProducts;
 
@@ -250,13 +254,130 @@ product* GetRemaProducts(char query[])
     strcpy(SProducts.PostFields, entireQuery);
     char* response = APICall(SProducts);
 
-    FILE* remaproducts = fopen("remaproducts.txt", "w");
+
+    FILE* remaproducts = fopen("remaproducts.txt", "w+");
     fputs(response, remaproducts);
 
+    rewind(remaproducts);
+
+    product* product_array = rema1000_scan(remaproducts, nbHits);
     fclose(remaproducts);
     // printf("%s", r);
+    return product_array;
 
 }
+
+void loaded_check(FILE* file) {
+    if (file == NULL) {
+        printf("Failed on loading file!");
+        exit(EXIT_FAILURE);
+    }
+}
+
+int count_lines(char* file_name) {
+
+    FILE* match_file = fopen(file_name, "r");
+    loaded_check(match_file);
+    int lines = 1;
+    int ch = 0;
+    while ((ch = fgetc(match_file)) != EOF) {
+        if (ch == '\n')
+            lines++;
+    }
+    fclose(match_file);
+    return lines;
+}
+
+int isStringInArray(char** selectedShops, char* shopName, int shopsNumber) {
+
+    for (int i = 0; i < shopsNumber; i++)
+    {
+        if (strcmp(shopName, selectedShops[i]) == 0)
+            return 1;
+    }
+    return 0;
+}
+
+char** getStoresArray(int* storeAmount) {
+    FILE* stores = fopen("./stores.txt", "r");
+    loaded_check(stores);
+    *storeAmount = count_lines("./stores.txt");
+    rewind(stores);
+    char storesArray[*storeAmount][20];
+
+    for (int i = 0; i < *storeAmount; i++)
+    {
+        char store[20];
+        fscanf(stores, "%s", store);
+        strcpy(storesArray[i], store);
+        printf("%s \n", storesArray[i]);
+    }
+
+    fclose(stores);
+    return storesArray;
+
+
+}
+
+product* getProductsFromStoreList(char query[]) {
+
+    int storeAmount;
+    char** storesArray = getStoresArray(&storeAmount);
+    int nbHits;
+
+    // product* rema = GetRemaProducts(query, &nbHitsRema);
+    // product* salling = GetRemaProducts(query);
+    int current_size = 0;
+    product* fullProductArray = malloc(sizeof(product));
+
+
+    if (isStringInArray(storesArray, "Rema", storeAmount)) {
+        int nbHitsRema = 5;
+        nbHits += nbHitsRema;
+        product rema[5] = { [0] .name = "Eggs",[0].price = 9.0,
+        [0 ... 4].store = "Rema",
+        [1].name = "Dickus",[1].price = 32.5,
+        [2].name = "Balls",[2].price = 51.4,
+        [3].name = "Gordon Blue",[3].price = 99.5,
+        [4].name = "skrrt",[4].price = 4444.1,
+        };
+        current_size += nbHitsRema;
+        fullProductArray = realloc(fullProductArray, current_size * sizeof(product));
+
+
+
+    }
+
+
+
+
+}
+
+
+
+
+
+
+// printf("elements rema: %d \n", nbHitsRema);
+// printf("aa: %d", rema[2].price);
+
+
+// for (int i = 0; i < storeAmount; i++)
+// {
+//     char* current[10];
+//     fscanf(stores, "%s", current);
+//     if (strcmp(current, "Fotex") == 1) {
+
+//     }
+
+//     return
+
+// }
+
+
+
+
+
 
 void storeChoice() {
     FILE* stores;
@@ -281,7 +402,7 @@ void storeChoice() {
             printf("\nSame store is already in list\n");
         }
 
-            //Prints given store to list
+        //Prints given store to list
         else {
             fprintf(stores, "\n%s", storeName);
             printf("Given store is added to list\n\n");
@@ -436,24 +557,25 @@ void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
     }
 
     //Create struct Dict with char* StoreName & char* Kardex
-    
+
     //init struct for all stores
     //Loop through structs and get the store that matches the one we are reading from the file
     //do query
     //for all new lines -> do it again
     //done
-/*
-    char *c = GetSallingProducts("m%C3%A6lk");
+
+    //char* c = GetSallingProducts("m%C3%A6lk");
+
     fputs(c, QFile);
     fputs("????", QFile);
     c = GetCoopProducts("aifa", "aifa");
     fputs(c, QFile);
 
-    fclose(QFile);*/
+    fclose(QFile);
 }
 
 /*This initializes our dictionary (Gives it all of the entries with keys and values)*/
-SDictionary InitDictionary(){
+SDictionary InitDictionary() {
     //Create the dictionary
     SDictionary Dictionary;
     /*https://stackoverflow.com/a/62004489*/
@@ -480,6 +602,7 @@ SDictionary InitDictionary(){
     /*Update the dictionary, first update the length, then update the entry*/
     Dictionary.DictLength = 2;
     Dictionary.DictMaxSize = 10;
+    
     Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize * sizeof(EntryDagliBrugs) +1);
     Dictionary.entry[1] = EntryDagliBrugs;
 
@@ -491,6 +614,7 @@ SDictionary InitDictionary(){
     /*Updates our dictonaries length, and adds the new entry to the dictionary*/
     Dictionary.DictLength = 3;
     Dictionary.DictMaxSize = 10;
+
     Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize * sizeof(EntryFakta) +1);
     Dictionary.entry[2] = EntryFakta;
 
@@ -526,6 +650,17 @@ int main()
     WriteAPIDataToFile("x", Dictionary);
 
     //printf("%s", GetSallingProducts("for%C3%A5rsl%C3%B8g"));
+    
+    // getProductsFromStoreList("ost");
+    int nbhits;
+    // product* products = GetRemaProducts("ost", &nbhits);
+    GetSallingProducts("ost");
+    FILE* aaaa = fopen("salling.txt", "r");
+    // printf("%s", products[49].name);
+    product* sallingus = salling_scan(aaaa);
+    fclose(aaaa);
+
+    printf("%d", (int)"æ");
 
     //GetData('x');
     //FILE *test = fopen("test.txt", "r");

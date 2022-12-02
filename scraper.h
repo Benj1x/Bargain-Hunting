@@ -14,7 +14,7 @@ typedef struct DictionaryEntry {
 typedef struct Dictionary {
     int DictLength;
     int DictMaxSize;
-    SDictEntry *entry;
+    SDictEntry* entry;
 } SDictionary;
 
 typedef struct Params {
@@ -31,8 +31,8 @@ typedef struct string {
     size_t len;
 } string;
 
-typedef enum Store {Fakta = 24080, DagliBrugsen = 2082} EStore;
-const char* KardexValue[] = { [Fakta] = "24080", [DagliBrugsen] = "2082"};
+typedef enum Store { Fakta = 24080, DagliBrugsen = 2082 } EStore;
+const char* KardexValue[] = { [Fakta] = "24080",[DagliBrugsen] = "2082" };
 
 char* GetSallingProducts(char* Item);
 char* GetCoopProducts(char* Item, char* Stores);
