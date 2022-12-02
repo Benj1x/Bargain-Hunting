@@ -419,13 +419,20 @@ void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
     FILE* StoreFile;
     StoreFile = fopen("stores.txt", "r");
 
-    char buffer[15];
-    char* value[15];
+    char buffer[20];
+    //char value[15];
     while (fgets(buffer, 15, StoreFile))
     {
-        SDictEntry Entry = DictionaryLookup(Dictionary, buffer);
+        //Fjerner alle \n fra vores buffer, dette gør det muligt at søge på alle linjer, ellers ville search slå fejl
+        buffer[strcspn(buffer, "\n")] = '\0';
 
-        printf("%s", Entry.Value);
+        char* key = DictionaryLookup(Dictionary, buffer);
+        if (key == NULL){
+            printf("NOT FOUND\n");
+        } else{
+            printf("%s", key);
+        }
+
     }
 
     //Create struct Dict with char* StoreName & char* Kardex
@@ -456,15 +463,25 @@ SDictionary InitDictionary(){
     //consider it represents an already allocated block (which it isn't) and the computer explodes.
     Dictionary.entry = NULL;
     /*Creates our entry for Dagli'Brugsen*/
+    SDictEntry EntryError;
+    strcpy(EntryError.Key, "Not Found");
+    strcpy(EntryError.Value, "000000");
+
+    Dictionary.DictLength = 1;
+    Dictionary.DictMaxSize = 10;
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize+1 * sizeof(EntryError) +1);
+    Dictionary.entry[0] = EntryError;
+
+
     SDictEntry EntryDagliBrugs;
     strcpy(EntryDagliBrugs.Key, "Dagli'Brugsen");
     strcpy(EntryDagliBrugs.Value, "2082");
 
     /*Update the dictionary, first update the length, then update the entry*/
-    Dictionary.DictLength = 1;
+    Dictionary.DictLength = 2;
     Dictionary.DictMaxSize = 10;
-    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize+1 * sizeof(EntryDagliBrugs));
-    Dictionary.entry[0] = EntryDagliBrugs;
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize * sizeof(EntryDagliBrugs) +1);
+    Dictionary.entry[1] = EntryDagliBrugs;
 
     /*Creates our entry for Fakta*/
     SDictEntry EntryFakta;
@@ -472,27 +489,35 @@ SDictionary InitDictionary(){
     strcpy(EntryFakta.Value, "24080");
 
     /*Updates our dictonaries length, and adds the new entry to the dictionary*/
-    Dictionary.DictLength = 2;
+    Dictionary.DictLength = 3;
     Dictionary.DictMaxSize = 10;
-    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize+1 * sizeof(EntryFakta));
-    Dictionary.entry[1] = EntryFakta;
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize * sizeof(EntryFakta) +1);
+    Dictionary.entry[2] = EntryFakta;
 
     return Dictionary;
 }
 
 /*This is a given, it looks up in our dictionary, this is done with a "Key"*/
-SDictEntry DictionaryLookup(SDictionary Dictionary, char Key[]){
+char* DictionaryLookup(SDictionary Dictionary, char *Key)
+{
     //For the size of our dictionary
-    for (int i = 0; i < Dictionary.DictLength-1; i++)
+    for (int i = 1; i < Dictionary.DictLength; i++)
     {
+        printf("\nTest %s: %d", Key, i);
         //If equal, it returns 0, therefor we want !strcmp (Some might be used to it returning 1)
         /*This checks if our key, is equal to the set key, of the dictionary entry*/
         if (!strcmp(Dictionary.entry[i].Key, Key))
         {
             //If they are equal, return the value
-            return Dictionary.entry[i];
+            /*SegFault here*/
+            printf("");
+            return Dictionary.entry[i].Value;
+        } else{
+
         }
     }
+
+    return NULL;
 }
 
 int main()
@@ -500,6 +525,7 @@ int main()
     SDictionary Dictionary = InitDictionary();
     WriteAPIDataToFile("x", Dictionary);
 
+    //printf("%s", GetSallingProducts("for%C3%A5rsl%C3%B8g"));
 
     //GetData('x');
     //FILE *test = fopen("test.txt", "r");

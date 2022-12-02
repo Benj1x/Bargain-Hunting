@@ -6,7 +6,7 @@ typedef struct {
 
 /*Dictonary entry*/
 typedef struct DictionaryEntry {
-    char Key[15];
+    char Key[20];
     char Value[20];
 } SDictEntry;
 
@@ -40,7 +40,7 @@ void WriteAPIDataToFile(char* Items, SDictionary Dictionary);
 void storeChoice();
 int storeCheck(char currentInput[]);
 char* APICall(SAPIStruct params);
-SDictEntry DictionaryLookup(SDictionary Dictionary, char Key[20]);
+char* DictionaryLookup(SDictionary Dictionary, char *Key);
 SDictionary InitDictionary();
 void init_string(struct string* s);
 size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s);
