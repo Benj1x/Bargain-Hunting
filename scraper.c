@@ -553,17 +553,19 @@ void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
         char* Keyd;
         Keyd = DictionaryLookup(Dictionary, buffer);
 
-        if (Keyd == NULL){
+        if (Keyd == NULL) {
             printf("Store not found (Not supported by API)\n");
 
-        } else{
+        }
+        else {
             strcpy(key, Keyd);
-            if (isdigit(key[0])){
+            if (isdigit(key[0])) {
                 printf("%s (%s) Is a coop store\n", buffer, key);
                 char* c = GetCoopProducts(Items, Keyd);
                 fputs(c, QFile);
                 fputs("????", QFile);
-            } else{
+            }
+            else {
                 printf("%s Is a Salling store\n", key);
                 char* c = GetSallingProducts(Items);
                 fputs(c, QFile);
@@ -600,7 +602,7 @@ SDictionary InitDictionary() {
 
     Dictionary.DictLength = 1;
     Dictionary.DictMaxSize = 10;
-    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize+1 * sizeof(EntryError) +1);
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize + 1 * sizeof(EntryError) + 1);
     Dictionary.entry[0] = EntryError;
 
 
@@ -611,8 +613,8 @@ SDictionary InitDictionary() {
     /*Update the dictionary, first update the length, then update the entry*/
     Dictionary.DictLength = 2;
     Dictionary.DictMaxSize = 10;
-    
-    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize * sizeof(EntryDagliBrugs) +1);
+
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize * sizeof(EntryDagliBrugs) + 1);
     Dictionary.entry[1] = EntryDagliBrugs;
 
     /*Creates our entry for Fakta*/
@@ -624,7 +626,7 @@ SDictionary InitDictionary() {
     Dictionary.DictLength = 3;
     Dictionary.DictMaxSize = 10;
 
-    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize * sizeof(EntryFakta) +1);
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
     Dictionary.entry[2] = EntryFakta;
 
     SDictEntry EntryBilka;
@@ -633,14 +635,24 @@ SDictionary InitDictionary() {
 
     Dictionary.DictLength = 4;
     Dictionary.DictMaxSize = 10;
-    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize * sizeof(EntryBilka) +1);
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
     Dictionary.entry[3] = EntryBilka;
+
+    SDictEntry EntryRema;
+    strcpy(EntryRema.Key, "Rema");
+    strcpy(EntryRema.Value, "Rema");
+
+    Dictionary.DictLength = 5;
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
+    Dictionary.entry[4] = EntryRema;
+
+
 
     return Dictionary;
 }
 
 /*This is a given, it looks up in our dictionary, this is done with a "Key"*/
-char* DictionaryLookup(SDictionary Dictionary, char *Key)
+char* DictionaryLookup(SDictionary Dictionary, char* Key)
 {
     //For the size of our dictionary
     for (int i = 1; i < Dictionary.DictLength; i++)
@@ -651,7 +663,8 @@ char* DictionaryLookup(SDictionary Dictionary, char *Key)
         {
             //If they are equal, return the value
             return Dictionary.entry[i].Value;
-        } else{
+        }
+        else {
 
         }
     }
@@ -777,25 +790,25 @@ char* PRScraper()
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
         /*Set's a callback function to receive incoming data myfunc);*/
-/*
-curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
-/*-----------------------------------------------------------*/
-/*Callback will take an argument that is set (This is our string)*/
-/*curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
-/*-----------------------------------------------------------*/
-/*struct curl_slist *headers = NULL;
-headers = curl_slist_append(headers, "Authorization: Bearer dc6422b7-166d-41e8-94c1-6804da7e17d5");
-headers = curl_slist_append(headers, "Cookie: TiPMix=92.20528390749058; x-ms-routing-name=self");
-curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-res = curl_easy_perform(curl);
+        /*
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
+        /*-----------------------------------------------------------*/
+        /*Callback will take an argument that is set (This is our string)*/
+        /*curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
+        /*-----------------------------------------------------------*/
+        /*struct curl_slist *headers = NULL;
+        headers = curl_slist_append(headers, "Authorization: Bearer dc6422b7-166d-41e8-94c1-6804da7e17d5");
+        headers = curl_slist_append(headers, "Cookie: TiPMix=92.20528390749058; x-ms-routing-name=self");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        res = curl_easy_perform(curl);
 
-/* Check for errors */
-/*if (res != CURLE_OK)
-{
-fprintf(stderr, "curl_easy_perform() failed: %s\n",
-curl_easy_strerror(res));
-}
-}
-curl_easy_cleanup(curl);
+        /* Check for errors */
+        /*if (res != CURLE_OK)
+        {
+        fprintf(stderr, "curl_easy_perform() failed: %s\n",
+        curl_easy_strerror(res));
+        }
+        }
+        curl_easy_cleanup(curl);
 
-printf("%s", s.ptr);*/
+        printf("%s", s.ptr);*/
