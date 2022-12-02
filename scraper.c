@@ -214,7 +214,9 @@ char* GetCoopProducts(char* Item, char* Stores)
     char* StoreNumbers;
 
     SAPIStruct SProducts;
-    strcpy(SProducts.URL, "https://api.cl.coop.dk/productapi/v1/product/1290");
+    //1290 gamle kardex
+    strcpy(SProducts.URL, "https://api.cl.coop.dk/productapi/v1/product/");
+    strcat(SProducts.URL, Stores);
     strcpy(SProducts.RequestType, "GET");
     strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
     strcpy(SProducts.KeyTypeAndKey, "Ocp-Apim-Subscription-Key: fefba58d42c4456ca7182cc307574653");
@@ -544,34 +546,41 @@ void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
     //char value[15];
     while (fgets(buffer, 15, StoreFile))
     {
-        //Fjerner alle \n fra vores buffer, dette gør det muligt at søge på alle linjer, ellers ville search slå fejl
+        //Fjerner alle \n fra vores buffer, dette gør det muligt at søge på alle linjer, ellers ville search slå fejl for alle udover den sidste
         buffer[strcspn(buffer, "\n")] = '\0';
 
-        char* key = DictionaryLookup(Dictionary, buffer);
-        if (key == NULL){
-            printf("NOT FOUND\n");
+        char key[20];
+        char* Keyd;
+        Keyd = DictionaryLookup(Dictionary, buffer);
+
+        if (Keyd == NULL){
+            printf("Store not found\n");
+
         } else{
-            printf("%s", key);
+            strcpy(key, Keyd);
+            if (isdigit(key[0])){
+                printf("Is a coop store\n");
+                char* c = GetCoopProducts(Items, Keyd);
+                fputs(c, QFile);
+                fputs("????", QFile);
+            } else{
+                printf("Is a Salling store\n");
+                char* c = GetSallingProducts(Items);
+                fputs(c, QFile);
+                fputs("????", QFile);
+            }
         }
 
     }
-
+    fclose(QFile);
+    fclose(StoreFile);
     //Create struct Dict with char* StoreName & char* Kardex
 
     //init struct for all stores
-    //Loop through structs and get the store that matches the one we are reading from the file
+
     //do query
     //for all new lines -> do it again
     //done
-
-    //char* c = GetSallingProducts("m%C3%A6lk");
-
-    fputs(c, QFile);
-    fputs("????", QFile);
-    c = GetCoopProducts("aifa", "aifa");
-    fputs(c, QFile);
-
-    fclose(QFile);
 }
 
 /*This initializes our dictionary (Gives it all of the entries with keys and values)*/
@@ -618,6 +627,15 @@ SDictionary InitDictionary() {
     Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize * sizeof(EntryFakta) +1);
     Dictionary.entry[2] = EntryFakta;
 
+    SDictEntry EntryBilka;
+    strcpy(EntryBilka.Key, "Bilka");
+    strcpy(EntryBilka.Value, "Bilka");
+
+    Dictionary.DictLength = 4;
+    Dictionary.DictMaxSize = 10;
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize * sizeof(EntryBilka) +1);
+    Dictionary.entry[3] = EntryBilka;
+
     return Dictionary;
 }
 
@@ -627,14 +645,11 @@ char* DictionaryLookup(SDictionary Dictionary, char *Key)
     //For the size of our dictionary
     for (int i = 1; i < Dictionary.DictLength; i++)
     {
-        printf("\nTest %s: %d", Key, i);
         //If equal, it returns 0, therefor we want !strcmp (Some might be used to it returning 1)
         /*This checks if our key, is equal to the set key, of the dictionary entry*/
         if (!strcmp(Dictionary.entry[i].Key, Key))
         {
             //If they are equal, return the value
-            /*SegFault here*/
-            printf("");
             return Dictionary.entry[i].Value;
         } else{
 
@@ -647,10 +662,10 @@ char* DictionaryLookup(SDictionary Dictionary, char *Key)
 int main()
 {
     SDictionary Dictionary = InitDictionary();
-    WriteAPIDataToFile("x", Dictionary);
+    WriteAPIDataToFile("Mel", Dictionary);
 
     //printf("%s", GetSallingProducts("for%C3%A5rsl%C3%B8g"));
-    
+    /*
     // getProductsFromStoreList("ost");
     int nbhits;
     // product* products = GetRemaProducts("ost", &nbhits);
