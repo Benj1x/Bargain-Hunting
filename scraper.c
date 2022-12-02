@@ -559,12 +559,12 @@ void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
         } else{
             strcpy(key, Keyd);
             if (isdigit(key[0])){
-                printf("Is a coop store\n");
+                printf("%s (%s) Is a coop store\n", buffer, key);
                 char* c = GetCoopProducts(Items, Keyd);
                 fputs(c, QFile);
                 fputs("????", QFile);
             } else{
-                printf("Is a Salling store\n");
+                printf("%s Is a Salling store\n", key);
                 char* c = GetSallingProducts(Items);
                 fputs(c, QFile);
                 fputs("????", QFile);
