@@ -554,7 +554,7 @@ void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
         Keyd = DictionaryLookup(Dictionary, buffer);
 
         if (Keyd == NULL){
-            printf("Store not found\n");
+            printf("Store not found (Not supported by API)\n");
 
         } else{
             strcpy(key, Keyd);
