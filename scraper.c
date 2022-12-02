@@ -479,8 +479,10 @@ char* DictionaryLookup(SDictionary Dictionary, char Key[20]){
 
 int main()
 {
-    SDictionary Dictionary = InitDictionary();
-    printf(DictionaryLookup(Dictionary, "Fakta"));
+  //  SDictionary Dictionary = InitDictionary();
+   // printf(DictionaryLookup(Dictionary, "Fakta"));
+
+
 
     //GetData('x');
     //FILE *test = fopen("test.txt", "r");
