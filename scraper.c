@@ -53,7 +53,7 @@ product* salling_scan(FILE* file) {
 }
 
 product* coop_scan(FILE* file) {
-    int counter = -1;
+    int counter = 0;
     while (1) {
         char b = fgetc(file);
         if (feof(file)) {
@@ -724,11 +724,17 @@ int main()
     SDictionary Dictionary = InitDictionary();
     WriteAPIDataToFile("Mel", Dictionary);
 
-    GetSallingProducts("forarslog");
+    /*GetSallingProducts("forarslog");
     FILE* aaaa = fopen("salling.txt", "r");
     product* sallingProducts = salling_scan(aaaa);
     fclose(aaaa);
-    printf("%s", sallingProducts[0].name);
+    printf("%s", sallingProducts[0].name);*/
+
+    //GetCoopProducts("forarslog", "Fakta");
+    FILE* aaaa = fopen("coop.txt", "r");
+    product* coopProducts = coop_scan(aaaa);
+    fclose(aaaa);
+    printf("%s", coopProducts[0].name);
 
     //GetData('x');
     //FILE *test = fopen("test.txt", "r");
