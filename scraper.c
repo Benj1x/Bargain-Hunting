@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include "scraper.h"
-#include <strings.h>
+#include <stdlib.h>
+#include <string.h>
 #include "include/curl/curl.h"
 
 enum {
@@ -207,7 +207,9 @@ char* GetCoopProducts(char* Item, char* Stores)
     char* StoreNumbers;
 
     SAPIStruct SProducts;
-    strcpy(SProducts.URL, "https://api.cl.coop.dk/productapi/v1/product/1290");
+    //1290 gamle kardex
+    strcpy(SProducts.URL, "https://api.cl.coop.dk/productapi/v1/product/");
+    strcat(SProducts.URL, Stores);
     strcpy(SProducts.RequestType, "GET");
     strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
     strcpy(SProducts.KeyTypeAndKey, "Ocp-Apim-Subscription-Key: fefba58d42c4456ca7182cc307574653");
@@ -232,32 +234,145 @@ void GetKardexNumbers(char* Stores, char* KardexNumbers)
     //printf("Hello, Coop!\n");
 }
 
-product* GetRemaProducts(char query[], int* nbHits) {
+product* GetRemaProducts(char query[], int* nbHits)
+{
     SAPIStruct SProducts;
 
     char entireQuery[300] = "{\"requests\":[{\"indexName\":\"aws-prod-products\",\"params\":\"query=";
     char rest[200] = "&hitsPerPage=5000&"
-                     "page=0&"
-                     "&attributesToRetrieve=%5B%22name%22%2C%22labels%22%2C%22pricing%22%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D\"}]}";
+        "page=0&"
+        "&attributesToRetrieve=%5B%22name%22%2C%22labels%22%2C%22pricing%22%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D\"}]}";
     strcat(entireQuery, query);
     strcat(entireQuery, rest);
-    strcpy(SProducts.URL,
-           "https://flwdn2189e-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%20for%20vanilla%20JavaScript%203.21.1&x-algolia-application-id=FLWDN2189E&x-algolia-api-key=fa20981a63df668e871a87a8fbd0caed");
+    strcpy(SProducts.URL, "https://flwdn2189e-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%20for%20vanilla%20JavaScript%203.21.1&x-algolia-application-id=FLWDN2189E&x-algolia-api-key=fa20981a63df668e871a87a8fbd0caed");
     strcpy(SProducts.RequestType, "POST");
     strcpy(SProducts.PostFields, entireQuery);
-    char *response = APICall(SProducts);
+    char* response = APICall(SProducts);
 
 
-    FILE *remaproducts = fopen("remaproducts.txt", "w+");
+    FILE* remaproducts = fopen("remaproducts.txt", "w+");
     fputs(response, remaproducts);
 
     rewind(remaproducts);
 
-    product *product_array = rema1000_scan(remaproducts, nbHits);
+    product* product_array = rema1000_scan(remaproducts, nbHits);
     fclose(remaproducts);
     // printf("%s", r);
     return product_array;
+
 }
+
+void loaded_check(FILE* file) {
+    if (file == NULL) {
+        printf("Failed on loading file!");
+        exit(EXIT_FAILURE);
+    }
+}
+
+int count_lines(char* file_name) {
+
+    FILE* match_file = fopen(file_name, "r");
+    loaded_check(match_file);
+    int lines = 1;
+    int ch = 0;
+    while ((ch = fgetc(match_file)) != EOF) {
+        if (ch == '\n')
+            lines++;
+    }
+    fclose(match_file);
+    return lines;
+}
+
+int isStringInArray(char** selectedShops, char* shopName, int shopsNumber) {
+
+    for (int i = 0; i < shopsNumber; i++)
+    {
+        if (strcmp(shopName, selectedShops[i]) == 0)
+            return 1;
+    }
+    return 0;
+}
+
+char** getStoresArray(int* storeAmount) {
+    FILE* stores = fopen("./stores.txt", "r");
+    loaded_check(stores);
+    *storeAmount = count_lines("./stores.txt");
+    rewind(stores);
+    char storesArray[*storeAmount][20];
+
+    for (int i = 0; i < *storeAmount; i++)
+    {
+        char store[20];
+        fscanf(stores, "%s", store);
+        strcpy(storesArray[i], store);
+        printf("%s \n", storesArray[i]);
+    }
+
+    fclose(stores);
+    return storesArray;
+
+
+}
+
+product* getProductsFromStoreList(char query[]) {
+
+    int storeAmount;
+    char** storesArray = getStoresArray(&storeAmount);
+    int nbHits;
+
+    // product* rema = GetRemaProducts(query, &nbHitsRema);
+    // product* salling = GetRemaProducts(query);
+    int current_size = 0;
+    product* fullProductArray = malloc(sizeof(product));
+
+
+    if (isStringInArray(storesArray, "Rema", storeAmount)) {
+        int nbHitsRema = 5;
+        nbHits += nbHitsRema;
+        product rema[5] = { [0] .name = "Eggs",[0].price = 9.0,
+        [0 ... 4].store = "Rema",
+        [1].name = "Dickus",[1].price = 32.5,
+        [2].name = "Balls",[2].price = 51.4,
+        [3].name = "Gordon Blue",[3].price = 99.5,
+        [4].name = "skrrt",[4].price = 4444.1,
+        };
+        current_size += nbHitsRema;
+        fullProductArray = realloc(fullProductArray, current_size * sizeof(product));
+
+
+
+    }
+
+
+
+
+}
+
+
+
+
+
+
+// printf("elements rema: %d \n", nbHitsRema);
+// printf("aa: %d", rema[2].price);
+
+
+// for (int i = 0; i < storeAmount; i++)
+// {
+//     char* current[10];
+//     fscanf(stores, "%s", current);
+//     if (strcmp(current, "Fotex") == 1) {
+
+//     }
+
+//     return
+
+// }
+
+
+
+
+
 
 void storeChoice() {
     FILE* stores;
@@ -411,43 +526,95 @@ size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s)
     return size * nmemb;
 }
 
-void WriteAPIDataToFile(char* Items)
+/*Calls the API's and writes the data to a file*/
+void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
 {
     FILE* QFile;
     QFile = fopen("QueryResults.txt", "w+");
 
+    FILE* StoreFile;
+    StoreFile = fopen("stores.txt", "r");
+
+    char buffer[20];
+
+    while (fgets(buffer, 15, StoreFile))
+    {
+        //Fjerner alle \n fra vores buffer, dette gør det muligt at søge på alle linjer, ellers ville search slå fejl for alle udover den sidste
+        buffer[strcspn(buffer, "\n")] = '\0';
+
+        char IsDigkey[20];
+        char* Key;
+        Key = DictionaryLookup(Dictionary, buffer);
+        char* Rema = "Rema";
+        if (Key == NULL)
+        {
+            printf("Store not found (Not supported by API)\n");
+        }
+        else {
+            strcpy(IsDigkey, Key);
+            if (isdigit(IsDigkey[0]))
+            {
+                printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
+                char* c = GetCoopProducts(Items, Key);
+                fputs(c, QFile);
+                fputs("????", QFile);
+            }
+            else if(!strcmp(Key, Rema))
+            {
+                printf("%s Is Rema store\n", IsDigkey);
+
+                //fputs(c, QFile);
+                //fputs("????", QFile);
+            }
+            else {
+                printf("%s Is a Salling store\n", IsDigkey);
+                char* c = GetSallingProducts(Items);
+                fputs(c, QFile);
+                fputs("????", QFile);
+            }
+        }
+    }
+    fclose(QFile);
+    fclose(StoreFile);
     //Create struct Dict with char* StoreName & char* Kardex
 
     //init struct for all stores
-    //Loop through structs and get the store that matches the one we are reading from the file
+
     //do query
     //for all new lines -> do it again
     //done
-
-    char* c = GetSallingProducts("m%C3%A6lk");
-    fputs(c, QFile);
-    fputs("????", QFile);
-    c = GetCoopProducts("aifa", "aifa");
-    fputs(c, QFile);
-
-    fclose(QFile);
 }
 
 /*This initializes our dictionary (Gives it all of the entries with keys and values)*/
 SDictionary InitDictionary() {
     //Create the dictionary
     SDictionary Dictionary;
+    /*https://stackoverflow.com/a/62004489*/
+    //If you pass NULL to realloc(),
+    //then realloc tries to allocate a completely new block,
+    //but if you pass something different than NULL it
+    //consider it represents an already allocated block (which it isn't) and the computer explodes.
     Dictionary.entry = NULL;
     /*Creates our entry for Dagli'Brugsen*/
+    SDictEntry EntryError;
+    strcpy(EntryError.Key, "Not Found");
+    strcpy(EntryError.Value, "000000");
+
+    Dictionary.DictLength = 1;
+    Dictionary.DictMaxSize = 10;
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(EntryError) + 1);
+    Dictionary.entry[0] = EntryError;
+
     SDictEntry EntryDagliBrugs;
     strcpy(EntryDagliBrugs.Key, "Dagli'Brugsen");
     strcpy(EntryDagliBrugs.Value, "2082");
 
     /*Update the dictionary, first update the length, then update the entry*/
-    Dictionary.DictLength = 1;
+    Dictionary.DictLength = 2;
     Dictionary.DictMaxSize = 10;
-    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize + 1 * sizeof(EntryDagliBrugs));
-    Dictionary.entry[0] = EntryDagliBrugs;
+
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(EntryDagliBrugs) + 1);
+    Dictionary.entry[1] = EntryDagliBrugs;
 
     /*Creates our entry for Fakta*/
     SDictEntry EntryFakta;
@@ -455,18 +622,37 @@ SDictionary InitDictionary() {
     strcpy(EntryFakta.Value, "24080");
 
     /*Updates our dictonaries length, and adds the new entry to the dictionary*/
-    Dictionary.DictLength = 2;
+    Dictionary.DictLength = 3;
     Dictionary.DictMaxSize = 10;
-    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize + 1 * sizeof(EntryFakta));
-    Dictionary.entry[1] = EntryFakta;
+
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
+    Dictionary.entry[2] = EntryFakta;
+
+    SDictEntry EntryBilka;
+    strcpy(EntryBilka.Key, "Bilka");
+    strcpy(EntryBilka.Value, "Bilka");
+
+    Dictionary.DictLength = 4;
+    Dictionary.DictMaxSize = 10;
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
+    Dictionary.entry[3] = EntryBilka;
+
+    SDictEntry EntryRema;
+    strcpy(EntryRema.Key, "Rema");
+    strcpy(EntryRema.Value, "Rema");
+
+    Dictionary.DictLength = 5;
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
+    Dictionary.entry[4] = EntryRema;
 
     return Dictionary;
 }
 
 /*This is a given, it looks up in our dictionary, this is done with a "Key"*/
-char* DictionaryLookup(SDictionary Dictionary, char Key[]) {
+char* DictionaryLookup(SDictionary Dictionary, char* Key)
+{
     //For the size of our dictionary
-    for (int i = 0; i < Dictionary.DictLength; i++)
+    for (int i = 1; i < Dictionary.DictLength; i++)
     {
         //If equal, it returns 0, therefor we want !strcmp (Some might be used to it returning 1)
         /*This checks if our key, is equal to the set key, of the dictionary entry*/
@@ -475,7 +661,12 @@ char* DictionaryLookup(SDictionary Dictionary, char Key[]) {
             //If they are equal, return the value
             return Dictionary.entry[i].Value;
         }
+        else {
+
+        }
     }
+
+    return NULL;
 }
 
 int main()
@@ -483,15 +674,59 @@ int main()
     SDictionary Dictionary = InitDictionary();
     WriteAPIDataToFile("Mel", Dictionary);
 
-    GetSallingProducts("forarslog");
+    //GetSallingProducts("forarslog");
     FILE* aaaa = fopen("salling.txt", "r");
     product* sallingProducts = salling_scan(aaaa);
     fclose(aaaa);
     printf("%s", sallingProducts[0].name);
 
+    //printf("%s", GetSallingProducts("for%C3%A5rsl%C3%B8g"));
+    /*
+    // getProductsFromStoreList("ost");
+    int nbhits;
+    // product* products = GetRemaProducts("ost", &nbhits);
+    GetSallingProducts("ost");
+    FILE* aaaa = fopen("salling.txt", "r");
+    // printf("%s", products[49].name);
+    product* sallingus = salling_scan(aaaa);
+    fclose(aaaa);
+
+    printf("%d", (int)"æ");
+
+    //GetData('x');
+    //FILE *test = fopen("test.txt", "r");
+
+    /*product *array = salling_scan(test);
+    for (int i = 0; i < 3; ++i) {
+        printf("%s %lf i %s\n", array[i].name, array[i].price, array[i].store);
+    }*/
+    //char query[5] = "toast";
+    //product* productArray = GetRemaProducts(query);
+
+    // GetRemaProducts(query);
+
+    // char name[30];
+    // double max_price;
+    // scan_input(name, &max_price);
+    // FILE* SFile = fopen("ShoppingList.txt", "w");
+    // fputs(name, SFile);
+    // putc(max_price, SFile);
+
+    // fclose(SFile);
+    // FILE* test = fopen("test.txt", "r");
+    // /*product *array = salling_scan(test);
+    // for (int i = 0; i < 3; ++i) {
+    //     printf("%s %lf i %s\n", array[i].name, array[i].price, array[i].store);
+    // }*/
+    // //char query[5] = "toast";
+    // //product* productArray = GetRemaProducts(query);
+
+    //fclose(test);
+    // free(Dictionary.entry);
+    //bddf4b34da0d70fb4f21811ca0e1dae59a734a57
     return 0;
 }
-
+/*Pricerunner scraper, currently not in use, but also does not scrape anything they don't want us to*/
 char* PRScraper()
 {
     CURL* curl;
@@ -542,4 +777,42 @@ char* PRScraper()
         curl_easy_setopt(curl, CURLOPT_FTP_SKIP_PASV_IP, 1L);
         curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
     }
-  }
+
+    return s.ptr;
+}
+
+/* CURL *curl;
+    CURLcode res;
+    curl = curl_easy_init();
+    struct string s;
+    if(curl) {
+        init_string(&s);
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
+        curl_easy_setopt(curl, CURLOPT_CAINFO, "cacert.pem");
+        curl_easy_setopt(curl, CURLOPT_CAPATH, "cacert.pem");
+        curl_easy_setopt(curl, CURLOPT_URL, "https://api.sallinggroup.com/v1/food-waste/?zip=8000");
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+        curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
+        /*Set's a callback function to receive incoming data myfunc);*/
+        /*
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
+        /*-----------------------------------------------------------*/
+        /*Callback will take an argument that is set (This is our string)*/
+        /*curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
+        /*-----------------------------------------------------------*/
+        /*struct curl_slist *headers = NULL;
+        headers = curl_slist_append(headers, "Authorization: Bearer dc6422b7-166d-41e8-94c1-6804da7e17d5");
+        headers = curl_slist_append(headers, "Cookie: TiPMix=92.20528390749058; x-ms-routing-name=self");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        res = curl_easy_perform(curl);
+
+        /* Check for errors */
+        /*if (res != CURLE_OK)
+        {
+        fprintf(stderr, "curl_easy_perform() failed: %s\n",
+        curl_easy_strerror(res));
+        }
+        }
+        curl_easy_cleanup(curl);
+
+        printf("%s", s.ptr);*/
