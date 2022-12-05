@@ -214,7 +214,9 @@ char* GetCoopProducts(char* Item, char* Stores)
     char* StoreNumbers;
 
     SAPIStruct SProducts;
-    strcpy(SProducts.URL, "https://api.cl.coop.dk/productapi/v1/product/1290");
+    //1290 gamle kardex
+    strcpy(SProducts.URL, "https://api.cl.coop.dk/productapi/v1/product/");
+    strcat(SProducts.URL, Stores);
     strcpy(SProducts.RequestType, "GET");
     strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
     strcpy(SProducts.KeyTypeAndKey, "Ocp-Apim-Subscription-Key: fefba58d42c4456ca7182cc307574653");
@@ -541,37 +543,53 @@ void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
     StoreFile = fopen("stores.txt", "r");
 
     char buffer[20];
-    //char value[15];
+
     while (fgets(buffer, 15, StoreFile))
     {
-        //Fjerner alle \n fra vores buffer, dette gør det muligt at søge på alle linjer, ellers ville search slå fejl
+        //Fjerner alle \n fra vores buffer, dette gør det muligt at søge på alle linjer, ellers ville search slå fejl for alle udover den sidste
         buffer[strcspn(buffer, "\n")] = '\0';
 
-        char* key = DictionaryLookup(Dictionary, buffer);
-        if (key == NULL){
-            printf("NOT FOUND\n");
-        } else{
-            printf("%s", key);
+        char IsDigkey[20];
+        char* Key;
+        Key = DictionaryLookup(Dictionary, buffer);
+        char* Rema = "Rema";
+        if (Key == NULL)
+        {
+            printf("Store not found (Not supported by API)\n");
         }
+        else {
+            strcpy(IsDigkey, Key);
+            if (isdigit(IsDigkey[0]))
+            {
+                printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
+                char* c = GetCoopProducts(Items, Key);
+                fputs(c, QFile);
+                fputs("????", QFile);
+            }
+            else if(!strcmp(Key, Rema))
+            {
+                printf("%s Is Rema store\n", IsDigkey);
 
+                //fputs(c, QFile);
+                //fputs("????", QFile);
+            }
+            else {
+                printf("%s Is a Salling store\n", IsDigkey);
+                char* c = GetSallingProducts(Items);
+                fputs(c, QFile);
+                fputs("????", QFile);
+            }
+        }
     }
-
+    fclose(QFile);
+    fclose(StoreFile);
     //Create struct Dict with char* StoreName & char* Kardex
 
     //init struct for all stores
-    //Loop through structs and get the store that matches the one we are reading from the file
+
     //do query
     //for all new lines -> do it again
     //done
-
-    //char* c = GetSallingProducts("m%C3%A6lk");
-
-    fputs(c, QFile);
-    fputs("????", QFile);
-    c = GetCoopProducts("aifa", "aifa");
-    fputs(c, QFile);
-
-    fclose(QFile);
 }
 
 /*This initializes our dictionary (Gives it all of the entries with keys and values)*/
@@ -591,9 +609,8 @@ SDictionary InitDictionary() {
 
     Dictionary.DictLength = 1;
     Dictionary.DictMaxSize = 10;
-    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize+1 * sizeof(EntryError) +1);
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(EntryError) + 1);
     Dictionary.entry[0] = EntryError;
-
 
     SDictEntry EntryDagliBrugs;
     strcpy(EntryDagliBrugs.Key, "Dagli'Brugsen");
@@ -602,8 +619,8 @@ SDictionary InitDictionary() {
     /*Update the dictionary, first update the length, then update the entry*/
     Dictionary.DictLength = 2;
     Dictionary.DictMaxSize = 10;
-    
-    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize * sizeof(EntryDagliBrugs) +1);
+
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(EntryDagliBrugs) + 1);
     Dictionary.entry[1] = EntryDagliBrugs;
 
     /*Creates our entry for Fakta*/
@@ -615,28 +632,43 @@ SDictionary InitDictionary() {
     Dictionary.DictLength = 3;
     Dictionary.DictMaxSize = 10;
 
-    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize * sizeof(EntryFakta) +1);
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
     Dictionary.entry[2] = EntryFakta;
+
+    SDictEntry EntryBilka;
+    strcpy(EntryBilka.Key, "Bilka");
+    strcpy(EntryBilka.Value, "Bilka");
+
+    Dictionary.DictLength = 4;
+    Dictionary.DictMaxSize = 10;
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
+    Dictionary.entry[3] = EntryBilka;
+
+    SDictEntry EntryRema;
+    strcpy(EntryRema.Key, "Rema");
+    strcpy(EntryRema.Value, "Rema");
+
+    Dictionary.DictLength = 5;
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
+    Dictionary.entry[4] = EntryRema;
 
     return Dictionary;
 }
 
 /*This is a given, it looks up in our dictionary, this is done with a "Key"*/
-char* DictionaryLookup(SDictionary Dictionary, char *Key)
+char* DictionaryLookup(SDictionary Dictionary, char* Key)
 {
     //For the size of our dictionary
     for (int i = 1; i < Dictionary.DictLength; i++)
     {
-        printf("\nTest %s: %d", Key, i);
         //If equal, it returns 0, therefor we want !strcmp (Some might be used to it returning 1)
         /*This checks if our key, is equal to the set key, of the dictionary entry*/
         if (!strcmp(Dictionary.entry[i].Key, Key))
         {
             //If they are equal, return the value
-            /*SegFault here*/
-            printf("");
             return Dictionary.entry[i].Value;
-        } else{
+        }
+        else {
 
         }
     }
@@ -647,10 +679,10 @@ char* DictionaryLookup(SDictionary Dictionary, char *Key)
 int main()
 {
     SDictionary Dictionary = InitDictionary();
-    WriteAPIDataToFile("x", Dictionary);
+    WriteAPIDataToFile("Mel", Dictionary);
 
     //printf("%s", GetSallingProducts("for%C3%A5rsl%C3%B8g"));
-    
+    /*
     // getProductsFromStoreList("ost");
     int nbhits;
     // product* products = GetRemaProducts("ost", &nbhits);
@@ -762,25 +794,25 @@ char* PRScraper()
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
         /*Set's a callback function to receive incoming data myfunc);*/
-/*
-curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
-/*-----------------------------------------------------------*/
-/*Callback will take an argument that is set (This is our string)*/
-/*curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
-/*-----------------------------------------------------------*/
-/*struct curl_slist *headers = NULL;
-headers = curl_slist_append(headers, "Authorization: Bearer dc6422b7-166d-41e8-94c1-6804da7e17d5");
-headers = curl_slist_append(headers, "Cookie: TiPMix=92.20528390749058; x-ms-routing-name=self");
-curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-res = curl_easy_perform(curl);
+        /*
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
+        /*-----------------------------------------------------------*/
+        /*Callback will take an argument that is set (This is our string)*/
+        /*curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
+        /*-----------------------------------------------------------*/
+        /*struct curl_slist *headers = NULL;
+        headers = curl_slist_append(headers, "Authorization: Bearer dc6422b7-166d-41e8-94c1-6804da7e17d5");
+        headers = curl_slist_append(headers, "Cookie: TiPMix=92.20528390749058; x-ms-routing-name=self");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        res = curl_easy_perform(curl);
 
-/* Check for errors */
-/*if (res != CURLE_OK)
-{
-fprintf(stderr, "curl_easy_perform() failed: %s\n",
-curl_easy_strerror(res));
-}
-}
-curl_easy_cleanup(curl);
+        /* Check for errors */
+        /*if (res != CURLE_OK)
+        {
+        fprintf(stderr, "curl_easy_perform() failed: %s\n",
+        curl_easy_strerror(res));
+        }
+        }
+        curl_easy_cleanup(curl);
 
-printf("%s", s.ptr);*/
+        printf("%s", s.ptr);*/
