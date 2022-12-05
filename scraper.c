@@ -52,6 +52,56 @@ product* salling_scan(FILE* file) {
     return array;
 }
 
+product* coop_scan(FILE* file) {
+    int counter = -1;
+    while (1) {
+        char b = fgetc(file);
+        if (feof(file)) {
+            break;
+        }
+        if (b == '}') {
+            counter += 1;
+        }
+
+    }
+    rewind(file);
+    product* array = malloc(sizeof(product)*counter);
+    while (fgetc(file) != '[') {
+    }
+    char c;
+    int i = 0;
+    while(1) {
+        c = fgetc(file);
+        if (feof(file)) {
+            break;
+        }
+        if (c == '"') {
+            char ctgry[100];
+            char desc[100];
+            char desc2[100];
+            double price;
+            fscanf(file, "%[^\"]%*c", ctgry);
+            if (strcmp(ctgry, "Navn") == 0) {
+                fscanf(file, "%*2s%[^\"]%*c",desc);
+                check_DK_char(desc);
+                strcpy(array[i].name, desc);
+                strcpy(array[i].store, "Coop");
+            }
+            if (strcmp(ctgry, "Navn2") == 0) {
+                fscanf(file, "%*[\"]%*[\"]%s%[^\"]",desc2);
+                if (strcmp(desc2, "\"") == 0) {
+                }
+            }
+            if ((strcmp(ctgry, "Pris") == 0)) {
+                fscanf(file, "%*c%lf", &price);
+                array[i].price = price;
+                i += 1;
+            }
+        }
+    }
+    return array;
+}
+
 product* rema1000_scan(FILE* file, int* nbHits) {
     int counter = -1;
     while (1) {
@@ -674,24 +724,11 @@ int main()
     SDictionary Dictionary = InitDictionary();
     WriteAPIDataToFile("Mel", Dictionary);
 
-    //GetSallingProducts("forarslog");
+    GetSallingProducts("forarslog");
     FILE* aaaa = fopen("salling.txt", "r");
     product* sallingProducts = salling_scan(aaaa);
     fclose(aaaa);
     printf("%s", sallingProducts[0].name);
-
-    //printf("%s", GetSallingProducts("for%C3%A5rsl%C3%B8g"));
-    /*
-    // getProductsFromStoreList("ost");
-    int nbhits;
-    // product* products = GetRemaProducts("ost", &nbhits);
-    GetSallingProducts("ost");
-    FILE* aaaa = fopen("salling.txt", "r");
-    // printf("%s", products[49].name);
-    product* sallingus = salling_scan(aaaa);
-    fclose(aaaa);
-
-    printf("%d", (int)"æ");
 
     //GetData('x');
     //FILE *test = fopen("test.txt", "r");
