@@ -40,15 +40,15 @@ void WriteAPIDataToFile(char* Items, SDictionary Dictionary);
 void storeChoice();
 int storeCheck(char currentInput[]);
 char* APICall(SAPIStruct params);
-char* DictionaryLookup(SDictionary Dictionary, char *Key);
+char* DictionaryLookup(SDictionary Dictionary, char* Key);
 SDictionary InitDictionary();
 void init_string(struct string* s);
 size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s);
-product* salling_scan(FILE* file);
+product* salling_scan(FILE* file, int* nbHits, product* productArray);
 void scan_input(char* name, double* max_price);
 void check_DK_char(char* string);
 void correct_DK_char(char* string, int i, int str_len, int type);
-product* rema100_scan(FILE* file);
+product* rema1000_scan(FILE* file, int* nbHits, product* productArray);
 
 #ifndef BARGAIN_HUNTING_SCRAPER_H
 #define BARGAIN_HUNTING_SCRAPER_H
