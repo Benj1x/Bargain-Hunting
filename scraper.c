@@ -471,7 +471,6 @@ product* getProductsFromStoreList(char* Items, SDictionary Dictionary, int* leng
 
     // product* rema = GetRemaProducts(query, &nbHitsRema);
     // product* salling = GetRemaProducts(query);
-    int current_size = 0;
     product* productArray = malloc(sizeof(product) * 999);
 
     FILE* QFile;
@@ -484,7 +483,6 @@ product* getProductsFromStoreList(char* Items, SDictionary Dictionary, int* leng
     {
         char* Key;
         char IsDigkey[20];
-        printf("%s", storesArray[i]);
 
         Key = DictionaryLookup(Dictionary, storesArray[i]);
         if (Key == NULL)
@@ -496,7 +494,6 @@ product* getProductsFromStoreList(char* Items, SDictionary Dictionary, int* leng
             if (isdigit(IsDigkey[0]))
             {
                 freopen("QueryResults.txt", "w+", QFile);
-                int nbHitsCoop;
                 printf("%s (%s) Is a coop store\n", storesArray[i], IsDigkey);
                 freopen("QueryResults.txt", "w+", QFile);
                 char* c = GetCoopProducts(Items, Key);
@@ -505,7 +502,6 @@ product* getProductsFromStoreList(char* Items, SDictionary Dictionary, int* leng
             else if (!strcmp(Key, "Rema"))
             {
                 freopen("QueryResults.txt", "w+", QFile);
-                int nbHitsRema;
                 printf("%s Is Rema store\n", IsDigkey);
                 char* c = GetRemaProducts(Items);
                 fputs(c, QFile);
@@ -543,7 +539,7 @@ product* WriteAPIDataToFile(char* Items, SDictionary Dictionary, int* length)
     char buffer[20];
 
     int nbHits = 0;
-    product* productArray = malloc(sizeof(product) * nbHits);
+    product* productArray = malloc(sizeof(product) * 999);
 
     while (fgets(buffer, 15, StoreFile))
     {
@@ -553,7 +549,6 @@ product* WriteAPIDataToFile(char* Items, SDictionary Dictionary, int* length)
         char IsDigkey[20];
         char* Key;
         Key = DictionaryLookup(Dictionary, buffer);
-        char* Rema = "Rema";
         if (Key == NULL)
         {
             printf("Store not found (Not supported by API)\n");
@@ -570,7 +565,7 @@ product* WriteAPIDataToFile(char* Items, SDictionary Dictionary, int* length)
                 // salling_scan(QFile, &nbHitsCoop, productArray, nbHits);
                 // fputs("????", QFile);
             }
-            else if (!strcmp(Key, Rema))
+            else if (!strcmp(Key, "Rema"))
             {
                 freopen("QueryResults.txt", "w+", QFile);
                 printf("%s Is Rema store\n", IsDigkey);
@@ -595,7 +590,7 @@ product* WriteAPIDataToFile(char* Items, SDictionary Dictionary, int* length)
     fclose(QFile);
     fclose(StoreFile);
     *length = nbHits;
-    // qsort(productArray, nbHits, sizeof(product), cmpfunc);
+    qsort(productArray, *length, sizeof(product), cmpfunc);
     return productArray;
 
     //Create struct Dict with char* StoreName & char* Kardex
