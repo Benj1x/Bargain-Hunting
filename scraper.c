@@ -543,36 +543,43 @@ void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
     StoreFile = fopen("stores.txt", "r");
 
     char buffer[20];
-    //char value[15];
+
     while (fgets(buffer, 15, StoreFile))
     {
         //Fjerner alle \n fra vores buffer, dette gør det muligt at søge på alle linjer, ellers ville search slå fejl for alle udover den sidste
         buffer[strcspn(buffer, "\n")] = '\0';
 
-        char key[20];
-        char* Keyd;
-        Keyd = DictionaryLookup(Dictionary, buffer);
-
-        if (Keyd == NULL) {
+        char IsDigkey[20];
+        char* Key;
+        Key = DictionaryLookup(Dictionary, buffer);
+        char* Rema = "Rema";
+        if (Key == NULL)
+        {
             printf("Store not found (Not supported by API)\n");
-
         }
         else {
-            strcpy(key, Keyd);
-            if (isdigit(key[0])) {
-                printf("%s (%s) Is a coop store\n", buffer, key);
-                char* c = GetCoopProducts(Items, Keyd);
+            strcpy(IsDigkey, Key);
+            if (isdigit(IsDigkey[0]))
+            {
+                printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
+                char* c = GetCoopProducts(Items, Key);
                 fputs(c, QFile);
                 fputs("????", QFile);
             }
+            else if(!strcmp(Key, Rema))
+            {
+                printf("%s Is Rema store\n", IsDigkey);
+
+                //fputs(c, QFile);
+                //fputs("????", QFile);
+            }
             else {
-                printf("%s Is a Salling store\n", key);
+                printf("%s Is a Salling store\n", IsDigkey);
                 char* c = GetSallingProducts(Items);
                 fputs(c, QFile);
                 fputs("????", QFile);
             }
         }
-
     }
     fclose(QFile);
     fclose(StoreFile);
@@ -602,9 +609,8 @@ SDictionary InitDictionary() {
 
     Dictionary.DictLength = 1;
     Dictionary.DictMaxSize = 10;
-    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize + 1 * sizeof(EntryError) + 1);
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(EntryError) + 1);
     Dictionary.entry[0] = EntryError;
-
 
     SDictEntry EntryDagliBrugs;
     strcpy(EntryDagliBrugs.Key, "Dagli'Brugsen");
@@ -614,7 +620,7 @@ SDictionary InitDictionary() {
     Dictionary.DictLength = 2;
     Dictionary.DictMaxSize = 10;
 
-    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictMaxSize * sizeof(EntryDagliBrugs) + 1);
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(EntryDagliBrugs) + 1);
     Dictionary.entry[1] = EntryDagliBrugs;
 
     /*Creates our entry for Fakta*/
@@ -645,8 +651,6 @@ SDictionary InitDictionary() {
     Dictionary.DictLength = 5;
     Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
     Dictionary.entry[4] = EntryRema;
-
-
 
     return Dictionary;
 }
