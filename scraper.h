@@ -36,7 +36,7 @@ const char* KardexValue[] = { [Fakta] = "24080",[DagliBrugsen] = "2082" };
 
 char* GetSallingProducts(char* Item);
 char* GetCoopProducts(char* Item, char* Stores);
-void WriteAPIDataToFile(char* Items, SDictionary Dictionary);
+product* WriteAPIDataToFile(char* Items, SDictionary Dictionary, int* length);
 void storeChoice();
 int storeCheck(char currentInput[]);
 char* APICall(SAPIStruct params);

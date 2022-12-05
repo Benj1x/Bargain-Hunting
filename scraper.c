@@ -463,7 +463,7 @@ size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s)
 }
 
 
-product* getProductsFromStoreList(char* Items, SDictionary Dictionary, int* Length) {
+product* getProductsFromStoreList(char* Items, SDictionary Dictionary, int* length) {
 
     int storeAmount;
     char** storesArray = getStoresArray(&storeAmount);
@@ -525,14 +525,14 @@ product* getProductsFromStoreList(char* Items, SDictionary Dictionary, int* Leng
     }
     fclose(QFile);
     fclose(StoreFile);
-    *Length = nbHits;
-    qsort(productArray, length, sizeof(product), cmpfunc);
+    *length = nbHits;
+    qsort(productArray, *length, sizeof(product), cmpfunc);
     return productArray;
 }
 
 
 /*Calls the API's and writes the data to a file*/
-product* WriteAPIDataToFile(char* Items, SDictionary Dictionary, int* Length)
+product* WriteAPIDataToFile(char* Items, SDictionary Dictionary, int* length)
 {
     FILE* QFile;
     QFile = fopen("QueryResults.txt", "w+");
@@ -594,7 +594,7 @@ product* WriteAPIDataToFile(char* Items, SDictionary Dictionary, int* Length)
     }
     fclose(QFile);
     fclose(StoreFile);
-    *Length = nbHits;
+    *length = nbHits;
     // qsort(productArray, nbHits, sizeof(product), cmpfunc);
     return productArray;
 
