@@ -1,0 +1,1 @@
+[{"Ean":"5700380825600","Navn":"HAKKET OKSEKØD","Navn2":"8-12% 450G","Pris": 30.0,"VareHierakiId":3021},{"Ean":"5700381622802","Navn":"SVINEBRYST 500G","Navn2":"","Pris":35.0,"VareHierakiId":3021},{"Ean":"5700382599578","Navn":"HAKKET OKSEKØD","Navn2":"4-7% 400G","Pris":30.0,"VareHierakiId":3021}]
