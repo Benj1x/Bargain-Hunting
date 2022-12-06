@@ -209,7 +209,7 @@ char* GetSallingProducts(char* Item)
     free(r);
 }
 
-char* GetCoopProducts(char* Item, char* Stores)
+char* GetCoopProducts(char* Stores)
 {
     char* StoreNumbers;
 
@@ -225,20 +225,6 @@ char* GetCoopProducts(char* Item, char* Stores)
     return r;
     free(r);
 
-}
-
-void GetKardexNumbers(char* Stores, char* KardexNumbers)
-{
-    SAPIStruct SKardex;
-    strcpy(SKardex.URL, "https://api.cl.coop.dk/storeapi/v1/stores?Content-Length=50");
-    strcpy(SKardex.RequestType, "POST");
-    strcpy(SKardex.CheckData, "RetailGroup: \"Kvickly\"");
-    strcpy(SKardex.KeyTypeAndKey, "Ocp-Apim-Subscription-Key: fefba58d42c4456ca7182cc307574653");
-    char* r = APICall(SKardex);
-    printf("\n\n\n\n\n\n\n\n\n________________________________________\n\n\n%s", r);
-
-    free(r);
-    //printf("Hello, Coop!\n");
 }
 
 product* GetRemaProducts(char query[], int* nbHits)
@@ -349,9 +335,6 @@ product* getProductsFromStoreList(char query[]) {
 
 
     }
-
-
-
 
 }
 
@@ -498,10 +481,8 @@ char* APICall(SAPIStruct Params)
 
     return s.ptr;
 }
-
-//This code is how the documentation said to do so (spørg Henrik om how to declare)
-
-//This code is from stackoverflow - this seems like the only way to really do this
+/*________________________________________________________________________________*/
+//All code between the these^^ (Line 487-515) is from stackoverflow - this seems like the only way to really do this
 //https://stackoverflow.com/a/2329792
 void init_string(struct string* s) {
     s->len = 0;
@@ -532,7 +513,7 @@ size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s)
     s->len = new_len;
     return size * nmemb;
 }
-
+/*________________________________________________________________________________*/
 /*Calls the API's and writes the data to a file*/
 void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
 {
@@ -551,6 +532,7 @@ void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
 
         char IsDigkey[20];
         char* Key;
+        //char* Test = GetSallingProducts(Items);
         Key = DictionaryLookup(Dictionary, buffer);
         char* Rema = "Rema";
         if (Key == NULL)
@@ -562,7 +544,7 @@ void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
             if (isdigit(IsDigkey[0]))
             {
                 printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
-                char* c = GetCoopProducts(Items, Key);
+                char* c = GetCoopProducts(Key);
                 fputs(c, QFile);
                 fputs("????", QFile);
             }
@@ -575,9 +557,9 @@ void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
             }
             else {
                 printf("%s Is a Salling store\n", IsDigkey);
-                char* c = GetSallingProducts(Items);
-                fputs(c, QFile);
-                fputs("????", QFile);
+                //char* c = GetSallingProducts(Items);
+                //fputs(c, QFile);
+                //fputs("????", QFile);
             }
         }
     }
@@ -593,7 +575,8 @@ void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
 }
 
 /*This initializes our dictionary (Gives it all of the entries with keys and values)*/
-SDictionary InitDictionary() {
+SDictionary InitDictionary()
+{
     //Create the dictionary
     SDictionary Dictionary;
     /*https://stackoverflow.com/a/62004489*/
@@ -676,10 +659,102 @@ char* DictionaryLookup(SDictionary Dictionary, char* Key)
     return NULL;
 }
 
+product* coop_scan(FILE* file) {
+    int counter = 0;
+    while (1) {
+        char b = fgetc(file);
+        if (feof(file)) {
+            break;
+        }
+        if (b == '}') {
+            counter += 1;
+        }
+
+    }
+    rewind(file);
+    product* array = malloc(sizeof(product)*counter);
+    while (fgetc(file) != '[') {
+    }
+    char c;
+    int i = 0;
+    while(1) {
+        c = fgetc(file);
+        if (feof(file)) {
+            break;
+        }
+        if (c == '"') {
+            char ctgry[100];
+            char desc[100];
+            char desc2[100];
+            double price;
+            fscanf(file, "%[^\"]%*c", ctgry);
+            if (strcmp(ctgry, "Navn") == 0) {
+                fscanf(file, "%*2s%[^\"]%*c",desc);
+                check_DK_char(desc);
+                strcpy(array[i].name, desc);
+                strcpy(array[i].store, "Coop");
+            }
+            if (strcmp(ctgry, "Navn2") == 0) {
+                fscanf(file, "%*[\"]%*[\"]%s%[^\"]",desc2);
+                if (strcmp(desc2, "\"") == 0) {
+                }
+            }
+            if ((strcmp(ctgry, "Pris") == 0)) {
+                fscanf(file, "%*c%lf", &price);
+                array[i].price = price;
+                i += 1;
+            }
+        }
+    }
+    return array;
+}
+
+void ReadDataFromFile()
+{
+    FILE* QFile;
+    QFile = fopen("QueryResults.txt", "r");
+
+    product* products = coop_scan(QFile);
+     /*for(int i = 0; i < 4555; i++){
+        printf("%s, %.2lf kr\n", products[i].name, products[i].price);
+    }*/
+    product* remainingProd = malloc(sizeof(product)*20);
+    char query[50] = "MÆLK";
+    int prodIndex = 0;
+    for (int i = 0; i < 4555; i++){
+        char prodTest[50];
+
+        char *res = strstr(products[i].name, query);
+        if (res != NULL) {
+            strcpy(remainingProd[prodIndex].name, products[i].name);
+            remainingProd[prodIndex].price = products[i].price;
+            prodIndex++;
+        }
+
+    }
+    printf("\n\n\n");
+
+    for(int i = 0; i < prodIndex; i++)
+    {
+        printf("%s, %.2lf kr\n", remainingProd[i].name, remainingProd[i].price);
+    }
+
+    //final_print(products, 3);
+}
+
+void final_print(product* array, int array_len) {
+    printf("|       Produkt       |    Price    |    Store    |\n");
+    printf("|                     |             |             |");
+    for (int i = 0; i < array_len; ++i) {
+        printf("|%20s|%13d|%13s|\n", array[i].name, array[i].price, array[i].store);
+    }
+}
+
 int main()
 {
     SDictionary Dictionary = InitDictionary();
-    WriteAPIDataToFile("Mel", Dictionary);
+    ///WriteAPIDataToFile("Mel", Dictionary);
+    ReadDataFromFile();
 
     //printf("%s", GetSallingProducts("for%C3%A5rsl%C3%B8g"));
     /*

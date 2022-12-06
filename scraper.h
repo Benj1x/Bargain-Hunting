@@ -35,7 +35,7 @@ typedef enum Store { Fakta = 24080, DagliBrugsen = 2082 } EStore;
 const char* KardexValue[] = { [Fakta] = "24080",[DagliBrugsen] = "2082" };
 
 char* GetSallingProducts(char* Item);
-char* GetCoopProducts(char* Item, char* Stores);
+char* GetCoopProducts(char* Stores);
 void WriteAPIDataToFile(char* Items, SDictionary Dictionary);
 void storeChoice();
 int storeCheck(char currentInput[]);
@@ -48,6 +48,8 @@ product* salling_scan(FILE* file);
 void scan_input(char* name, double* max_price);
 void check_DK_char(char* string);
 void correct_DK_char(char* string, int i, int str_len, int type);
+void ReadDataFromFile();
+void final_print(product* array, int array_len);
 product* rema100_scan(FILE* file);
 
 #ifndef BARGAIN_HUNTING_SCRAPER_H
