@@ -561,7 +561,7 @@ product* getProductsFromStoreList(char* Items, SDictionary Dictionary, int* leng
 }
 
 /*Calls the API's and writes the data to a file*/
-product* WriteAPIDataToFile(char* Items, SDictionary Dictionary, int* length)
+void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
 {
     FILE* QFile;
     QFile = fopen("QueryResults.txt", "w+");
@@ -570,9 +570,6 @@ product* WriteAPIDataToFile(char* Items, SDictionary Dictionary, int* length)
     StoreFile = fopen("stores.txt", "r");
 
     char buffer[20];
-
-    int nbHits = 0;
-    product* productArray = malloc(sizeof(product) * 999);
 
     while (fgets(buffer, 15, StoreFile))
     {
@@ -583,6 +580,7 @@ product* WriteAPIDataToFile(char* Items, SDictionary Dictionary, int* length)
         char* Key;
         //char* Test = GetSallingProducts(Items);
         Key = DictionaryLookup(Dictionary, buffer);
+        char* Rema = "Rema";
         if (Key == NULL)
         {
             printf("Store not found (Not supported by API)\n");
@@ -591,51 +589,28 @@ product* WriteAPIDataToFile(char* Items, SDictionary Dictionary, int* length)
             strcpy(IsDigkey, Key);
             if (isdigit(IsDigkey[0]))
             {
-                //freopen("QueryResults.txt", "w+", QFile);
                 printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
-//Conflict Benj1
                 char* c = GetCoopProducts(Key);
-/*Conflict main
-                freopen("QueryResults.txt", "w+", QFile);
-                char* c = GetCoopProducts(Items, Key);
-*/Conflict main end
                 fputs(c, QFile);
-                // salling_scan(QFile, &nbHitsCoop, productArray, nbHits);
-                // fputs("????", QFile);
+                fputs("????", QFile);
             }
-            else if (!strcmp(Key, "Rema"))
+            else if(!strcmp(Key, Rema))
             {
-                freopen("QueryResults.txt", "w+", QFile);
                 printf("%s Is Rema store\n", IsDigkey);
-                char* c = GetRemaProducts(Items);
-                fputs(c, QFile);
-                rewind(QFile);
-                rema1000_scan(QFile, &nbHits, productArray);
-                // fputs("????", QFile);
 
+                //fputs(c, QFile);
+                //fputs("????", QFile);
             }
             else {
-                freopen("QueryResults.txt", "w+", QFile);
                 printf("%s Is a Salling store\n", IsDigkey);
                 //char* c = GetSallingProducts(Items);
                 //fputs(c, QFile);
                 //fputs("????", QFile);
-/*Conflict main
-                char* c = GetSallingProducts(Items);
-                fputs(c, QFile);
-                rewind(QFile);
-                salling_scan(QFile, &nbHits, productArray);
-                // fputs("????", QFile);
-*/Conflict main end
             }
         }
     }
     fclose(QFile);
     fclose(StoreFile);
-    *length = nbHits;
-    qsort(productArray, *length, sizeof(product), cmpfunc);
-    return productArray;
-
     //Create struct Dict with char* StoreName & char* Kardex
 
     //init struct for all stores
