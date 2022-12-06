@@ -764,14 +764,18 @@ void ReadDataFromFile()
      /*for(int i = 0; i < 4555; i++){
         printf("%s, %.2lf kr\n", products[i].name, products[i].price);
     }*/
+    //This malloc was copied from coop_scan()
     product* remainingProd = malloc(sizeof(product)*20);
     char query[50] = "MÆLK";
     int prodIndex = 0;
+    //Making this for loop dynamic would be PERFECT
     for (int i = 0; i < 4555; i++){
         char prodTest[50];
-
+        //strstr, returns a pointer to our substring, if it is found in the string, if it isn't res will be null
         char *res = strstr(products[i].name, query);
+        //If the substring was found in the product name
         if (res != NULL) {
+            //copy it over to a new array
             strcpy(remainingProd[prodIndex].name, products[i].name);
             remainingProd[prodIndex].price = products[i].price;
             prodIndex++;
@@ -780,6 +784,7 @@ void ReadDataFromFile()
     }
     printf("\n\n\n");
 
+    //Print what we found
     for(int i = 0; i < prodIndex; i++)
     {
         printf("%s, %.2lf kr\n", remainingProd[i].name, remainingProd[i].price);
