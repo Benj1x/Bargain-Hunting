@@ -35,22 +35,24 @@ typedef enum Store { Fakta = 24080, DagliBrugsen = 2082 } EStore;
 const char* KardexValue[] = { [Fakta] = "24080",[DagliBrugsen] = "2082" };
 
 char* GetSallingProducts(char* Item);
+
 char* GetCoopProducts(char* Stores);
 void WriteAPIDataToFile(char* Items, SDictionary Dictionary);
+//product* WriteAPIDataToFile(char* Items, SDictionary Dictionary, int* length);
 void storeChoice();
 int storeCheck(char currentInput[]);
 char* APICall(SAPIStruct params);
-char* DictionaryLookup(SDictionary Dictionary, char *Key);
+char* DictionaryLookup(SDictionary Dictionary, char* Key);
 SDictionary InitDictionary();
 void init_string(struct string* s);
 size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s);
-product* salling_scan(FILE* file);
+product* salling_scan(FILE* file, int* nbHits, product* productArray);
 void scan_input(char* name, double* max_price);
 void check_DK_char(char* string);
 void correct_DK_char(char* string, int i, int str_len, int type);
 void ReadDataFromFile();
 void final_print(product* array, int array_len);
-product* rema100_scan(FILE* file);
+product* rema1000_scan(FILE* file, int* nbHits, product* productArray);
 
 #ifndef BARGAIN_HUNTING_SCRAPER_H
 #define BARGAIN_HUNTING_SCRAPER_H
