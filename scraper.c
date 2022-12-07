@@ -216,21 +216,21 @@ char* GetCoopProducts(char* Stores)
     strcat(SProducts.URL, Stores);
     strcpy(SProducts.RequestType, "GET");
     strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
-    strcpy(SProducts.KeyTypeAndKey, "Ocp-Apim-Subscription-Key: fefba58d42c4456ca7182cc307574653");
+    strcpy(SProducts.KeyTypeAndKey, "Ocp-Apim-Subscription-Key: 87d818c340b34764beda02cdd0b5865f");
     char* r = APICall(SProducts);
 
     return r;
 
 }
 
-product* GetRemaProducts(char query[])
+char* GetRemaProducts(char query[])
 {
     SAPIStruct SProducts;
 
     char entireQuery[300] = "{\"requests\":[{\"indexName\":\"aws-prod-products\",\"params\":\"query=";
     char rest[200] = "&hitsPerPage=5000&"
-        "page=0&"
-        "&attributesToRetrieve=%5B%22name%22%2C%22labelsMain%22%2C%22pricing%22%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D\"}]}";
+                     "page=0&"
+                     "&attributesToRetrieve=%5B%22name%22%2C%22labels%22%2C%22pricing%22%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D\"}]}";
     strcat(entireQuery, query);
     strcat(entireQuery, rest);
     strcpy(SProducts.URL, "https://flwdn2189e-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%20for%20vanilla%20JavaScript%203.21.1&x-algolia-application-id=FLWDN2189E&x-algolia-api-key=fa20981a63df668e871a87a8fbd0caed");
@@ -562,15 +562,17 @@ product* getProductsFromStoreList(char* Items, SDictionary Dictionary, int* leng
 }
 
 /*Calls the API's and writes the data to a file*/
-void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
+void WriteAPIDataToFile(char* Items, SDictionary Dictionary, int Runs)
 {
     FILE* QFile;
-    QFile = fopen("QueryResults.txt", "w+");
+    QFile = fopen("QueryResults.txt", "a");
 
     FILE* StoreFile;
     StoreFile = fopen("stores.txt", "r");
 
     char buffer[20];
+
+    Items[strcspn(Items, "\n")] = '\0';
 
     while (fgets(buffer, 15, StoreFile))
     {
@@ -590,17 +592,20 @@ void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
             strcpy(IsDigkey, Key);
             if (isdigit(IsDigkey[0]))
             {
-                printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
-                char* c = GetCoopProducts(Key);
-                fputs(c, QFile);
-                fputs("????", QFile);
+                if (Runs == 0)
+                {
+                    printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
+                    //char* c = GetCoopProducts(Key);
+                    //fputs(c, QFile);
+                    //fputs("????", QFile);
+                }
             }
             else if(!strcmp(Key, Rema))
             {
                 printf("%s Is Rema store\n", IsDigkey);
-
-                //fputs(c, QFile);
-                //fputs("????", QFile);
+                char* c = GetRemaProducts(Items);
+                fputs(c, QFile);
+                fputs("????", QFile);
             }
             else {
                 printf("%s Is a Salling store\n", IsDigkey);
@@ -612,13 +617,6 @@ void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
     }
     fclose(QFile);
     fclose(StoreFile);
-    //Create struct Dict with char* StoreName & char* Kardex
-
-    //init struct for all stores
-
-    //do query
-    //for all new lines -> do it again
-    //done
 }
 
 /*This initializes our dictionary (Gives it all of the entries with keys and values)*/
@@ -799,11 +797,31 @@ void final_print(product* array, int array_len) {
     }
 }
 
+void delay(int seconds) {
+    // Get the current time
+    time_t start = time(NULL);
+
+    // Loop until "seconds" seconds have passed
+    while (time(NULL) - start < seconds);
+}
+
 int main()
 {
     SDictionary Dictionary = InitDictionary();
     //WriteAPIDataToFile("Mel", Dictionary);
-    ReadDataFromFile();
+    //ReadDataFromFile();
+
+    char buffer[50];
+    FILE* SLFile;
+    SLFile = fopen("ShoppingList.txt", "r");
+    int Runs = 0;
+    while (fgets(buffer, 50, SLFile))
+    {
+        WriteAPIDataToFile(buffer, Dictionary, Runs);
+        Runs++;
+        delay(1);
+    }
+
 
     // product rema[5] = { [0] .name = "Eggs",[0].price = 9.0,
     //     [0 ... 4].store = "Rema",
