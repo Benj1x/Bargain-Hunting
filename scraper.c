@@ -237,6 +237,12 @@ product* GetRemaProducts(char query[])
     strcpy(SProducts.RequestType, "POST");
     strcpy(SProducts.PostFields, entireQuery);
     char* response = APICall(SProducts);
+
+    //test print
+    FILE* remaTest = fopen("rematest.txt", "w");
+    fputs(response, remaTest);
+    fclose(remaTest);
+
     return response;
 
 }
@@ -832,6 +838,7 @@ void ReadDataFromFile()
     QFile = fopen("QueryResults.txt", "r");
 
     int ArraySize = 0;
+    int QueryAmount = 0;
 
     product* products = coop_scan(QFile, &ArraySize);
      /*for(int i = 0; i < ArraySize; i++){
@@ -849,6 +856,7 @@ void ReadDataFromFile()
             remainingProd = realloc(remainingProd, prodIndex * sizeof(product));
             strcpy(remainingProd[prodIndex-1].name, products[i].name);
             remainingProd[prodIndex-1].price = products[i].price;
+            ++QueryAmount;
         }
     }
 
@@ -856,18 +864,21 @@ void ReadDataFromFile()
 
     for(int i = 0; i < prodIndex; i++)
     {
-        printf("%s, %.2lf kr\n", remainingProd[i].name, remainingProd[i].price);
+        strcpy(remainingProd[i].store, "Coop butik");
+        printf("%s, %.2lf kr, %s\n", remainingProd[i].name, remainingProd[i].price, remainingProd[i].store);
     }
 
-    //final_print(products, 3);
+    final_print(remainingProd, QueryAmount);
 }
 
 void final_print(product* array, int array_len) {
+    printf("________________________________________________________________________________\n");
     printf("|                      Produkt                     |    Price    |    Store    |\n");
     printf("|                                                  |             |             |\n");
     for (int i = 0; i < array_len; ++i) {
         printf("|%50s|%13.2lf|%13s|\n", array[i].name, array[i].price, array[i].store);
     }
+    printf("________________________________________________________________________________\n");
 }
 
 int main()
@@ -877,6 +888,13 @@ int main()
     //
 
     ReadDataFromFile();
+
+    product* products = GetRemaProducts("ost");
+    FILE* remaTest = fopen("rematest.txt", "r");
+    printf("\n\n\n%s, %.2lf kr, %s", products[0].name, products[0].price, products[0].store);
+    fclose(remaTest);
+
+
 
     // product rema[5] = { [0] .name = "Eggs",[0].price = 9.0,
     //     [0 ... 4].store = "Rema",
