@@ -10,7 +10,7 @@ enum {
 
 void salling_scan(FILE* file, int* ArrayIndex, product* productArray) {
     FILE* XFile;
-    XFile = fopen("QueryResults", "r");
+    XFile = fopen("QueryResults.txt", "r");
 
     int counter = -1;
     while (1) {
@@ -70,7 +70,7 @@ void rema1000_scan(FILE* file, int* ArraySize, product* productArray) {
     int counter = -1;
 
     FILE* XFile;
-    XFile = fopen("QueryResults", "r");
+    XFile = fopen("QueryResults.txt", "r");
 
     while (1) {
         char b = fgetc(XFile);
@@ -799,10 +799,11 @@ char* DictionaryLookup(SDictionary Dictionary, char* Key)
     return NULL;
 }
 
-product* coop_scan(FILE* file, int* counter) {
+product* coop_scan(FILE* file, int* counter)
+{
 
     FILE* XFile;
-    XFile = fopen("QueryResults", "r");
+    XFile = fopen("QueryResults.txt", "r");
 
 
     while (1) {
