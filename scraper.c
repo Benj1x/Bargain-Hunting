@@ -8,7 +8,7 @@ enum {
     ae = -90, oe = -72, aa = -91, AE = -122, OE = -104, AA = -123
 };
 
-product* salling_scan(FILE* file, int* nbHits, product* productArray) {
+product* salling_scan(FILE* file, node** head) {
     int counter = -1;
     while (1) {
         char b = fgetc(file);
@@ -22,11 +22,9 @@ product* salling_scan(FILE* file, int* nbHits, product* productArray) {
     }
 
     rewind(file);
-    productArray = realloc(productArray, sizeof(product) * (*nbHits + counter));
     while (fgetc(file) != '[') {
     }
     char c;
-    int i = *nbHits;
     while (1) {
         c = fgetc(file);
         if (feof(file)) {
@@ -40,21 +38,20 @@ product* salling_scan(FILE* file, int* nbHits, product* productArray) {
             if (strcmp(ctgry, "title") == 0) {
                 fscanf(file, "%*2s%[^\"]%*c", desc);
                 check_DK_char(desc);
-                strcpy(productArray[i].name, desc);
-                strcpy(productArray[i].store, "Bilka");
             }
             if ((strcmp(ctgry, "price") == 0)) {
                 fscanf(file, "%*c%4lf", &price);
-                productArray[i].price = price;
-                i += 1;
+                product newproduct;
+                strcpy(newproduct.name, desc);
+                strcpy(newproduct.store, "Bilka");
+                newproduct.price = price;
+                insertToList(head, newproduct);
             }
         }
     }
-    *nbHits += counter;
-    return productArray;
 }
 
-product* rema1000_scan(FILE* file, int* nbHits, product* productArray) {
+product* rema1000_scan(FILE* file, node** head) {
     int counter = -4;
     while (1) {
         char b = fgetc(file);
@@ -69,11 +66,9 @@ product* rema1000_scan(FILE* file, int* nbHits, product* productArray) {
     counter /= 2;
 
     rewind(file);
-    productArray = realloc(productArray, sizeof(product) * (*nbHits + counter));
     while (fgetc(file) != '[') {
     }
     char c;
-    int i = *nbHits;
     while (1) {
         c = fgetc(file);
         if (feof(file)) {
@@ -87,18 +82,17 @@ product* rema1000_scan(FILE* file, int* nbHits, product* productArray) {
             if (strcmp(ctgry, "name") == 0) {
                 fscanf(file, "%*2s%[^\"]%*c", desc);
                 check_DK_char(desc);
-                strcpy(productArray[i].name, desc);
-                strcpy(productArray[i].store, "Rema1000");
             }
             if ((strcmp(ctgry, "price") == 0)) {
                 fscanf(file, "%*c%lf", &price);
-                productArray[i].price = price;
-                i += 1;
+                product newproduct;
+                strcpy(newproduct.name, desc);
+                strcpy(newproduct.store, "Rema1000");
+                newproduct.price = price;
+                insertToList(head, newproduct);
             }
         }
     }
-    *nbHits += counter - 1;
-    return productArray;
 }
 
 void scan_input(char* name, double* max_price)
@@ -171,6 +165,29 @@ void correct_DK_char(char* string, int position, int str_len, int type)
     }
 }
 
+void insertToList(node** head, product data) {
+    node* newnode = malloc(sizeof(node));
+    newnode->data = data;
+    newnode->next = *head;
+
+    // *head = newnode;
+    if (*head == NULL || (*head)->data.price >= newnode->data.price) {
+        newnode->next = *head;
+        *head = newnode;
+    }
+    else {
+        node* current = *head;
+        while (current->next != NULL && current->next->data.price < newnode->data.price) {
+            current = current->next;
+        }
+        newnode->next = current->next;
+        current->next = newnode;
+    }
+
+}
+
+
+
 int cmpfunc(const void* a, const void* b)
 {
     double priceA = ((product*)a)->price;
@@ -202,6 +219,20 @@ char* GetSallingProducts(char* Item)
     FILE* aaaa = fopen("salling.txt", "w");
     fputs(r, aaaa);
     fclose(aaaa);
+    return r;
+}
+
+char* GetCoopMadProducts(char* Item) {
+
+    SAPIStruct SProducts;
+    strcpy(SProducts.URL, "https://mad.coop.dk/api/search/search?pageSize=30&tab=products&term=");
+    strcat(SProducts.URL, Item);
+    strcpy(SProducts.RequestType, "GET");
+    char* r = APICall(SProducts);
+    FILE* coopproducts = fopen("coopmad.txt", "w");
+    fputs(r, coopproducts);
+    fclose(coopproducts);
+
     return r;
 }
 
@@ -463,15 +494,15 @@ size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s)
 }
 
 
-product* getProductsFromStoreList(char* Items, SDictionary Dictionary, int* length) {
+node* getProductsFromStores(char* Items, SDictionary Dictionary, int* length) {
 
     int storeAmount;
     char** storesArray = getStoresArray(&storeAmount);
     int nbHits = 0;
+    node* head = NULL;
 
     // product* rema = GetRemaProducts(query, &nbHitsRema);
     // product* salling = GetRemaProducts(query);
-    product* productArray = malloc(sizeof(product) * 999);
 
     FILE* QFile;
     QFile = fopen("QueryResults.txt", "w+");
@@ -506,7 +537,7 @@ product* getProductsFromStoreList(char* Items, SDictionary Dictionary, int* leng
                 char* c = GetRemaProducts(Items);
                 fputs(c, QFile);
                 rewind(QFile);
-                rema1000_scan(QFile, &nbHits, productArray);
+                rema1000_scan(QFile, &head);
 
             }
             else {
@@ -515,19 +546,20 @@ product* getProductsFromStoreList(char* Items, SDictionary Dictionary, int* leng
                 char* c = GetSallingProducts(Items);
                 fputs(c, QFile);
                 rewind(QFile);
-                salling_scan(QFile, &nbHits, productArray);
+                salling_scan(QFile, &head);
             }
         }
     }
     fclose(QFile);
     fclose(StoreFile);
-    *length = nbHits;
-    qsort(productArray, *length, sizeof(product), cmpfunc);
-    return productArray;
+    // *length = nbHits;
+    // qsort(productArray, *length, sizeof(product), cmpfunc);
+    return head;
 }
 
 
 /*Calls the API's and writes the data to a file*/
+/*
 product* WriteAPIDataToFile(char* Items, SDictionary Dictionary, int* length)
 {
     FILE* QFile;
@@ -601,7 +633,7 @@ product* WriteAPIDataToFile(char* Items, SDictionary Dictionary, int* length)
     //for all new lines -> do it again
     //done
 }
-
+*/
 /*This initializes our dictionary (Gives it all of the entries with keys and values)*/
 SDictionary InitDictionary() {
     //Create the dictionary
@@ -686,28 +718,30 @@ char* DictionaryLookup(SDictionary Dictionary, char* Key)
     return NULL;
 }
 
-void final_print(product* array, int array_len) {
+
+void final_print(struct node* head)
+{
+
+    printf("________________________________________________________________________________\n");
     printf("|                      Produkt                     |    Price    |    Store    |\n");
     printf("|                                                  |             |             |\n");
-    for (int i = 0; i < array_len; ++i) {
-        printf("|%50s|%13.2lf|%13s|\n", array[i].name, array[i].price, array[i].store);
+    node* current = head;
+    while (current != NULL) {
+        printf("|%49s |%12.2lf |%12s |\n", current->data.name, current->data.price, current->data.store);
+        current = current->next;
     }
+    printf("________________________________________________________________________________\n");
 }
 
 int main()
 {
     SDictionary Dictionary = InitDictionary();
-
-    // product rema[5] = { [0] .name = "Eggs",[0].price = 9.0,
-    //     [0 ... 4].store = "Rema",
-    //     [1].name = "Dickus",[1].price = 32.5,
-    //     [2].name = "Balls",[2].price = 51.4,
-    //     [3].name = "Gordon Blue",[3].price = 99.5,
-    //     [4].name = "skrrt",[4].price = 4444.1,
-    // };
     int length;
-    product* fullArray = getProductsFromStoreList("Toast", Dictionary, &length);
-    final_print(fullArray, length);
+    // product* fullArray = getProductsFromStoreList("papir", Dictionary, &length);
+    // final_print(fullArray, length);
+    node* head = getProductsFromStores("toast", Dictionary, &length);
+    printlist(head);
+
     //printf("%s", GetSallingProducts("for%C3%A5rsl%C3%B8g"));
     /*
     // getProductsFromStoreList("ost");
