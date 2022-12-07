@@ -8,7 +8,7 @@ enum {
     ae = -90, oe = -72, aa = -91, AE = -122, OE = -104, AA = -123
 };
 
-void salling_scan(FILE* file, int* ArrayIndex, product* productArray) {
+void salling_scan(FILE* file, int* ArrayIndex, product** productArray) {
     FILE* XFile;
     XFile = fopen("QueryResults.txt", "r");
 
@@ -26,7 +26,8 @@ void salling_scan(FILE* file, int* ArrayIndex, product* productArray) {
 
     fclose(XFile);
     //rewind(file);
-    productArray = realloc(productArray, sizeof(product) * counter);
+    *productArray = realloc(*productArray, sizeof(product) * counter);
+
     while (fgetc(file) != '[') {
     }
     char c;
@@ -52,12 +53,12 @@ void salling_scan(FILE* file, int* ArrayIndex, product* productArray) {
             if (strcmp(ctgry, "title") == 0) {
                 fscanf(file, "%*2s%[^\"]%*c", desc);
                 check_DK_char(desc);
-                strcpy(productArray[*ArrayIndex].name, desc);
-                strcpy(productArray[*ArrayIndex].store, "Bilka");
+                strcpy(productArray[*ArrayIndex]->name, desc);
+                strcpy(productArray[*ArrayIndex]->store, "Bilka");
             }
             if ((strcmp(ctgry, "price") == 0)) {
                 fscanf(file, "%*c%4lf", &price);
-                productArray[*ArrayIndex].price = price;
+                productArray[*ArrayIndex]->price = price;
                 *ArrayIndex += 1;
             }
         }
@@ -66,7 +67,7 @@ void salling_scan(FILE* file, int* ArrayIndex, product* productArray) {
     //return productArray;
 }
 
-void rema1000_scan(FILE* file, int* ArraySize, product* productArray) {
+void rema1000_scan(FILE* file, int* ArraySize, product** productArray) {
     int counter = -1;
 
     FILE* XFile;
@@ -83,10 +84,12 @@ void rema1000_scan(FILE* file, int* ArraySize, product* productArray) {
 
     }
     fclose(XFile);
+    XFile = NULL;
     //counter /= 2;
 
     //rewind(file);
-    productArray = realloc(productArray, sizeof(product) * counter);
+    *productArray = realloc(*productArray, sizeof(product) * counter);
+
 
 
     while (fgetc(file) != '[') {
@@ -114,12 +117,12 @@ void rema1000_scan(FILE* file, int* ArraySize, product* productArray) {
             if (strcmp(ctgry, "name") == 0) {
                 fscanf(file, "%*2s%[^\"]%*c", desc);
                 check_DK_char(desc);
-                strcpy(productArray[*ArraySize].name, desc);
-                strcpy(productArray[*ArraySize].store, "Rema1000");
+                strcpy(productArray[*ArraySize]->name, desc);
+                strcpy(productArray[*ArraySize]->store, "Rema1000");
             }
             if ((strcmp(ctgry, "price") == 0)) {
                 fscanf(file, "%*c%lf", &price);
-                productArray[*ArraySize].price = price;
+                productArray[*ArraySize]->price = price;
                 *ArraySize += 1;
             }
         }
@@ -888,19 +891,19 @@ void ReadDataFromFile(char* Query)
 
         if(strcmp(buffer, "Rema") == 0)
         {
-            rema1000_scan(QFile, &ArraySize, products);
+            rema1000_scan(QFile, &ArraySize, &products);
         }
         if(strcmp(buffer, "Fakta") == 0)
         {
-            RelevantCoopData(QFile, products, Query, &ArraySize);
+            RelevantCoopData(QFile, &products, Query, &ArraySize);
         }
         if(strcmp(buffer, "Dagli'Brugsen") == 0)
         {
-            RelevantCoopData(QFile, products, Query, &ArraySize);
+            RelevantCoopData(QFile, &products, Query, &ArraySize);
         }
         if(strcmp(buffer, "Bilka") == 0)
         {
-            salling_scan(QFile, &ArraySize, products);
+            salling_scan(QFile, &ArraySize, &products);
         }
 
     }
@@ -909,7 +912,7 @@ void ReadDataFromFile(char* Query)
 
 }
 
-void RelevantCoopData(FILE* QFile, product* products, char* Query, int* ArraySize)
+void RelevantCoopData(FILE* QFile, product** products, char* Query, int* ArraySize)
 {
     Query[strcspn(Query, "\n")] = '\0';
     int ArrayIndex = 0;
@@ -917,31 +920,21 @@ void RelevantCoopData(FILE* QFile, product* products, char* Query, int* ArraySiz
     FILE* XFile;
     //XFile = fopen("QueryResults", "r");
 
-
     product* AllProducts = coop_scan(QFile, &ArrayIndex);
-
-
 
     int prodIndex = 0;
     for (int i = 0; i < ArrayIndex; i++){
         char *res = strstr(AllProducts[i].name, Query);
         if (res != NULL) {
-            ArraySize++;
-            products = realloc(products, *ArraySize * sizeof(product));
-            strcpy(products[*ArraySize-1].name, AllProducts[i].name);
-            products[*ArraySize-1].price = AllProducts[i].price;
+            *ArraySize += 1;
+            *products = realloc(*products, sizeof(product) * *ArraySize);
+            strcpy(products[*ArraySize-1]->name, AllProducts[i].name);
+            products[*ArraySize-1]->price = AllProducts[i].price;
 
         }
     }
 
-    /*printf("\n\n\n");
-
-    for(int i = 0; i < prodIndex; i++)
-    {
-    printf("%s, %.2lf kr\n", remainingProd[i].name, remainingProd[i].price);
-    }
-*/
-    //final_print(products, prodIndex);
+    free(AllProducts);
 }
 
 
