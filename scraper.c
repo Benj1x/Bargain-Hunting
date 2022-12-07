@@ -297,7 +297,7 @@ char** getStoresArray(int* storeAmount) {
 }
 
 ///Was this deleted ealier?
-/*
+
 product* getProductsFromStoreList(char query[]) {
 
     int storeAmount;
@@ -322,13 +322,10 @@ product* getProductsFromStoreList(char query[]) {
         };
         current_size += nbHitsRema;
         fullProductArray = realloc(fullProductArray, current_size * sizeof(product));
-
-
-
     }
 
 }
-*/
+
 //was this deleted earlier?
 // printf("elements rema: %d \n", nbHitsRema);
 // printf("aa: %d", rema[2].price);
@@ -388,6 +385,78 @@ void storeChoice() {
     }
     fclose(stores);
 }
+
+void ItemsChoice()
+{
+    FILE* SLFile;
+    char ProductName[50];
+
+    SLFile = fopen("./ShoppingList.txt", "a+");
+
+    //Loop for entering wanted stores
+    while (1) {
+        printf("Enter product you want to buy, end with ! 'q':");
+        scanf("%[^\n]", &ProductName);
+        while (getchar() != '\n');
+
+        //Breaks loop
+        if (strcmp(ProductName, "q") == 0) {
+            break;
+        }
+
+        //Check if entered store already is in list
+        if (DoesProductExist(ProductName) == 1) {
+            printf("\nThe product is already in the list\n");
+        }
+
+            //Prints given store to list
+        else {
+            fprintf(SLFile, "\n%s", ProductName);
+            printf("The product has been added to list\n\n");
+        }
+    }
+    fclose(SLFile);
+
+    //Prints stores present in list file
+    SLFile = fopen("./ShoppingList.txt", "r");
+    int i = 0;
+
+    while (!feof(SLFile)) {
+        ++i;
+        fgets(ProductName, 50, SLFile);
+        printf("Store number %d: %s\n", i, ProductName);
+    }
+    fclose(SLFile);
+}
+
+int DoesProductExist(char curretInput[])
+{
+    FILE* SLFile;
+    int storeExists = 0;
+    char searchString[20];
+    strcpy(searchString, curretInput);
+
+    SLFile = fopen("./ShoppingList.txt", "r");
+
+    char buffer[20];
+
+    while (fgets(buffer, 20, SLFile)) {
+        char* checkForStore = strstr(buffer, searchString);
+        if (checkForStore != NULL) {
+            storeExists = 1;
+            break;
+        }
+        else {
+            storeExists = 0;
+        }
+    }
+    fclose(SLFile);
+
+    //Returns 1 if store is found in list
+    //Returns 0 if store is not found in list
+    return storeExists;
+}
+
 
 //Function for checking if input store is already in list
 int storeCheck(char curretInput[])
@@ -497,7 +566,7 @@ size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s)
 }
 /*________________________________________________________________________________*/
 
-
+/*
 product* getProductsFromStoreList(char* Items, SDictionary Dictionary, int* length) {
 
     int storeAmount;
@@ -560,9 +629,9 @@ product* getProductsFromStoreList(char* Items, SDictionary Dictionary, int* leng
     qsort(productArray, *length, sizeof(product), cmpfunc);
     return productArray;
 }
-
+*/
 /*Calls the API's and writes the data to a file*/
-void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
+void WriteAPIDataToFile(char* Items, SDictionary Dictionary, int Runs)
 {
     FILE* QFile;
     QFile = fopen("QueryResults.txt", "w+");
@@ -590,10 +659,12 @@ void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
             strcpy(IsDigkey, Key);
             if (isdigit(IsDigkey[0]))
             {
-                printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
-                char* c = GetCoopProducts(Key);
-                fputs(c, QFile);
-                fputs("????", QFile);
+                if(Runs == 0){
+                    printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
+                    char* c = GetCoopProducts(Key);
+                    fputs(c, QFile);
+                    fputs("????", QFile);
+                }
             }
             else if(!strcmp(Key, Rema))
             {
@@ -801,8 +872,10 @@ void final_print(product* array, int array_len) {
 
 int main()
 {
+
     SDictionary Dictionary = InitDictionary();
-    //WriteAPIDataToFile("Mel", Dictionary);
+    //
+
     ReadDataFromFile();
 
     // product rema[5] = { [0] .name = "Eggs",[0].price = 9.0,
