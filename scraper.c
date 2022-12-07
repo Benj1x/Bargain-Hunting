@@ -187,25 +187,6 @@ void insertToList(node** head, product data) {
 }
 
 
-
-int cmpfunc(const void* a, const void* b)
-{
-    double priceA = ((product*)a)->price;
-    double priceB = ((product*)b)->price;
-
-    if (priceA > priceB)
-        return 1;
-    if (priceA < priceB)
-        return -1;
-    else
-        return 0;
-}
-
-void sortByPrice(product* productList, int listLen)
-{
-    qsort(productList, listLen, sizeof(product), cmpfunc);
-}
-
 char* GetSallingProducts(char* Item)
 {
     SAPIStruct SProducts;
@@ -494,7 +475,7 @@ size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s)
 }
 
 
-node* getProductsFromStores(char* Items, SDictionary Dictionary, int* length) {
+node* getProductsFromStores(char* Items, SDictionary Dictionary) {
 
     int storeAmount;
     char** storesArray = getStoresArray(&storeAmount);
@@ -552,8 +533,6 @@ node* getProductsFromStores(char* Items, SDictionary Dictionary, int* length) {
     }
     fclose(QFile);
     fclose(StoreFile);
-    // *length = nbHits;
-    // qsort(productArray, *length, sizeof(product), cmpfunc);
     return head;
 }
 
@@ -736,11 +715,10 @@ void final_print(struct node* head)
 int main()
 {
     SDictionary Dictionary = InitDictionary();
-    int length;
     // product* fullArray = getProductsFromStoreList("papir", Dictionary, &length);
     // final_print(fullArray, length);
-    node* head = getProductsFromStores("toast", Dictionary, &length);
-    printlist(head);
+    node* head = getProductsFromStores("toast", Dictionary);
+    final_print(head);
 
     //printf("%s", GetSallingProducts("for%C3%A5rsl%C3%B8g"));
     /*
