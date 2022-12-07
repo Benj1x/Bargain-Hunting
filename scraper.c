@@ -28,8 +28,7 @@ void salling_scan(FILE* file, int* ArrayIndex, product** productArray) {
     //rewind(file);
     *productArray = realloc(*productArray, sizeof(product) * counter);
 
-    while (fgetc(file) != '[') {
-    }
+    //while (fgetc(file) != '[');
     char c;
     while (1) {
         c = fgetc(file);
@@ -822,8 +821,7 @@ product* coop_scan(FILE* file, int* counter)
     fclose(XFile);
     //rewind(file);
     product* products = malloc(sizeof(product)* *counter);
-    while (fgetc(file) != '[') {
-    }
+    //while (fgetc(file) != '[');
     char c;
     int i = 0;
     while(1) {
@@ -908,7 +906,9 @@ void ReadDataFromFile(char* Query)
 
     }
 
-    printf("We here");
+    final_print(&products, &ArraySize);
+
+    printf("\n\nWE'RE DONE HERE!\n\n");
 
 }
 
@@ -938,10 +938,10 @@ void RelevantCoopData(FILE* QFile, product** products, char* Query, int* ArraySi
 }
 
 
-void final_print(product* array, int array_len) {
+void final_print(product* array, int *array_len) {
     printf("|                      Produkt                     |    Price    |    Store    |\n");
     printf("|                                                  |             |             |\n");
-    for (int i = 0; i < array_len; ++i) {
+    for (int i = 0; i < *array_len; ++i) {
         printf("|%50s|%13.2lf|%13s|\n", array[i].name, array[i].price, array[i].store);
     }
 }

@@ -51,7 +51,7 @@ int DoesProductExist(char curretInput[]);
 void check_DK_char(char* string);
 void correct_DK_char(char* string, int i, int str_len, int type);
 void ReadDataFromFile(char* Query);
-void final_print(product* array, int array_len);
+void final_print(product* array, int* array_len);
 void RelevantCoopData(FILE* QFile, product** remainingProd, char* Query, int* ArraySize);
 void rema1000_scan(FILE* file, int* nbHits, product** productArray);
 
