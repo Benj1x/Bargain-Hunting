@@ -32,6 +32,7 @@ product* salling_scan(FILE* file, int* nbHits, product* productArray) {
         if (feof(file)) {
             break;
         }
+
         if (c == '"') {
             char ctgry[100];
             char desc[100];
@@ -222,14 +223,14 @@ char* GetCoopProducts(char* Stores)
 
 }
 
-product* GetRemaProducts(char query[], int* nbHits)
+product* GetRemaProducts(char query[])
 {
     SAPIStruct SProducts;
 
     char entireQuery[300] = "{\"requests\":[{\"indexName\":\"aws-prod-products\",\"params\":\"query=";
     char rest[200] = "&hitsPerPage=5000&"
         "page=0&"
-        "&attributesToRetrieve=%5B%22name%22%2C%22labels%22%2C%22pricing%22%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D\"}]}";
+        "&attributesToRetrieve=%5B%22name%22%2C%22labelsMain%22%2C%22pricing%22%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D\"}]}";
     strcat(entireQuery, query);
     strcat(entireQuery, rest);
     strcpy(SProducts.URL, "https://flwdn2189e-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%20for%20vanilla%20JavaScript%203.21.1&x-algolia-application-id=FLWDN2189E&x-algolia-api-key=fa20981a63df668e871a87a8fbd0caed");
@@ -296,7 +297,7 @@ char** getStoresArray(int* storeAmount) {
 }
 
 ///Was this deleted ealier?
-/*
+
 product* getProductsFromStoreList(char query[]) {
 
     int storeAmount;
@@ -321,13 +322,10 @@ product* getProductsFromStoreList(char query[]) {
         };
         current_size += nbHitsRema;
         fullProductArray = realloc(fullProductArray, current_size * sizeof(product));
-
-
-
     }
 
 }
-*/
+
 //was this deleted earlier?
 // printf("elements rema: %d \n", nbHitsRema);
 // printf("aa: %d", rema[2].price);
@@ -387,6 +385,78 @@ void storeChoice() {
     }
     fclose(stores);
 }
+
+void ItemsChoice()
+{
+    FILE* SLFile;
+    char ProductName[50];
+
+    SLFile = fopen("./ShoppingList.txt", "a+");
+
+    //Loop for entering wanted stores
+    while (1) {
+        printf("Enter product you want to buy, end with ! 'q':");
+        scanf("%[^\n]", &ProductName);
+        while (getchar() != '\n');
+
+        //Breaks loop
+        if (strcmp(ProductName, "q") == 0) {
+            break;
+        }
+
+        //Check if entered store already is in list
+        if (DoesProductExist(ProductName) == 1) {
+            printf("\nThe product is already in the list\n");
+        }
+
+            //Prints given store to list
+        else {
+            fprintf(SLFile, "\n%s", ProductName);
+            printf("The product has been added to list\n\n");
+        }
+    }
+    fclose(SLFile);
+
+    //Prints stores present in list file
+    SLFile = fopen("./ShoppingList.txt", "r");
+    int i = 0;
+
+    while (!feof(SLFile)) {
+        ++i;
+        fgets(ProductName, 50, SLFile);
+        printf("Store number %d: %s\n", i, ProductName);
+    }
+    fclose(SLFile);
+}
+
+int DoesProductExist(char curretInput[])
+{
+    FILE* SLFile;
+    int storeExists = 0;
+    char searchString[20];
+    strcpy(searchString, curretInput);
+
+    SLFile = fopen("./ShoppingList.txt", "r");
+
+    char buffer[20];
+
+    while (fgets(buffer, 20, SLFile)) {
+        char* checkForStore = strstr(buffer, searchString);
+        if (checkForStore != NULL) {
+            storeExists = 1;
+            break;
+        }
+        else {
+            storeExists = 0;
+        }
+    }
+    fclose(SLFile);
+
+    //Returns 1 if store is found in list
+    //Returns 0 if store is not found in list
+    return storeExists;
+}
+
 
 //Function for checking if input store is already in list
 int storeCheck(char curretInput[])
@@ -496,7 +566,7 @@ size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s)
 }
 /*________________________________________________________________________________*/
 
-
+/*
 product* getProductsFromStoreList(char* Items, SDictionary Dictionary, int* length) {
 
     int storeAmount;
@@ -530,7 +600,7 @@ product* getProductsFromStoreList(char* Items, SDictionary Dictionary, int* leng
                 freopen("QueryResults.txt", "w+", QFile);
                 printf("%s (%s) Is a coop store\n", storesArray[i], IsDigkey);
                 freopen("QueryResults.txt", "w+", QFile);
-                char* c = GetCoopProducts(Items, Key);
+                char* c = GetCoopProducts(Key);
                 fputs(c, QFile);
             }
             else if (!strcmp(Key, "Rema"))
@@ -559,9 +629,9 @@ product* getProductsFromStoreList(char* Items, SDictionary Dictionary, int* leng
     qsort(productArray, *length, sizeof(product), cmpfunc);
     return productArray;
 }
-
+*/
 /*Calls the API's and writes the data to a file*/
-void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
+void WriteAPIDataToFile(char* Items, SDictionary Dictionary, int Runs)
 {
     FILE* QFile;
     QFile = fopen("QueryResults.txt", "w+");
@@ -589,10 +659,12 @@ void WriteAPIDataToFile(char* Items, SDictionary Dictionary)
             strcpy(IsDigkey, Key);
             if (isdigit(IsDigkey[0]))
             {
-                printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
-                char* c = GetCoopProducts(Key);
-                fputs(c, QFile);
-                fputs("????", QFile);
+                if(Runs == 0){
+                    printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
+                    char* c = GetCoopProducts(Key);
+                    fputs(c, QFile);
+                    fputs("????", QFile);
+                }
             }
             else if(!strcmp(Key, Rema))
             {
@@ -705,20 +777,19 @@ char* DictionaryLookup(SDictionary Dictionary, char* Key)
     return NULL;
 }
 
-product* coop_scan(FILE* file) {
-    int counter = 0;
+product* coop_scan(FILE* file, int* counter) {
     while (1) {
         char b = fgetc(file);
         if (feof(file)) {
             break;
         }
         if (b == '}') {
-            counter += 1;
+            *counter += 1;
         }
 
     }
     rewind(file);
-    product* array = malloc(sizeof(product)*counter);
+    product* array = malloc(sizeof(product)* *counter);
     while (fgetc(file) != '[') {
     }
     char c;
@@ -760,31 +831,29 @@ void ReadDataFromFile()
     FILE* QFile;
     QFile = fopen("QueryResults.txt", "r");
 
-    product* products = coop_scan(QFile);
-     /*for(int i = 0; i < 4555; i++){
+    int ArraySize = 0;
+
+    product* products = coop_scan(QFile, &ArraySize);
+     /*for(int i = 0; i < ArraySize; i++){
         printf("%s, %.2lf kr\n", products[i].name, products[i].price);
     }*/
-    //This malloc was copied from coop_scan()
-    product* remainingProd = malloc(sizeof(product)*20);
-    char query[50] = "MÆLK";
-    int prodIndex = 0;
-    //Making this for loop dynamic would be PERFECT
-    for (int i = 0; i < 4555; i++){
-        char prodTest[50];
-        //strstr, returns a pointer to our substring, if it is found in the string, if it isn't res will be null
-        char *res = strstr(products[i].name, query);
-        //If the substring was found in the product name
-        if (res != NULL) {
-            //copy it over to a new array
-            strcpy(remainingProd[prodIndex].name, products[i].name);
-            remainingProd[prodIndex].price = products[i].price;
-            prodIndex++;
-        }
 
+    product* remainingProd = malloc(sizeof(char));
+    char query[50] = "APPELSIN";
+    int prodIndex = 0;
+    for (int i = 0; i < ArraySize; i++){
+        char *res = strstr(products[i].name, query);
+        if (res != NULL) {
+            prodIndex++;
+             //Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry)
+            remainingProd = realloc(remainingProd, prodIndex * sizeof(product));
+            strcpy(remainingProd[prodIndex-1].name, products[i].name);
+            remainingProd[prodIndex-1].price = products[i].price;
+        }
     }
+
     printf("\n\n\n");
 
-    //Print what we found
     for(int i = 0; i < prodIndex; i++)
     {
         printf("%s, %.2lf kr\n", remainingProd[i].name, remainingProd[i].price);
@@ -803,8 +872,10 @@ void final_print(product* array, int array_len) {
 
 int main()
 {
+
     SDictionary Dictionary = InitDictionary();
-    ///WriteAPIDataToFile("Mel", Dictionary);
+    //
+
     ReadDataFromFile();
 
     // product rema[5] = { [0] .name = "Eggs",[0].price = 9.0,
@@ -814,9 +885,9 @@ int main()
     //     [3].name = "Gordon Blue",[3].price = 99.5,
     //     [4].name = "skrrt",[4].price = 4444.1,
     // };
-    int length;
-    product* fullArray = getProductsFromStoreList("Toast", Dictionary, &length);
-    final_print(fullArray, length);
+    //int length;
+    //product* fullArray = getProductsFromStoreList("Toast", Dictionary, &length);
+    //final_print(fullArray, length);
     //printf("%s", GetSallingProducts("for%C3%A5rsl%C3%B8g"));
     /*
     // getProductsFromStoreList("ost");
