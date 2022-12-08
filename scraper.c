@@ -539,18 +539,17 @@ node* getProductsFromStores(char* Items, SDictionary Dictionary) {
 
 /*Calls the API's and writes the data to a file*/
 /*
-product* WriteAPIDataToFile(char* Items, SDictionary Dictionary, int* length)
+void WriteAPIDataToFile(char* Items, SDictionary Dictionary, int Runs)
 {
     FILE* QFile;
-    QFile = fopen("QueryResults.txt", "w+");
+    QFile = fopen("QueryResults.txt", "a");
 
     FILE* StoreFile;
     StoreFile = fopen("stores.txt", "r");
 
     char buffer[20];
 
-    int nbHits = 0;
-    product* productArray = malloc(sizeof(product) * 999);
+    Items[strcspn(Items, "\n")] = '\0';
 
     while (fgets(buffer, 15, StoreFile))
     {
@@ -559,7 +558,9 @@ product* WriteAPIDataToFile(char* Items, SDictionary Dictionary, int* length)
 
         char IsDigkey[20];
         char* Key;
+        //char* Test = GetSallingProducts(Items);
         Key = DictionaryLookup(Dictionary, buffer);
+        char* Rema = "Rema";
         if (Key == NULL)
         {
             printf("Store not found (Not supported by API)\n");
@@ -568,50 +569,33 @@ product* WriteAPIDataToFile(char* Items, SDictionary Dictionary, int* length)
             strcpy(IsDigkey, Key);
             if (isdigit(IsDigkey[0]))
             {
-                freopen("QueryResults.txt", "w+", QFile);
-                printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
-                freopen("QueryResults.txt", "w+", QFile);
-                char* c = GetCoopProducts(Items, Key);
-                fputs(c, QFile);
-                // salling_scan(QFile, &nbHitsCoop, productArray, nbHits);
-                // fputs("????", QFile);
+                if (Runs == 0)
+                {
+                    printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
+                    //char* c = GetCoopProducts(Key);
+                    //fputs(c, QFile);
+                    //fputs("????", QFile);
+                }
             }
-            else if (!strcmp(Key, "Rema"))
+            else if(!strcmp(Key, Rema))
             {
-                freopen("QueryResults.txt", "w+", QFile);
                 printf("%s Is Rema store\n", IsDigkey);
                 char* c = GetRemaProducts(Items);
                 fputs(c, QFile);
-                rewind(QFile);
-                rema1000_scan(QFile, &nbHits, productArray);
-                // fputs("????", QFile);
-
+                fputs("????", QFile);
             }
             else {
-                freopen("QueryResults.txt", "w+", QFile);
                 printf("%s Is a Salling store\n", IsDigkey);
-                char* c = GetSallingProducts(Items);
-                fputs(c, QFile);
-                rewind(QFile);
-                salling_scan(QFile, &nbHits, productArray);
-                // fputs("????", QFile);
+                //char* c = GetSallingProducts(Items);
+                //fputs(c, QFile);
+                //fputs("????", QFile);
             }
         }
     }
     fclose(QFile);
     fclose(StoreFile);
-    *length = nbHits;
-    qsort(productArray, *length, sizeof(product), cmpfunc);
-    return productArray;
-
-    //Create struct Dict with char* StoreName & char* Kardex
-
-    //init struct for all stores
-
-    //do query
-    //for all new lines -> do it again
-    //done
 }
+
 */
 /*This initializes our dictionary (Gives it all of the entries with keys and values)*/
 SDictionary InitDictionary() {
@@ -717,14 +701,14 @@ int main()
     SDictionary Dictionary = InitDictionary();
     // product* fullArray = getProductsFromStoreList("papir", Dictionary, &length);
     // final_print(fullArray, length);
-    node* head = getProductsFromStores("toast", Dictionary);
-    final_print(head);
+    node* products = getProductsFromStores("toast", Dictionary);
+    final_print(products);
 
     //printf("%s", GetSallingProducts("for%C3%A5rsl%C3%B8g"));
     /*
     // getProductsFromStoreList("ost");
     int nbhits;
-    // product* products = GetRemaProducts("ost", &nbhits);
+    // product* products = GetRemaProducts("ost", &nbhits);>
     GetSallingProducts("ost");
     FILE* aaaa = fopen("salling.txt", "r");
     // printf("%s", products[49].name);
