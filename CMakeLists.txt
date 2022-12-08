@@ -3,8 +3,6 @@ project(Bargain_Hunting C)
 
 add_definitions( -DCURL_STATICLIB )
 
-
-
 set(CMAKE_C_STANDARD 99)
 
 #link curl with Bargain_Hunting
