@@ -7,7 +7,7 @@
 #include <wchar.h>
 
 enum {
-    ae = -90, oe = -72, aa = -91, AE = -122, OE = -104, AA = -123
+    ae = -90, oe = -72, aa = -91, AE = -122, OE = -104, AA = -123, SPACE = 32
 };
 
 product* salling_scan(FILE* file, node** head) {
@@ -101,9 +101,9 @@ product* rema1000_scan(FILE* file, node** head) {
 void scan_input(char* ProductName, int* maxItems)
 {
     printf("Indtast produktets navn, saasom 'banan yogurt'>");
-    scanf(" %s", ProductName);
+    scanf(" %[^\n]s", ProductName);
 
-    //check_input(ProductName);
+    check_input(ProductName);
 
     //while ((getchar()) != '\n');
     printf("Hvor mange resultater vil du se for dit produkt?>");
@@ -844,7 +844,7 @@ void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList)
 
     for (int i = 0; i < ArrayIndex; i++)
     {
-        if (strstr(AllProducts[i].name, Query) != NULL) 
+        if (strstr(AllProducts[i].name, Query) != NULL)
         {
             insertToList(LinkedList, AllProducts[i]);
         }
@@ -853,63 +853,46 @@ void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList)
     free(AllProducts);
 }
 
-void correct_input(char *string, int position, int str_len, int type) {
-
-    char *strB;
-
-    switch (type) {
-        case ae:
-            strB = "%C3%A6";
-            break;
-        case oe:
-            strB = "%C3%B8";
-            break;
-        case aa:
-            strB = "%C3%A5";
-            break;
-        case AE:
-            strB = "%C3%86";
-            break;
-        case OE:
-            strB = "%C3%98";
-            break;
-        case AA:
-            strB = "%C3%85";
-            break;
-    }
-
-    char *strA = string, strC[50];
-    strncpy(strC, strA, position - 1);
-    strC[position] = '\0';
-    strcat(strC, strB);
-    strcat(strC, strA + position + 1);
-    strcpy(string, strC);
-    printf("%s\n",string);
-}
-
-void check_input(char *string)
-{
+void check_input(char *string) {
     int stringlen = strlen(string);
     for (int i = 0; i < stringlen; ++i) {
+        char *strB = "Null";
         switch ((int) string[i]) {
             case ae:
-                correct_input(string, i, stringlen, ae);
+                strB = "%C3%A6";
                 break;
             case oe:
-                correct_input(string, i, stringlen, oe);
+                strB = "%C3%B8";
                 break;
             case aa:
-                correct_input(string, i, stringlen, aa);
+                strB = "%C3%A5";
                 break;
             case AE:
-                correct_input(string, i, stringlen, AE);
+                strB = "%C3%86";
                 break;
             case OE:
-                correct_input(string, i, stringlen, OE);
+                strB = "%C3%98";
                 break;
             case AA:
-                correct_input(string, i, stringlen, AA);
+                strB = "%C3%85";
                 break;
+        }
+        if ((int) string[i] == SPACE) {
+            char *strA = string, strC[50];
+            strncpy(strC, strA, i);
+            strC[i] = '\0';
+            strcat(strC, "%20");
+            strcat(strC, strA + i+1);
+            strcpy(string, strC);
+        }
+
+        if (strcmp(strB, "Null") != 0) {
+            char *strA = string, strC[50];
+            strncpy(strC, strA, i - 1);
+            strC[i] = '\0';
+            strcat(strC, strB);
+            strcat(strC, strA + i + 1);
+            strcpy(string, strC);
         }
     }
 }
