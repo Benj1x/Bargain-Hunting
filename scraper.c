@@ -549,6 +549,8 @@ void GetNonCoopProducts(char* Items, SDictionary Dictionary, node** LinkedList) 
     FILE* StoreFile;
     StoreFile = fopen("stores.txt", "r");
 
+    Items[strcspn(Items, "\n")] = '\0';
+
     for (int i = 0; i < storeAmount; i++)
     {
         char* Key;
@@ -743,7 +745,7 @@ void final_print(struct node* head)
 product* coop_scan(FILE* file, int* counter, char* Store) {
 
     FILE* XFile;
-    XFile = fopen("Some", "r");
+    XFile = fopen("CoopQueryResults.txt", "r");
 
     while (1) {
         char b = fgetc(XFile);
@@ -848,7 +850,8 @@ void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList)
     product* AllProducts = coop_scan(QFile, &ArrayIndex, Store);
 
     for (int i = 0; i < ArrayIndex; i++){
-        if (strstr(AllProducts[i].name, Query) != NULL) {
+        char* res = strstr(AllProducts[i].name, Query);
+        if (res != NULL) {
             insertToList(LinkedList, AllProducts[i]);
         }
     }
@@ -871,8 +874,8 @@ int main()
         QFile = fopen("QueryResults.txt", "w");
         fclose(QFile);
 
-        QFile = fopen("CoopQueryResults.txt", "w");
-        fclose(QFile);
+        //QFile = fopen("CoopQueryResults.txt", "w");
+        //fclose(QFile);
 
     SDictionary Dictionary = InitDictionary();
 
@@ -881,11 +884,10 @@ int main()
     FILE* SLFile;
     SLFile = fopen("ShoppingList.txt", "r");
     int Runs = 0;
-    node* LinkedList;
-    while (fgets(buffer, 50, SLFile))
-    {
+    node* LinkedList = NULL;
+    while (fgets(buffer, 50, SLFile)) {
         //We use runs, to make sure we only do the coop call once for each store
-        WriteCoopDataToFile(buffer, Dictionary, Runs);
+        //WriteCoopDataToFile(buffer, Dictionary, Runs);
         GetNonCoopProducts(buffer, Dictionary, &LinkedList);
         ReadCoopData(buffer, &LinkedList);
         Runs++;
@@ -893,7 +895,6 @@ int main()
         DeleteAllListItems(&LinkedList);
         delay(1);
     }
-    node* linkedList;
 
 
 
