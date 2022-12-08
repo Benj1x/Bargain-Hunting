@@ -103,7 +103,7 @@ void scan_input(char* ProductName, int* maxItems)
     printf("Indtast produktets navn, saasom 'banan yogurt'>");
     scanf(" %s", ProductName);
 
-    check_input(ProductName);
+    //check_input(ProductName);
 
     //while ((getchar()) != '\n');
     printf("Hvor mange resultater vil du se for dit produkt?>");
@@ -296,16 +296,21 @@ void storeChoice() {
     char storeID[5];
     char storeName[25];
 
-    stores = fopen("./stores.txt", "a+");
+    printf("\nProgrammet kan vise dig varer for: Bilka, Fakta, Dagli'Brugsen, Rema1000");
+    printf("\nGrundet problemer med Salling Group og Coop, kan programmet "
+           "ikke vise varer for andre butikker i disse kaeder :( !\n\n");
+
+
+    stores = fopen("./stores.txt", "w");
 
     //Loop for entering wanted stores
     while (1) {
-        printf("Enter store name, break with 'q':");
+        printf("Skriv et butiksnavn, afslut med 'q':");
         scanf("%[^\n]", &storeName);
         while (getchar() != '\n');
 
         //Breaks loop
-        if (strcmp(storeName, "q") == 0) {
+        if (strcasecmp(storeName, "q") == 0) {
             break;
         }
 
@@ -316,7 +321,7 @@ void storeChoice() {
 
         //Prints given store to list
         else {
-            fprintf(stores, "\n%s", storeName);
+            fprintf(stores, "%s\n", storeName);
             printf("Given store is added to list\n\n");
         }
     }
@@ -329,7 +334,10 @@ void storeChoice() {
     while (!feof(stores)) {
         ++i;
         fgets(storeName, 25, stores);
-        printf("Store number %d: %s\n", i, storeName);
+
+        if (!feof(stores)){
+            printf("Store number %d: %s\n", i, storeName);
+        }
     }
     fclose(stores);
 }
@@ -348,7 +356,7 @@ void ItemsChoice()
         while (getchar() != '\n');
 
         //Breaks loop
-        if (strcmp(ProductName, "q") == 0) {
+        if (strcasecmp(ProductName, "q") == 0) {
             break;
         }
 
@@ -539,7 +547,7 @@ void GetNonCoopProducts(char* Items, SDictionary Dictionary, node** LinkedList) 
         }
         else {
             strcpy(IsDigkey, Key);
-            if (!strcmp(Key, "Rema") && !isdigit(IsDigkey[0]))
+            if (!strcasecmp(Key, "Rema") && !isdigit(IsDigkey[0]))
             {
                 freopen("QueryResults.txt", "w+", QFile);
                 printf("%s Is Rema store\n", IsDigkey);
@@ -694,7 +702,7 @@ char* DictionaryLookup(SDictionary Dictionary, char* Key)
     {
         //If equal, it returns 0, therefor we want !strcmp (Some might be used to it returning 1)
         /*This checks if our key, is equal to the set key, of the dictionary entry*/
-        if (!strcmp(Dictionary.entry[i].Key, Key))
+        if (!strcasecmp(Dictionary.entry[i].Key, Key))
         {
             //If they are equal, return the value
             return Dictionary.entry[i].Value;
@@ -816,11 +824,11 @@ void ReadCoopData(char* Query, node** ProductList)
     while (fgets(buffer, 50, SFile)) {
         buffer[strcspn(buffer, "\n")] = '\0';
 
-        if (strcmp(buffer, "Fakta") == 0)
+        if (strcasecmp(buffer, "Fakta") == 0)
         {
             RelevantCoopData(QFile, "Fakta", Query, ProductList);
         }
-        if (strcmp(buffer, "Dagli'Brugsen") == 0)
+        if (strcasecmp(buffer, "Dagli'Brugsen") == 0)
         {
             RelevantCoopData(QFile, "Dagli'Brugsen", Query, ProductList);
         }
@@ -916,11 +924,14 @@ void delay(int seconds) {
 
 int main()
 {
-    //Delete all data in file
+    //reset files
     FILE* QFile;
     QFile = fopen("QueryResults.txt", "w");
     fclose(QFile);
 
+    FILE* SFile;
+    SFile = fopen("./stores.txt", "w");
+    fclose(SFile);
         //QFile = fopen("CoopQueryResults.txt", "w");
         //fclose(QFile);
 
@@ -928,6 +939,11 @@ int main()
     SDictionary Dictionary = InitDictionary();
     char Product[50];
     int MaxItems = 0;
+
+    printf("Hej, og velkommen til! \nI dette program kan du finde de bedste priser paa dine dagligvare!\n");
+
+    storeChoice();
+
     scan_input(Product, &MaxItems);
     /*Laver et kald for hele shopping listen, hvis du kun vil have et kald, så brug de to funktioner over*/
     FILE* SLFile;
