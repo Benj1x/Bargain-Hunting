@@ -61,7 +61,8 @@ int DoesProductExist(char curretInput[]);
 void check_DK_char(char* string);
 void correct_DK_char(char* string, int i, int str_len, int type);
 void ReadDataFromFile();
-void final_print(product* array, int array_len);
+void final_print(struct node* head);
+void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList);
 
 
 #ifndef BARGAIN_HUNTING_SCRAPER_H
