@@ -774,7 +774,8 @@ product* coop_scan(FILE* file, int* counter, char* Store) {
             c2 = fgetc(file);
             if (c2 == '?')
             {
-                break;
+
+                return products;
             }
         }
         if (c == '"') {
@@ -823,6 +824,10 @@ void ReadCoopData(char* Query, node** ProductList)
 
     char buffer[20];
 
+    for (int i = 0; Query[i] != '\0'; i++) {
+        Query[i] = toupper(Query[i]);
+    }
+
     while (fgets(buffer, 50, SFile)) {
         buffer[strcspn(buffer, "\n")] = '\0';
 
@@ -849,9 +854,11 @@ void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList)
 
     product* AllProducts = coop_scan(QFile, &ArrayIndex, Store);
 
-    for (int i = 0; i < ArrayIndex; i++){
-        char* res = strstr(AllProducts[i].name, Query);
-        if (res != NULL) {
+    for (int i = 0; i < ArrayIndex; i++)
+    {
+        //char* res = strstr(AllProducts[i].name, Query);
+        if (strstr(AllProducts[i].name, Query) != NULL) 
+        {
             insertToList(LinkedList, AllProducts[i]);
         }
     }

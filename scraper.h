@@ -60,8 +60,10 @@ void scan_input(char* name, double* max_price);
 int DoesProductExist(char curretInput[]);
 void check_DK_char(char* string);
 void correct_DK_char(char* string, int i, int str_len, int type);
+
 void DeleteAllListItems(node** LinkedListHead);
 void ReadCoopData(char* Query, node** ProductList);
+
 void final_print(struct node* head);
 void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList);
 
