@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "include/curl/curl.h"
+#include <locale.h>
+#include <wchar.h>
 
 enum {
     ae = -90, oe = -72, aa = -91, AE = -122, OE = -104, AA = -123
@@ -98,8 +100,9 @@ product* rema1000_scan(FILE* file, node** head) {
 
 void scan_input(char* ProductName, int* maxItems)
 {
-    printf("Indtast produktets navn, såsom 'banan yogurt'>");
+    printf("Indtast produktets navn, saasom 'banan yogurt'>");
     scanf(" %s", ProductName);
+
     //while ((getchar()) != '\n');
     printf("Hvor mange resultater vil du se for dit produkt?>");
     scanf("%d", maxItems);
@@ -709,7 +712,7 @@ void final_print(struct node* head, int MaxItems)
     printf("|                                                  |             |             |\n");
     node* current = head;
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < MaxItems; i++)
     {
         if (current == NULL){
             break;
@@ -918,8 +921,8 @@ int main()
         //QFile = fopen("CoopQueryResults.txt", "w");
         //fclose(QFile);
 
-    SDictionary Dictionary = InitDictionary();
 
+    SDictionary Dictionary = InitDictionary();
     char Product[50];
     int MaxItems = 0;
     scan_input(Product, &MaxItems);
@@ -930,7 +933,7 @@ int main()
     int Runs = 0;
 
     node* LinkedList = NULL;
-    
+
     //WriteCoopDataToFile(Product, Dictionary, Runs);
     GetNonCoopProducts(Product, Dictionary, &LinkedList);
     ReadCoopData(Product, &LinkedList);
