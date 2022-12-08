@@ -42,7 +42,7 @@ const char* KardexValue[] = { [Fakta] = "24080",[DagliBrugsen] = "2082" };
 char* GetSallingProducts(char* Item);
 
 char* GetCoopProducts(char* Stores);
-void WriteAPIDataToFile(char* Items, SDictionary Dictionary, int Runs);
+void WriteCoopDataToFile(char* Items, SDictionary Dictionary, int Runs);
 void storeChoice();
 void insertToList(node** head, product data);
 int storeCheck(char currentInput[]);
@@ -52,15 +52,18 @@ SDictionary InitDictionary();
 void init_string(struct string* s);
 size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s);
 
-
 product* rema1000_scan(FILE* file, node** head);
 product* salling_scan(FILE* file, node** head);
 
+void insertToList(node** head, product data);
 void scan_input(char* name, double* max_price);
 int DoesProductExist(char curretInput[]);
 void check_DK_char(char* string);
 void correct_DK_char(char* string, int i, int str_len, int type);
-void ReadDataFromFile();
+
+void DeleteAllListItems(node** LinkedListHead);
+void ReadCoopData(char* Query, node** ProductList);
+
 void final_print(struct node* head);
 void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList);
 
