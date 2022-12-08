@@ -869,10 +869,10 @@ void delay(int seconds) {
 
 int main()
 {
-        //Delete all data in file
-        FILE* QFile;
-        QFile = fopen("QueryResults.txt", "w");
-        fclose(QFile);
+    //Delete all data in file
+    FILE* QFile;
+    QFile = fopen("QueryResults.txt", "w");
+    fclose(QFile);
 
         //QFile = fopen("CoopQueryResults.txt", "w");
         //fclose(QFile);
@@ -884,6 +884,7 @@ int main()
     FILE* SLFile;
     SLFile = fopen("ShoppingList.txt", "r");
     int Runs = 0;
+
     node* LinkedList = NULL;
     while (fgets(buffer, 50, SLFile)) {
         //We use runs, to make sure we only do the coop call once for each store
