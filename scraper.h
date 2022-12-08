@@ -56,7 +56,7 @@ product* rema1000_scan(FILE* file, node** head);
 product* salling_scan(FILE* file, node** head);
 
 void insertToList(node** head, product data);
-void scan_input(char* name, double* max_price);
+void scan_input(char* name, int* maxItems);
 int DoesProductExist(char curretInput[]);
 void check_DK_char(char* string);
 void correct_DK_char(char* string, int i, int str_len, int type);
@@ -64,7 +64,7 @@ void correct_DK_char(char* string, int i, int str_len, int type);
 void DeleteAllListItems(node** LinkedListHead);
 void ReadCoopData(char* Query, node** ProductList);
 
-void final_print(struct node* head);
+void final_print(struct node* head, int MaxItems);
 void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList);
 
 
