@@ -547,7 +547,7 @@ void GetNonCoopProducts(char* Items, SDictionary Dictionary, node** LinkedList) 
         }
         else {
             strcpy(IsDigkey, Key);
-            if (!strcasecmp(Key, "Rema") && !isdigit(IsDigkey[0]))
+            if (!strcmp(Key, "Rema") && !isdigit(IsDigkey[0]))
             {
                 freopen("QueryResults.txt", "w+", QFile);
                 printf("%s Is Rema store\n", IsDigkey);
