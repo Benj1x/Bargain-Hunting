@@ -11,8 +11,8 @@ enum {
 product* salling_scan(FILE* file, node** head) {
     int counter = -1;
     while (1) {
-        char b = fgetc(file);
-        if (feof(file)) {
+        char b = fgetc(XFile);
+        if (feof(XFile)) {
             break;
         }
         if (b == '}') {
@@ -31,6 +31,14 @@ product* salling_scan(FILE* file, node** head) {
             break;
         }
 
+        if(c == '?'){
+            char c2;
+            c2 = fgetc(file);
+            if(c2 == '?')
+            {
+                break;
+            }
+        }
         if (c == '"') {
             char ctgry[100];
             char desc[100];
@@ -54,9 +62,10 @@ product* salling_scan(FILE* file, node** head) {
 
 product* rema1000_scan(FILE* file, node** head) {
     int counter = -4;
+    
     while (1) {
-        char b = fgetc(file);
-        if (feof(file)) {
+        char b = fgetc(XFile);
+        if (feof(XFile)) {
             break;
         }
         if (b == '}') {
@@ -64,16 +73,30 @@ product* rema1000_scan(FILE* file, node** head) {
         }
 
     }
-    counter /= 2;
+    fclose(XFile);
+    XFile = NULL;
+    //counter /= 2;
+
+    //rewind(file);
+    *productArray = realloc(*productArray, sizeof(product) * counter);
 
     rewind(file);
     while (fgetc(file) != '[') {
     }
     char c;
+    
     while (1) {
         c = fgetc(file);
         if (feof(file)) {
             break;
+        }
+        if(c == '?'){
+            char c2;
+            c2 = fgetc(file);
+            if(c2 == '?')
+            {
+                break;
+            }
         }
         if (c == '"') {
             char ctgry[100];
@@ -676,9 +699,9 @@ void WriteAPIDataToFile(char* Items, SDictionary Dictionary, int Runs)
                 if (Runs == 0)
                 {
                     printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
-                    //char* c = GetCoopProducts(Key);
-                    //fputs(c, QFile);
-                    //fputs("????", QFile);
+                    char* c = GetCoopProducts(Key);
+                    fputs(c, QFile);
+                    fputs("????", QFile);
                 }
             }
             else if(!strcmp(Key, Rema))
@@ -690,9 +713,9 @@ void WriteAPIDataToFile(char* Items, SDictionary Dictionary, int Runs)
             }
             else {
                 printf("%s Is a Salling store\n", IsDigkey);
-                //char* c = GetSallingProducts(Items);
-                //fputs(c, QFile);
-                //fputs("????", QFile);
+                char* c = GetSallingProducts(Items);
+                fputs(c, QFile);
+                fputs("????", QFile);
             }
         }
     }
@@ -785,7 +808,7 @@ char* DictionaryLookup(SDictionary Dictionary, char* Key)
     return NULL;
 }
 
-void final_print_ll(struct node* head)
+void final_print(struct node* head)
 {
 
     printf("________________________________________________________________________________\n");
@@ -800,9 +823,10 @@ void final_print_ll(struct node* head)
 }
 
 product* coop_scan(FILE* file, int* counter) {
+
     while (1) {
-        char b = fgetc(file);
-        if (feof(file)) {
+        char b = fgetc(XFile);
+        if (feof(XFile)) {
             break;
         }
         if (b == '}') {
@@ -810,16 +834,25 @@ product* coop_scan(FILE* file, int* counter) {
         }
 
     }
-    rewind(file);
-    product* array = malloc(sizeof(product)* *counter);
-    while (fgetc(file) != '[') {
-    }
+    fclose(XFile);
+    //rewind(file);
+    product* products = malloc(sizeof(product)* *counter);
+    //while (fgetc(file) != '[');
     char c;
     int i = 0;
     while(1) {
         c = fgetc(file);
         if (feof(file)) {
             break;
+        }
+
+        if(c == '?'){
+            char c2;
+            c2 = fgetc(file);
+            if(c2 == '?')
+            {
+                break;
+            }
         }
         if (c == '"') {
             char ctgry[100];
@@ -830,8 +863,8 @@ product* coop_scan(FILE* file, int* counter) {
             if (strcmp(ctgry, "Navn") == 0) {
                 fscanf(file, "%*2s%[^\"]%*c",desc);
                 check_DK_char(desc);
-                strcpy(array[i].name, desc);
-                strcpy(array[i].store, "Coop");
+                strcpy(products[i].name, desc);
+                strcpy(products[i].store, "Coop");
             }
             if (strcmp(ctgry, "Navn2") == 0) {
                 fscanf(file, "%*[\"]%*[\"]%s%[^\"]",desc2);
@@ -840,59 +873,84 @@ product* coop_scan(FILE* file, int* counter) {
             }
             if ((strcmp(ctgry, "Pris") == 0)) {
                 fscanf(file, "%*c%lf", &price);
-                array[i].price = price;
+                products[i].price = price;
                 i += 1;
             }
         }
     }
-    return array;
+    return products;
 }
 
-void ReadDataFromFile()
+void ReadDataFromFile(char* Query)
 {
     FILE* QFile;
     QFile = fopen("QueryResults.txt", "r");
 
     int ArraySize = 0;
 
-    product* products = coop_scan(QFile, &ArraySize);
+    //product* products = coop_scan(QFile, &ArraySize);
      /*for(int i = 0; i < ArraySize; i++){
         printf("%s, %.2lf kr\n", products[i].name, products[i].price);
     }*/
 
-    product* remainingProd = malloc(sizeof(char));
-    char query[50] = "APPELSIN";
+    FILE* SFile;
+    SFile = fopen("stores.txt", "r");
+
+    product* products = malloc(sizeof(char));
+
+    char buffer[20];
+
+    while (fgets(buffer, 50, SFile)) {
+        buffer[strcspn(buffer, "\n")] = '\0';
+
+        if(strcmp(buffer, "Rema") == 0)
+        {
+            rema1000_scan(QFile, &ArraySize, &products);
+        }
+        if(strcmp(buffer, "Fakta") == 0)
+        {
+            RelevantCoopData(QFile, &products, Query, &ArraySize);
+        }
+        if(strcmp(buffer, "Dagli'Brugsen") == 0)
+        {
+            RelevantCoopData(QFile, &products, Query, &ArraySize);
+        }
+        if(strcmp(buffer, "Bilka") == 0)
+        {
+            salling_scan(QFile, &ArraySize, &products);
+        }
+
+    }
+
+    final_print(&products, &ArraySize);
+
+    printf("\n\nWE'RE DONE HERE!\n\n");
+
+}
+
+void RelevantCoopData(FILE* QFile, product** products, char* Query, int* ArraySize)
+{
+    Query[strcspn(Query, "\n")] = '\0';
+    int ArrayIndex = 0;
+
+    FILE* XFile;
+    //XFile = fopen("QueryResults", "r");
+
+    product* AllProducts = coop_scan(QFile, &ArrayIndex);
+
     int prodIndex = 0;
-    for (int i = 0; i < ArraySize; i++){
-        char *res = strstr(products[i].name, query);
+    for (int i = 0; i < ArrayIndex; i++){
+        char *res = strstr(AllProducts[i].name, Query);
         if (res != NULL) {
-            prodIndex++;
-             //Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry)
-            remainingProd = realloc(remainingProd, prodIndex * sizeof(product));
-            strcpy(remainingProd[prodIndex-1].name, products[i].name);
-            remainingProd[prodIndex-1].price = products[i].price;
+            *ArraySize += 1;
+            *products = realloc(*products, sizeof(product) * *ArraySize);
+            strcpy(products[*ArraySize-1]->name, AllProducts[i].name);
+            products[*ArraySize-1]->price = AllProducts[i].price;
+
         }
     }
 
-    printf("\n\n\n");
-
-    for(int i = 0; i < prodIndex; i++)
-    {
-        printf("%s, %.2lf kr\n", remainingProd[i].name, remainingProd[i].price);
-    }
-
-    //final_print(products, 3);
-}
-
-void final_print(product* array, int array_len) {
-    printf("|                      Produkt                     |    Price    |    Store    |\n");
-    printf("|                                                  |             |             |\n");
-    node* current = head;
-    while (current != NULL) {
-        printf("|%49s |%12.2lf |%12s |\n", current->data.name, current->data.price, current->data.store);
-        current = current->next;
-    }
-    printf("________________________________________________________________________________\n");
+    free(AllProducts);
 }
 
 void delay(int seconds) {
@@ -905,11 +963,15 @@ void delay(int seconds) {
 
 int main()
 {
+//Delete all data in file
+    //FILE* QFile;
+    //QFile = fopen("QueryResults.txt", "w");
+    //fclose(QFile);
 
     SDictionary Dictionary = InitDictionary();
 
-    //WriteAPIDataToFile("Mel", Dictionary);
-    //ReadDataFromFile();
+    //WriteAPIDataToFile("Mel", Dictionary, 0);
+    //ReadDataFromFile("Mel");
 
     char buffer[50];
     /*Laver et kald for hele shopping listen, hvis du kun vil have et kald, så brug de to funktioner over*/
@@ -918,7 +980,9 @@ int main()
     int Runs = 0;
     while (fgets(buffer, 50, SLFile))
     {
-        WriteAPIDataToFile(buffer, Dictionary, Runs);
+        //We use runs, to make sure we only do the coop call once for each store
+        //WriteAPIDataToFile(buffer, Dictionary, Runs);
+        ReadDataFromFile(buffer);
         Runs++;
         delay(1);
     }
