@@ -100,6 +100,7 @@ void scan_input(char* ProductName, int* maxItems)
 {
     printf("Indtast produktets navn, såsom 'banan yogurt'>");
     scanf(" %s", ProductName);
+    check_input(ProductName);
     //while ((getchar()) != '\n');
     printf("Hvor mange resultater vil du se for dit produkt?>");
     scanf("%d", maxItems);
@@ -704,9 +705,10 @@ char* DictionaryLookup(SDictionary Dictionary, char* Key)
 
 void final_print(struct node* head, int MaxItems)
 {
-    printf("________________________________________________________________________________\n");
-    printf("|                      Produkt                     |    Price    |    Store    |\n");
-    printf("|                                                  |             |             |\n");
+    printf("\n");
+    printf("____________________________________________________________________________________\n");
+    printf("|                      Produkt                     |     Price     |     Store     |\n");
+    printf("|                                                  |               |               |\n");
     node* current = head;
 
     for (int i = 0; i < 10; i++)
@@ -714,7 +716,7 @@ void final_print(struct node* head, int MaxItems)
         if (current == NULL){
             break;
         }
-        printf("|%49s |%12.2lf |%12s |\n", current->data.name, current->data.price, current->data.store);
+        printf("|%49s |%14.2lf |%14s |\n", current->data.name, current->data.price, current->data.store);
         current = current->next;
     }
     /*
@@ -923,7 +925,6 @@ int main()
     char Product[50];
     int MaxItems = 0;
     scan_input(Product, &MaxItems);
-
     /*Laver et kald for hele shopping listen, hvis du kun vil have et kald, så brug de to funktioner over*/
     FILE* SLFile;
     SLFile = fopen("ShoppingList.txt", "r");

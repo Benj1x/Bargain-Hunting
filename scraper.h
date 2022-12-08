@@ -51,6 +51,9 @@ char* DictionaryLookup(SDictionary Dictionary, char* Key);
 SDictionary InitDictionary();
 void init_string(struct string* s);
 size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s);
+void check_input(char *string);
+void correct_input(char *string, int position, int str_len, int type);
+
 
 product* rema1000_scan(FILE* file, node** head);
 product* salling_scan(FILE* file, node** head);
