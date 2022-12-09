@@ -100,7 +100,7 @@ product* rema1000_scan(FILE* file, node** head) {
 
 void scan_input(char* ProductName, int* maxItems)
 {
-    printf("Indtast produktets navn, saasom 'banan yogurt'>");
+    printf("Indtast produktets navn, saasom 'banan yoghurt'>");
     scanf(" %[^\n]s", ProductName);
 
     check_input(ProductName);
