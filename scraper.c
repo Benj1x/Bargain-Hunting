@@ -262,6 +262,8 @@ int count_lines(char* file_name) {
         if (ch == '\n')
             lines++;
     }
+    //The last line is always empty, so this detects something it shouldn't, hence -1
+    lines = lines - 1;
     fclose(match_file);
     return lines;
 }
@@ -547,7 +549,7 @@ void GetNonCoopProducts(char* Items, SDictionary Dictionary, node** LinkedList) 
         }
         else {
             strcpy(IsDigkey, Key);
-            if (!strcmp(Key, "Rema") && !isdigit(IsDigkey[0]))
+            if (!strcmp(Key, "Rema") || !strcmp(Key, "Rema1000") && !isdigit(IsDigkey[0]))
             {
                 freopen("QueryResults.txt", "w+", QFile);
                 printf("%s Is Rema store\n", IsDigkey);
@@ -690,6 +692,15 @@ SDictionary InitDictionary()
     Dictionary.DictLength = 5;
     Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
     Dictionary.entry[4] = EntryRema;
+
+    SDictEntry EntryRema2;
+    strcpy(EntryRema2.Key, "Rema1000");
+    strcpy(EntryRema2.Value, "Rema");
+
+    Dictionary.DictLength = 6;
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
+    Dictionary.entry[5] = EntryRema2;
+
 
     return Dictionary;
 }
