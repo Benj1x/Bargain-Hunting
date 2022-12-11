@@ -11,7 +11,7 @@ enum {
 };
 
 product* salling_scan(FILE* file, node** head) {
-    int counter = -1;
+    /*int counter = -1;
     while (1) {
         char b = fgetc(file);
         if (feof(file)) {
@@ -23,7 +23,7 @@ product* salling_scan(FILE* file, node** head) {
 
     }
 
-    rewind(file);
+    rewind(file);*/
     while (fgetc(file) != '[') {
     }
     char c;
@@ -54,7 +54,7 @@ product* salling_scan(FILE* file, node** head) {
 }
 
 product* rema1000_scan(FILE* file, node** head) {
-    int counter = -4;
+    /*int counter = -4;
     while (1) {
         char b = fgetc(file);
         if (feof(file)) {
@@ -65,9 +65,9 @@ product* rema1000_scan(FILE* file, node** head) {
         }
 
     }
-    counter /= 2;
+    counter /= 2;*/
 
-    rewind(file);
+    //rewind(file);
     while (fgetc(file) != '[') {
     }
     char c;
@@ -100,7 +100,7 @@ product* rema1000_scan(FILE* file, node** head) {
 
 void scan_input(char* ProductName, int* maxItems)
 {
-    printf("Indtast produktets navn, saasom 'banan yogurt'>");
+    printf("Indtast produktets navn, saasom 'banan yoghurt'>");
     scanf(" %[^\n]s", ProductName);
 
     check_input(ProductName);
@@ -175,7 +175,6 @@ void correct_DK_char(char* string, int position, int str_len, int type)
 void insertToList(node** head, product data) {
     node* newnode = malloc(sizeof(node));
     newnode->data = data;
-    newnode->next = *head;
 
     if (*head == NULL || (*head)->data.price >= newnode->data.price) {
         newnode->next = *head;
@@ -203,14 +202,10 @@ char* GetSallingProducts(char* Item)
     strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
     strcpy(SProducts.KeyTypeAndKey, "Authorization: Bearer dc6422b7-166d-41e8-94c1-6804da7e17d5");
     char* r = APICall(SProducts);
-    FILE* aaaa = fopen("salling.txt", "w");
-    fputs(r, aaaa);
-    fclose(aaaa);
     return r;
 }
 
 char* GetCoopProducts(char* Stores)
-
 {
     char* StoreNumbers;
 
@@ -472,8 +467,12 @@ char* APICall(SAPIStruct Params)
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
         /*-----------------------------------------------------------*/
         struct curl_slist* headers = NULL;
-        if (Params.KeyTypeAndKey != "") headers = curl_slist_append(headers, Params.KeyTypeAndKey);
-        if (Params.CheckData != "") headers = curl_slist_append(headers, Params.CheckData);
+        if (Params.KeyTypeAndKey != "") {
+            headers = curl_slist_append(headers, Params.KeyTypeAndKey);
+        }
+        if (Params.CheckData != "") {
+            headers = curl_slist_append(headers, Params.CheckData);
+        }
         headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         res = curl_easy_perform(curl);
@@ -783,7 +782,6 @@ product* coop_scan(FILE* file, int* counter, char* Store) {
             c2 = fgetc(file);
             if (c2 == '?')
             {
-
                 return products;
             }
         }
@@ -799,10 +797,15 @@ product* coop_scan(FILE* file, int* counter, char* Store) {
                 strcpy(products[i].name, desc);
                 strcpy(products[i].store, Store);
             }
+            //Add navn2 to navn
             if (strcmp(ctgry, "Navn2") == 0) {
                 fscanf(file, "%*[\"]%*[\"]%s%[^\"]", desc2);
                 if (strcmp(desc2, "\"") == 0) {
                 }
+                /*else {
+                    fscanf(file, "%*2s%[^\"]%*c", desc);
+                    strcat(products[i].name, desc2);
+                }*/
             }
             if ((strcmp(ctgry, "Pris") == 0)) {
                 fscanf(file, "%*c%lf", &price);
@@ -824,7 +827,7 @@ void ReadCoopData(char* Query, node** ProductList)
     FILE* SFile;
     SFile = fopen("stores.txt", "r");
 
-    product* products = malloc(sizeof(char));
+    //product* products = malloc(sizeof(char));
 
     char buffer[20];
 
