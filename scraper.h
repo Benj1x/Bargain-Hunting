@@ -62,7 +62,6 @@ void insertToList(node** head, product data);
 void scan_input(char* name, int* maxItems);
 int DoesProductExist(char curretInput[]);
 void check_DK_char(char* string);
-void correct_DK_char(char* string, int i, int str_len, int type);
 
 void DeleteAllListItems(node** LinkedListHead);
 void ReadCoopData(char* Query, node** ProductList);

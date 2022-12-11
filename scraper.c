@@ -123,52 +123,30 @@ void check_DK_char(char* string)
     for (int i = 0; i < len; ++i) {
         switch ((int)string[i]) {
             case ae:
-                correct_DK_char(string, i, len, ae);
+                string[i - 1] = 'a';
+                string[i] = 'e';
                 break;
             case oe:
-                correct_DK_char(string, i, len, oe);
+                string[i - 1] = 'o';
+                string[i] = 'e';
                 break;
             case aa:
-                correct_DK_char(string, i, len, aa);
+                string[i - 1] = 'a';
+                string[i] = 'a';
                 break;
             case AE:
-                correct_DK_char(string, i, len, AE);
+                string[i - 1] = 'A';
+                string[i] = 'E';
                 break;
             case OE:
-                correct_DK_char(string, i, len, OE);
+                string[i - 1] = 'O';
+                string[i] = 'E';
                 break;
             case AA:
-                correct_DK_char(string, i, len, AA);
+                string[i - 1] = 'A';
+                string[i] = 'A';
                 break;
         }
-    }
-}
-
-void correct_DK_char(char* string, int position, int str_len, int type)
-{
-    if (type == ae) {
-        string[position - 1] = 'a';
-        string[position] = 'e';
-    }
-    else if (type == oe) {
-        string[position - 1] = 'o';
-        string[position] = 'e';
-    }
-    else if (type == aa) {
-        string[position - 1] = 'a';
-        string[position] = 'a';
-    }
-    else if (type == AE) {
-        string[position - 1] = 'A';
-        string[position] = 'E';
-    }
-    else if (type == OE) {
-        string[position - 1] = 'O';
-        string[position] = 'E';
-    }
-    else if (type == AA) {
-        string[position - 1] = 'A';
-        string[position] = 'A';
     }
 }
 
@@ -560,7 +538,7 @@ void GetNonCoopProducts(char* Items, SDictionary Dictionary, node** LinkedList) 
             }
             else if (!isdigit(IsDigkey[0])) {
                 freopen("QueryResults.txt", "w+", QFile);
-                printf("%s Is a Salling store\n", IsDigkey);
+                // printf("%s Is a Salling store\n", IsDigkey);
                 char* c = GetSallingProducts(Items);
                 fputs(c, QFile);
                 rewind(QFile);
