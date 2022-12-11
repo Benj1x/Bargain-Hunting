@@ -98,22 +98,41 @@ product* rema1000_scan(FILE* file, node** head) {
 }
 
 
-void scan_input(char* ProductName, int* maxItems)
+int scan_input(char* ProductName)
 {
+
     printf("Indtast produktets navn, saasom 'banan yoghurt'>");
     scanf(" %[^\n]s", ProductName);
 
-    check_input(ProductName);
-
     //while ((getchar()) != '\n');
-    printf("Hvor mange resultater vil du se for dit produkt?>");
-    scanf("%d", maxItems);
+    while (getchar() != '\n');
+    printf("\nHvor mange resultater vil du se for dit produkt?>");
+    while (1)
+    {
+        char* digit;
+        scanf("%s", digit);
 
-    //FILE* SFile = fopen("ShoppingList.txt", "w");
-    //fputs(name, SFile);
-    //fprintf(SFile, "%s_%.2lf", name, maxItems);
+        int validChecks = 0;
 
-    //fclose(SFile);
+        for (int i = 0; i < strlen(digit); i++) {
+            if (isdigit(digit[i]) == 1) {
+                validChecks++;
+                if (validChecks == strlen(digit)) {
+                    int x;
+                    //sscanf convers our char to an int
+                    sscanf(digit, "%d", &x);
+                    printf("%d", x);
+                    //Put the number into our maxItems
+                    return x;
+                }
+            } else {
+                printf("Dit input er ikke et tal. Prøv igen :).\n");
+            }
+        }
+
+        while (getchar() != '\n');
+
+    }
 
 }
 
@@ -180,6 +199,7 @@ char* GetSallingProducts(char* Item)
     strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
     strcpy(SProducts.KeyTypeAndKey, "Authorization: Bearer dc6422b7-166d-41e8-94c1-6804da7e17d5");
     char* r = APICall(SProducts);
+
     return r;
 }
 
@@ -249,7 +269,6 @@ char** getStoresArray(int* storeAmount) {
     rewind(stores);
     char** storesArray = malloc(sizeof(char*) * (*storeAmount));
 
-
     for (int i = 0; i < *storeAmount; i++)
     {
         storesArray[i] = malloc(20 + 1);
@@ -260,8 +279,6 @@ char** getStoresArray(int* storeAmount) {
 
     fclose(stores);
     return storesArray;
-
-
 }
 
 
@@ -912,14 +929,14 @@ int main()
 
 
     SDictionary Dictionary = InitDictionary();
-    char Product[50];
-    int MaxItems = 0;
+    char Product[50] = "\0";
+    //int MaxItems = 0;
 
     printf("Hej, og velkommen til! \nI dette program kan du finde de bedste priser paa dine dagligvare!\n");
 
     storeChoice();
 
-    scan_input(Product, &MaxItems);
+    int MaxItems = scan_input(Product);
     /*Laver et kald for hele shopping listen, hvis du kun vil have et kald, så brug de to funktioner over*/
     FILE* SLFile;
     SLFile = fopen("ShoppingList.txt", "r");
@@ -928,8 +945,9 @@ int main()
     node* LinkedList = NULL;
 
     //WriteCoopDataToFile(Product, Dictionary, Runs);
-    GetNonCoopProducts(Product, Dictionary, &LinkedList);
     ReadCoopData(Product, &LinkedList);
+    check_input(Product);
+    GetNonCoopProducts(Product, Dictionary, &LinkedList);
     Runs++;
     final_print(LinkedList, MaxItems);
     DeleteAllListItems(&LinkedList);
