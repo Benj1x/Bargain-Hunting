@@ -41,8 +41,9 @@ const char* KardexValue[] = { [Fakta] = "24080",[DagliBrugsen] = "2082" };
 
 char* GetSallingProducts(char* Item);
 
+void delay(int seconds);
 char* GetCoopProducts(char* Stores);
-void WriteAPIDataToFile(char* Items, SDictionary Dictionary, int Runs);
+void WriteCoopDataToFile(char* Items, SDictionary Dictionary, int Runs);
 void storeChoice();
 void insertToList(node** head, product data);
 int storeCheck(char currentInput[]);
@@ -51,19 +52,22 @@ char* DictionaryLookup(SDictionary Dictionary, char* Key);
 SDictionary InitDictionary();
 void init_string(struct string* s);
 size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s);
+void check_input(char *string);
+
 
 product* rema1000_scan(FILE* file, node** head);
 product* salling_scan(FILE* file, node** head);
 
-
-void scan_input(char* name, double* max_price);
+void insertToList(node** head, product data);
+int scan_input(char* name);
 int DoesProductExist(char curretInput[]);
 void check_DK_char(char* string);
-void correct_DK_char(char* string, int i, int str_len, int type);
 
-void ReadDataFromFile(char* Query);
-void final_print(product* array, int* array_len);
-void RelevantCoopData(FILE* QFile, product** remainingProd, char* Query, int* ArraySize);
+void DeleteAllListItems(node** LinkedListHead);
+void ReadCoopData(char* Query, node** ProductList);
+
+void final_print(struct node* head, int MaxItems);
+void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList);
 
 
 #ifndef BARGAIN_HUNTING_SCRAPER_H
