@@ -793,13 +793,13 @@ product* coop_scan(FILE* file, int* counter, char* Store) {
             }
             //Add navn2 to navn
             if (strcmp(ctgry, "Navn2") == 0) {
-                fscanf(file, "%*[\"]%*[\"]%s%[^\"]", desc2);
+                fscanf(file, "%*[^\"]%*c%[^\"]%*c", desc2);
                 if (strcmp(desc2, "\"") == 0) {
                 }
-                /*else {
-                    fscanf(file, "%*2s%[^\"]%*c", desc);
+                else {
+                    //fscanf(file, "%*2s%[^\"]%*c", desc);
                     strcat(products[i].name, desc2);
-                }*/
+                }
             }
             if ((strcmp(ctgry, "Pris") == 0)) {
                 fscanf(file, "%*c%lf", &price);
