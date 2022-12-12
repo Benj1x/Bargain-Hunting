@@ -55,8 +55,8 @@ size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s);
 void check_input_for_salling(char *string);
 
 
-product* rema1000_scan(FILE* file, node** head);
-product* salling_scan(FILE* file, node** head);
+void rema1000_scan(FILE* file, node** head);
+void salling_scan(FILE* file, node** head);
 
 void insertToList(node** head, product data);
 int scan_input(char* name);

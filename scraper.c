@@ -14,7 +14,15 @@ enum misc_char {
     ö = -74, Ö = -106, ô = -76, Ô = -108, é = -87, É = -119, ä = -92, Ä = -124, ü = -68, Ü = -100, TRADEMARK = -82, SPACE = 32
 };
 
-product* salling_scan(FILE* file, node** head) {
+
+/**
+ * @Description
+ * Reads a txt-file and parses for Bilka-products, which are then inserted into a linked list.
+ * @param file: file with non-COOP products
+ * @param head: head of linked-list
+ */
+
+void salling_scan(FILE* file, node** head) {
     int counter = -1;
     while (1) {
         char b = fgetc(file);
@@ -56,8 +64,14 @@ product* salling_scan(FILE* file, node** head) {
         }
     }
 }
+/**
+ * @Description
+ * Reads a txt-file and parses for rema1000-products, which are then inserted into a linked list.
+ * @param file: file with non-COOP products
+ * @param head: head of linked-list
+ */
 
-product* rema1000_scan(FILE* file, node** head) {
+void rema1000_scan(FILE* file, node** head) {
     int counter = -4;
     while (1) {
         char b = fgetc(file);
@@ -100,9 +114,14 @@ product* rema1000_scan(FILE* file, node** head) {
         }
     }
 }
+/**
+ * @Description
+ * function which asks the user for a desired product name and maximum number of items to be shown.
+ * @param ProductName: string to contain user input of product name.
+ * @return user choice of maximum number of items that are to be shown in the terminal.
+ */
 
-
-void scan_input(char* ProductName, int* maxItems)
+int scan_input(char* ProductName)
 {
     printf("Indtast produktets navn, saasom 'banan yoghurt'. Afslut programmet med 'end'>");
     scanf(" %[^\n]s", ProductName);
@@ -146,7 +165,9 @@ void scan_input(char* ProductName, int* maxItems)
 
 
 /**
- *
+ * @Description
+ * Function which checks a string for uncommon characters, such as danish characters (æ, ø, å) or trademark-symbol,
+ * and then corrects them.
  * @param string: string scanned from file
  *
  */
@@ -922,6 +943,13 @@ void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList)
 
     free(AllProducts);
 }
+
+/**
+ * @Description
+ * Function which checks a product input for danish characters (æ, ø, å) and spaces, and converts them to the
+ * approapriate UTC-8 codes, before the string is used in get GetNonCoopProducts.
+ * @param string: string with produkt name
+ */
 
 void check_input_for_salling(char *string) {
     int stringlen = strlen(string);
