@@ -114,10 +114,14 @@ int scan_input(char* ProductName)
 
         int validChecks = 0;
 
-        for (int i = 0; i < strlen(digit); i++) {
-            if (isdigit(digit[i]) == 1) {
+        for (int i = 0; i < strlen(digit); i++)
+        {
+            if (isdigit(digit[i]) == 1)
+            {
                 validChecks++;
-                if (validChecks == strlen(digit)) {
+
+                if (validChecks == strlen(digit))
+                {
                     int x;
                     //sscanf convers our char to an int
                     sscanf(digit, "%d", &x);
@@ -607,19 +611,21 @@ void WriteCoopDataToFile(char* Items, SDictionary Dictionary, int Runs)
         if (Key == NULL)
         {
             printf("Store not found (Not supported by API)\n");
-        }
-        else {
+        } else{
             strcpy(IsDigkey, Key);
-            if (isdigit(IsDigkey[0]))
+        }
+
+
+        if (isdigit(IsDigkey[0]))
+        {
+            if (Runs == 0)
             {
-                if (Runs == 0)
-                {
-                    printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
-                    char* c = GetCoopProducts(Key);
-                    fputs(c, QFile);
-                    fputs("??", QFile);
-                    free(c);
-                }
+                printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
+                char* c = GetCoopProducts(Key);
+                fputs(c, QFile);
+                fputs("??", QFile);
+                free(c);
+
             }
         }
     }
@@ -634,30 +640,22 @@ SDictionary InitDictionary()
     SDictionary Dictionary;
     /*https://stackoverflow.com/a/62004489*/
     //If you pass NULL to realloc(),
-    //then realloc tries to allocate a completely new block,
-    //but if you pass something different than NULL it
-    //consider it represents an already allocated block (which it isn't) and the computer explodes.
+    //then realloc will try to allocate a completely new block of RAM,
+    //but if you pass something different than NULL it, realloc suposses that it already exists (in RAM)
+    //and will therefor try to realloc an existing block of RAM (which it isn't) and the computer dies.
     Dictionary.entry = NULL;
     /*Creates our entry for Dagli'Brugsen*/
-    SDictEntry EntryError;
-    strcpy(EntryError.Key, "Not Found");
-    strcpy(EntryError.Value, "000000");
-
-    Dictionary.DictLength = 1;
-    Dictionary.DictMaxSize = 10;
-    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(EntryError) + 1);
-    Dictionary.entry[0] = EntryError;
 
     SDictEntry EntryDagliBrugs;
     strcpy(EntryDagliBrugs.Key, "Dagli'Brugsen");
     strcpy(EntryDagliBrugs.Value, "2082");
 
     /*Update the dictionary, first update the length, then update the entry*/
-    Dictionary.DictLength = 2;
+    Dictionary.DictLength = 1;
     Dictionary.DictMaxSize = 10;
 
-    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(EntryDagliBrugs) + 1);
-    Dictionary.entry[1] = EntryDagliBrugs;
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
+    Dictionary.entry[0] = EntryDagliBrugs;
 
     /*Creates our entry for Fakta*/
     SDictEntry EntryFakta;
@@ -665,37 +663,36 @@ SDictionary InitDictionary()
     strcpy(EntryFakta.Value, "24080");
 
     /*Updates our dictonaries length, and adds the new entry to the dictionary*/
-    Dictionary.DictLength = 3;
+    Dictionary.DictLength = 2;
     Dictionary.DictMaxSize = 10;
 
     Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
-    Dictionary.entry[2] = EntryFakta;
+    Dictionary.entry[1] = EntryFakta;
 
     SDictEntry EntryBilka;
     strcpy(EntryBilka.Key, "Bilka");
     strcpy(EntryBilka.Value, "Bilka");
 
-    Dictionary.DictLength = 4;
+    Dictionary.DictLength = 3;
     Dictionary.DictMaxSize = 10;
     Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
-    Dictionary.entry[3] = EntryBilka;
+    Dictionary.entry[2] = EntryBilka;
 
     SDictEntry EntryRema;
     strcpy(EntryRema.Key, "Rema");
     strcpy(EntryRema.Value, "Rema");
 
-    Dictionary.DictLength = 5;
+    Dictionary.DictLength = 4;
     Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
-    Dictionary.entry[4] = EntryRema;
+    Dictionary.entry[3] = EntryRema;
 
     SDictEntry EntryRema2;
     strcpy(EntryRema2.Key, "Rema1000");
     strcpy(EntryRema2.Value, "Rema");
 
-    Dictionary.DictLength = 6;
+    Dictionary.DictLength = 5;
     Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
-    Dictionary.entry[5] = EntryRema2;
-
+    Dictionary.entry[4] = EntryRema2;
 
     return Dictionary;
 }
@@ -827,7 +824,8 @@ void ReadCoopData(char* Query, node** ProductList)
 
     char buffer[20];
 
-    for (int i = 0; Query[i] != '\0'; i++) {
+    for (int i = 0; Query[i] != '\0'; i++)
+    {
         Query[i] = toupper(Query[i]);
     }
 
@@ -931,7 +929,6 @@ int main()
 
     SDictionary Dictionary = InitDictionary();
     char Product[50] = "\0";
-    //int MaxItems = 0;
 
     printf("Hej, og velkommen til! \nI dette program kan du finde de bedste priser paa dine dagligvare!\n");
 
