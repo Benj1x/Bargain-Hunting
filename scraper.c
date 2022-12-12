@@ -130,7 +130,7 @@ void fotex_scan(FILE* file, node** head) {
             fscanf(file, "%[^\"]%*c", ctgry);
             if (strcmp(ctgry, "name") == 0) {
                 fscanf(file, "%*2s%[^\"]%*c", desc);
-                check_DK_char(desc);
+                check_output_char(desc);
             }
             if ((strcmp(ctgry, "normalPrice") == 0)) {
                 fscanf(file, "%*c%lf", &price);
@@ -1001,9 +1001,10 @@ void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList)
     {
         if (strstr(AllProducts[i].name, Query) != NULL)
         {
-            if (IsProductInList(*LinkedList, AllProducts[i])){
+            if (IsProductInList(*LinkedList, AllProducts[i])) {
                 printf("1");
-            } else {
+            }
+            else {
                 insertToList(LinkedList, AllProducts[i]);
             }
 
@@ -1017,7 +1018,7 @@ int IsProductInList(node* LinkedList, product data)
 {
     node* current = LinkedList;
 
-    while(current != NULL)
+    while (current != NULL)
     {
         if (strcmp(current->data.ean, data.ean) == 0)
         {
