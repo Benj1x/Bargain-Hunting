@@ -715,7 +715,7 @@ SDictionary InitDictionary()
 char* DictionaryLookup(SDictionary Dictionary, char* Key)
 {
     //For the size of our dictionary
-    for (int i = 1; i < Dictionary.DictLength; i++)
+    for (int i = 0; i < Dictionary.DictLength; i++)
     {
         //If equal, it returns 0, therefor we want !strcmp (Some might be used to it returning 1)
         /*This checks if our key, is equal to the set key, of the dictionary entry*/
@@ -983,7 +983,7 @@ int main()
 
     node* LinkedList = NULL;
 
-    WriteCoopDataToFile(Product, Dictionary, Runs);
+    //WriteCoopDataToFile(Product, Dictionary, Runs);
     ReadCoopData(Product, &LinkedList);
     check_input(Product);
     GetNonCoopProducts(Product, Dictionary, &LinkedList);
