@@ -287,7 +287,6 @@ char** getStoresArray(int* storeAmount) {
 }
 
 
-
 void storeChoice() {
     FILE* stores;
     char storeID[5];
@@ -302,9 +301,11 @@ void storeChoice() {
 
     //Loop for entering wanted stores
     while (1) {
-        printf("Skriv et butiksnavn, afslut med 'q':");
-        scanf("%[^\n]", &storeName);
-        while (getchar() != '\n');
+        //Loop for avoiding blank inputs
+        while (printf("Skriv et butiksnavn, afslut med 'q'>") && scanf("%[^\n]%*c", storeName) < 1) {
+            printf("please give valid input\n");
+            while (getchar() != '\n');
+        }
 
         //Breaks loop
         if (strcasecmp(storeName, "q") == 0) {
