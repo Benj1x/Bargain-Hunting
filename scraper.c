@@ -24,6 +24,7 @@ product* salling_scan(FILE* file, node** head) {
         if (b == '}') {
             counter += 1;
         }
+
     }
 
     rewind(file);
@@ -105,19 +106,41 @@ void scan_input(char* ProductName, int* maxItems)
 {
     printf("Indtast produktets navn, saasom 'banan yoghurt'. Afslut programmet med 'end'>");
     scanf(" %[^\n]s", ProductName);
-    if (strcasecmp(ProductName, "end") == 0) {
-        return;
+
+    //while ((getchar()) != '\n');
+    while (getchar() != '\n');
+    printf("\nHvor mange resultater vil du se for dit produkt?>");
+    while (1)
+    {
+        char* digit;
+        scanf("%s", digit);
+
+        int validChecks = 0;
+
+        for (int i = 0; i < strlen(digit); i++)
+        {
+            if (isdigit(digit[i]) == 1)
+            {
+                validChecks++;
+
+                if (validChecks == strlen(digit))
+                {
+                    int x;
+                    //sscanf convers our char to an int
+                    sscanf(digit, "%d", &x);
+                    printf("%d", x);
+                    //Put the number into our maxItems
+                    return x;
+                }
+                else {
+                    printf("Dit input er ikke et tal. Prøv igen :).\n");
+                }
+            }
+        }
+
+        while (getchar() != '\n');
+
     }
-
-    // while ((getchar()) != '\n');
-    printf("Hvor mange resultater vil du se for dit produkt?>");
-    scanf("%d", maxItems);
-
-    //FILE* SFile = fopen("ShoppingList.txt", "w");
-    //fputs(name, SFile);
-    //fprintf(SFile, "%s_%.2lf", name, maxItems);
-
-    //fclose(SFile);
 
 }
 
@@ -205,8 +228,6 @@ void check_output_char(char* string)
     }
 }
 
-
-
 void insertToList(node** head, product data) {
     node* newnode = malloc(sizeof(node));
     newnode->data = data;
@@ -238,9 +259,7 @@ char* GetSallingProducts(char* Item)
     strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
     strcpy(SProducts.KeyTypeAndKey, "Authorization: Bearer dc6422b7-166d-41e8-94c1-6804da7e17d5");
     char* r = APICall(SProducts);
-    FILE* aaaa = fopen("salling.txt", "w");
-    fputs(r, aaaa);
-    fclose(aaaa);
+
     return r;
 }
 
@@ -342,9 +361,11 @@ void storeChoice() {
 
     //Loop for entering wanted stores
     while (1) {
-        printf("Skriv et butiksnavn, afslut med 'q':");
-        scanf("%[^\n]", &storeName);
-        while (getchar() != '\n');
+        //Loop for avoiding blank inputs
+        while (printf("Skriv et butiksnavn, afslut med 'q'>") && scanf("%[^\n]%*c", storeName) < 1) {
+            printf("please give valid input\n");
+            while (getchar() != '\n');
+        }
 
         //Breaks loop
         if (strcasecmp(storeName, "q") == 0) {
@@ -507,8 +528,12 @@ char* APICall(SAPIStruct Params)
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
         /*-----------------------------------------------------------*/
         struct curl_slist* headers = NULL;
-        if (Params.KeyTypeAndKey != "") headers = curl_slist_append(headers, Params.KeyTypeAndKey);
-        if (Params.CheckData != "") headers = curl_slist_append(headers, Params.CheckData);
+        if (Params.KeyTypeAndKey != "") {
+            headers = curl_slist_append(headers, Params.KeyTypeAndKey);
+        }
+        if (Params.CheckData != "") {
+            headers = curl_slist_append(headers, Params.CheckData);
+        }
         headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         res = curl_easy_perform(curl);
@@ -647,19 +672,21 @@ void WriteCoopDataToFile(char* Items, SDictionary Dictionary, int Runs)
         if (Key == NULL)
         {
             printf("Store not found (Not supported by API)\n");
-        }
-        else {
+        } else{
             strcpy(IsDigkey, Key);
-            if (isdigit(IsDigkey[0]))
+        }
+
+
+        if (isdigit(IsDigkey[0]))
+        {
+            if (Runs == 0)
             {
-                if (Runs == 0)
-                {
-                    printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
-                    char* c = GetCoopProducts(Key);
-                    fputs(c, QFile);
-                    fputs("??", QFile);
-                    free(c);
-                }
+                printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
+                char* c = GetCoopProducts(Key);
+                fputs(c, QFile);
+                fputs("??", QFile);
+                free(c);
+
             }
         }
     }
@@ -674,30 +701,22 @@ SDictionary InitDictionary()
     SDictionary Dictionary;
     /*https://stackoverflow.com/a/62004489*/
     //If you pass NULL to realloc(),
-    //then realloc tries to allocate a completely new block,
-    //but if you pass something different than NULL it
-    //consider it represents an already allocated block (which it isn't) and the computer explodes.
+    //then realloc will try to allocate a completely new block of RAM,
+    //but if you pass something different than NULL it, realloc suposses that it already exists (in RAM)
+    //and will therefor try to realloc an existing block of RAM (which it isn't) and the computer dies.
     Dictionary.entry = NULL;
     /*Creates our entry for Dagli'Brugsen*/
-    SDictEntry EntryError;
-    strcpy(EntryError.Key, "Not Found");
-    strcpy(EntryError.Value, "000000");
-
-    Dictionary.DictLength = 1;
-    Dictionary.DictMaxSize = 10;
-    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(EntryError) + 1);
-    Dictionary.entry[0] = EntryError;
 
     SDictEntry EntryDagliBrugs;
     strcpy(EntryDagliBrugs.Key, "Dagli'Brugsen");
     strcpy(EntryDagliBrugs.Value, "2082");
 
     /*Update the dictionary, first update the length, then update the entry*/
-    Dictionary.DictLength = 2;
+    Dictionary.DictLength = 1;
     Dictionary.DictMaxSize = 10;
 
-    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(EntryDagliBrugs) + 1);
-    Dictionary.entry[1] = EntryDagliBrugs;
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
+    Dictionary.entry[0] = EntryDagliBrugs;
 
     /*Creates our entry for Fakta*/
     SDictEntry EntryFakta;
@@ -705,37 +724,36 @@ SDictionary InitDictionary()
     strcpy(EntryFakta.Value, "24080");
 
     /*Updates our dictonaries length, and adds the new entry to the dictionary*/
-    Dictionary.DictLength = 3;
+    Dictionary.DictLength = 2;
     Dictionary.DictMaxSize = 10;
 
     Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
-    Dictionary.entry[2] = EntryFakta;
+    Dictionary.entry[1] = EntryFakta;
 
     SDictEntry EntryBilka;
     strcpy(EntryBilka.Key, "Bilka");
     strcpy(EntryBilka.Value, "Bilka");
 
-    Dictionary.DictLength = 4;
+    Dictionary.DictLength = 3;
     Dictionary.DictMaxSize = 10;
     Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
-    Dictionary.entry[3] = EntryBilka;
+    Dictionary.entry[2] = EntryBilka;
 
     SDictEntry EntryRema;
     strcpy(EntryRema.Key, "Rema");
     strcpy(EntryRema.Value, "Rema");
 
-    Dictionary.DictLength = 5;
+    Dictionary.DictLength = 4;
     Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
-    Dictionary.entry[4] = EntryRema;
+    Dictionary.entry[3] = EntryRema;
 
     SDictEntry EntryRema2;
     strcpy(EntryRema2.Key, "Rema1000");
     strcpy(EntryRema2.Value, "Rema");
 
-    Dictionary.DictLength = 6;
+    Dictionary.DictLength = 5;
     Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
-    Dictionary.entry[5] = EntryRema2;
-
+    Dictionary.entry[4] = EntryRema2;
 
     return Dictionary;
 }
@@ -834,10 +852,15 @@ product* coop_scan(FILE* file, int* counter, char* Store) {
                 strcpy(products[i].name, desc);
                 strcpy(products[i].store, Store);
             }
+            //Add navn2 to navn
             if (strcmp(ctgry, "Navn2") == 0) {
                 fscanf(file, "%*[\"]%*[\"]%s%[^\"]", desc2);
                 if (strcmp(desc2, "\"") == 0) {
                 }
+                /*else {
+                    fscanf(file, "%*2s%[^\"]%*c", desc);
+                    strcat(products[i].name, desc2);
+                }*/
             }
             if ((strcmp(ctgry, "Pris") == 0)) {
                 fscanf(file, "%*c%lf", &price);
@@ -859,11 +882,12 @@ void ReadCoopData(char* Query, node** ProductList)
     FILE* SFile;
     SFile = fopen("stores.txt", "r");
 
-    product* products = malloc(sizeof(char));
+    //product* products = malloc(sizeof(char));
 
     char buffer[20];
 
-    for (int i = 0; Query[i] != '\0'; i++) {
+    for (int i = 0; Query[i] != '\0'; i++)
+    {
         Query[i] = toupper(Query[i]);
     }
 
@@ -966,34 +990,31 @@ int main()
 
 
     SDictionary Dictionary = InitDictionary();
-    char Product[50];
-    int MaxItems = 0;
+    char Product[50] = "\0";
 
     printf("Hej, og velkommen til! \nI dette program kan du finde de bedste priser paa dine dagligvare!\n");
 
     storeChoice();
 
-        scan_input(Product, &MaxItems);
-        /*Laver et kald for hele shopping listen, hvis du kun vil have et kald, så brug de to funktioner over*/
-        FILE* SLFile;
-        SLFile = fopen("ShoppingList.txt", "r");
-        int Runs = 0;
+    int MaxItems = scan_input(Product);
+    /*Laver et kald for hele shopping listen, hvis du kun vil have et kald, så brug de to funktioner over*/
+    FILE* SLFile;
+    SLFile = fopen("ShoppingList.txt", "r");
+    int Runs = 0;
 
-        node* LinkedList = NULL;
+    node* LinkedList = NULL;
 
-        //WriteCoopDataToFile(Product, Dictionary, Runs);
-        char* salling_product = Product;
-        check_input_for_salling(salling_product);
-        GetNonCoopProducts(salling_product, Dictionary, &LinkedList);
-        ReadCoopData(Product, &LinkedList);
-        Runs++;
-        final_print(LinkedList, MaxItems);
-        DeleteAllListItems(&LinkedList);
-        delay(1);
+    //WriteCoopDataToFile(Product, Dictionary, Runs);
+    ReadCoopData(Product, &LinkedList);
+    check_input_for_salling(Product);
+    GetNonCoopProducts(Product, Dictionary, &LinkedList);
+    Runs++;
+    final_print(LinkedList, MaxItems);
+    DeleteAllListItems(&LinkedList);
+    delay(1);
 
 
-        free(Dictionary.entry);
-
+    free(Dictionary.entry);
     return 0;
 }
 

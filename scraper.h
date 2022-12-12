@@ -59,7 +59,7 @@ product* rema1000_scan(FILE* file, node** head);
 product* salling_scan(FILE* file, node** head);
 
 void insertToList(node** head, product data);
-void scan_input(char* name, int* maxItems);
+int scan_input(char* name);
 int DoesProductExist(char curretInput[]);
 void check_output_char(char* string);
 
