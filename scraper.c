@@ -6,12 +6,16 @@
 #include <locale.h>
 #include <wchar.h>
 
-enum {
-    ae = -90, oe = -72, aa = -91, AE = -122, OE = -104, AA = -123, SPACE = 32
+enum danish_char {
+    ae = -90, oe = -72, aa = -91, AE = -122, OE = -104, AA = -123
+};
+
+enum misc_char {
+    ö = -74, Ö = -106, ô = -76, Ô = -108, é = -87, É = -119, ä = -92, Ä = -124, ü = -68, Ü = -100, TRADEMARK = -82, SPACE = 32
 };
 
 product* salling_scan(FILE* file, node** head) {
-    /*int counter = -1;
+    int counter = -1;
     while (1) {
         char b = fgetc(file);
         if (feof(file)) {
@@ -23,7 +27,7 @@ product* salling_scan(FILE* file, node** head) {
 
     }
 
-    rewind(file);*/
+    rewind(file);
     while (fgetc(file) != '[') {
     }
     char c;
@@ -39,7 +43,7 @@ product* salling_scan(FILE* file, node** head) {
             fscanf(file, "%[^\"]%*c", ctgry);
             if (strcmp(ctgry, "title") == 0) {
                 fscanf(file, "%*2s%[^\"]%*c", desc);
-                check_DK_char(desc);
+                check_output_char(desc);
             }
             if ((strcmp(ctgry, "price") == 0)) {
                 fscanf(file, "%*c%4lf", &price);
@@ -54,7 +58,7 @@ product* salling_scan(FILE* file, node** head) {
 }
 
 product* rema1000_scan(FILE* file, node** head) {
-    /*int counter = -4;
+    int counter = -4;
     while (1) {
         char b = fgetc(file);
         if (feof(file)) {
@@ -65,9 +69,9 @@ product* rema1000_scan(FILE* file, node** head) {
         }
 
     }
-    counter /= 2;*/
+    counter /= 2;
 
-    //rewind(file);
+    rewind(file);
     while (fgetc(file) != '[') {
     }
     char c;
@@ -83,7 +87,7 @@ product* rema1000_scan(FILE* file, node** head) {
             fscanf(file, "%[^\"]%*c", ctgry);
             if (strcmp(ctgry, "name") == 0) {
                 fscanf(file, "%*2s%[^\"]%*c", desc);
-                check_DK_char(desc);
+                check_output_char(desc);
             }
             if ((strcmp(ctgry, "price") == 0)) {
                 fscanf(file, "%*c%lf", &price);
@@ -98,10 +102,9 @@ product* rema1000_scan(FILE* file, node** head) {
 }
 
 
-int scan_input(char* ProductName)
+void scan_input(char* ProductName, int* maxItems)
 {
-
-    printf("Indtast produktets navn, saasom 'banan yoghurt'>");
+    printf("Indtast produktets navn, saasom 'banan yoghurt'. Afslut programmet med 'end'>");
     scanf(" %[^\n]s", ProductName);
 
     //while ((getchar()) != '\n');
@@ -141,10 +144,18 @@ int scan_input(char* ProductName)
 
 }
 
-void check_DK_char(char* string)
+
+/**
+ *
+ * @param string: string scanned from file
+ *
+ */
+
+void check_output_char(char* string)
 {
     int len = strlen(string);
     for (int i = 0; i < len; ++i) {
+        char *strB = "Null";
         switch ((int)string[i]) {
             case ae:
                 string[i - 1] = 'a';
@@ -170,6 +181,49 @@ void check_DK_char(char* string)
                 string[i - 1] = 'A';
                 string[i] = 'A';
                 break;
+            case ö:
+                string[i - 1] = 'o';
+                string[i] = 'e';
+                break;
+            case Ö:
+                string[i - 1] = 'O';
+                string[i] = 'e';
+                break;
+            case ô:
+                strB = "o";
+                break;
+            case Ô:
+                strB = "O";
+                break;
+            case é:
+                strB = "e";
+                break;
+            case É:
+                strB = "E";
+                break;
+            case ä:
+                strB = "a";
+                break;
+            case Ä:
+                strB = "A";
+                break;
+            case ü:
+                strB = "u";
+                break;
+            case Ü:
+                strB = "U";
+                break;
+            case TRADEMARK:
+                strB = "";
+                break;
+        }
+        if (strcmp(strB, "Null") != 0) {
+            char *strA = string, strC[50];
+            strncpy(strC, strA, i-1);
+            strC[i] = '\0';
+            strcat(strC, strB);
+            strcat(strC, strA + i+1);
+            strcpy(string, strC);
         }
     }
 }
@@ -177,6 +231,7 @@ void check_DK_char(char* string)
 void insertToList(node** head, product data) {
     node* newnode = malloc(sizeof(node));
     newnode->data = data;
+    newnode->next = *head;
 
     if (*head == NULL || (*head)->data.price >= newnode->data.price) {
         newnode->next = *head;
@@ -209,6 +264,7 @@ char* GetSallingProducts(char* Item)
 }
 
 char* GetCoopProducts(char* Stores)
+
 {
     char* StoreNumbers;
 
@@ -274,6 +330,7 @@ char** getStoresArray(int* storeAmount) {
     rewind(stores);
     char** storesArray = malloc(sizeof(char*) * (*storeAmount));
 
+
     for (int i = 0; i < *storeAmount; i++)
     {
         storesArray[i] = malloc(20 + 1);
@@ -284,7 +341,10 @@ char** getStoresArray(int* storeAmount) {
 
     fclose(stores);
     return storesArray;
+
+
 }
+
 
 
 void storeChoice() {
@@ -741,7 +801,7 @@ void final_print(struct node* head, int MaxItems)
         current = current->next;
         i++;
     }*/
-    printf("________________________________________________________________________________\n");
+    printf("____________________________________________________________________________________\n\n");
 }
 
 product* coop_scan(FILE* file, int* counter, char* Store) {
@@ -776,6 +836,7 @@ product* coop_scan(FILE* file, int* counter, char* Store) {
             c2 = fgetc(file);
             if (c2 == '?')
             {
+
                 return products;
             }
         }
@@ -787,7 +848,7 @@ product* coop_scan(FILE* file, int* counter, char* Store) {
             fscanf(file, "%[^\"]%*c", ctgry);
             if (strcmp(ctgry, "Navn") == 0) {
                 fscanf(file, "%*2s%[^\"]%*c", desc);
-                check_DK_char(desc);
+                check_output_char(desc);
                 strcpy(products[i].name, desc);
                 strcpy(products[i].store, Store);
             }
@@ -862,7 +923,7 @@ void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList)
     free(AllProducts);
 }
 
-void check_input(char *string) {
+void check_input_for_salling(char *string) {
     int stringlen = strlen(string);
     for (int i = 0; i < stringlen; ++i) {
         char *strB = "Null";
@@ -897,8 +958,8 @@ void check_input(char *string) {
 
         if (strcmp(strB, "Null") != 0) {
             char *strA = string, strC[50];
-            strncpy(strC, strA, i - 1);
-            strC[i] = '\0';
+            strncpy(strC, strA, i);
+            strC[i-1] = '\0';
             strcat(strC, strB);
             strcat(strC, strA + i + 1);
             strcpy(string, strC);
@@ -945,7 +1006,7 @@ int main()
 
     //WriteCoopDataToFile(Product, Dictionary, Runs);
     ReadCoopData(Product, &LinkedList);
-    check_input(Product);
+    check_input_for_salling(Product);
     GetNonCoopProducts(Product, Dictionary, &LinkedList);
     Runs++;
     final_print(LinkedList, MaxItems);
