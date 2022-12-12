@@ -46,6 +46,7 @@ product* salling_scan(FILE* file, node** head) {
                 product newproduct;
                 strcpy(newproduct.name, desc);
                 strcpy(newproduct.store, "Bilka");
+                strcpy(newproduct.ean, "n/a");
                 newproduct.price = price;
                 insertToList(head, newproduct);
             }
@@ -90,6 +91,7 @@ product* rema1000_scan(FILE* file, node** head) {
                 product newproduct;
                 strcpy(newproduct.name, desc);
                 strcpy(newproduct.store, "Rema1000");
+                strcpy(newproduct.ean, "n/a");
                 newproduct.price = price;
                 insertToList(head, newproduct);
             }
@@ -781,10 +783,15 @@ product* coop_scan(FILE* file, int* counter, char* Store) {
         }
         if (c == '"') {
             char ctgry[100];
+            char ean[13];
             char desc[100];
             char desc2[100];
             double price;
             fscanf(file, "%[^\"]%*c", ctgry);
+            if (strcmp(ctgry, "Ean") == 0) {
+                fscanf(file, "%*2s%[^\"]%*c", ean);
+                strcpy(products[i].ean, ean);
+            }
             if (strcmp(ctgry, "Navn") == 0) {
                 fscanf(file, "%*2s%[^\"]%*c", desc);
                 check_DK_char(desc);

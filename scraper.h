@@ -1,4 +1,5 @@
 typedef struct {
+    char ean[13];
     char name[50];
     double price;
     char store[15];
