@@ -52,10 +52,10 @@ char* APICall(SAPIStruct params);
 char* DictionaryLookup(SDictionary Dictionary, char* Key);
 SDictionary InitDictionary();
 void init_string(struct string* s);
-size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s);
+size_t WriteFunc(void* ptr, size_t size, size_t nmemb, struct string* s);
 void check_input(char *string);
 
-
+int IsProductInList(node* LinkedList, product data);
 product* rema1000_scan(FILE* file, node** head);
 product* salling_scan(FILE* file, node** head);
 

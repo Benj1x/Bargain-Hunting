@@ -192,7 +192,6 @@ void insertToList(node** head, product data) {
         newnode->next = current->next;
         current->next = newnode;
     }
-
 }
 
 
@@ -463,8 +462,8 @@ char* APICall(SAPIStruct Params)
         if (Params.PostFields != "") curl_easy_setopt(curl, CURLOPT_POSTFIELDS, Params.PostFields);
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
-        /*Set's a callback function to receive incoming data myfunc);*/
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
+        /*Set's a callback function (function called by function) to receive incoming data myfunc);*/
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteFunc);
         /*-----------------------------------------------------------*/
         /*Callback will take an argument that is set (This is our string)*/
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
@@ -493,34 +492,48 @@ char* APICall(SAPIStruct Params)
     return s.ptr;
 }
 /*________________________________________________________________________________*/
-//All code between the these^^ (Line 487-515) is from stackoverflow - this seems like the only way to really do this
+//All code between the these^^ (Line 492-523) is from stackoverflow - this seems like the only way to really do this
 //https://stackoverflow.com/a/2329792
+
+/** Initialises our string struct
+ * @param string* s, a pointer to the specifc struct we wants to init
+ * */
 void init_string(struct string* s) {
+    //set the length to 0
     s->len = 0;
     s->ptr = malloc(s->len + 1);
     if (s->ptr == NULL) {
         fprintf(stderr, "malloc() failed\n");
         exit(EXIT_FAILURE);
     }
+    //terminate it with '\0', we have to make sure
     s->ptr[0] = '\0';
 }
+/** This function recieves all of the data chunks from libcurl + our string struct
+ * void* is a void pointer, a void pointer can hold address of any type (like char & int)
+ * and can be typecasted to any type
+ * @param void* ptr takes incoming data chunks from libcurl, specifically the characters
+ * @param size_t size incoming data chunks, specifically the size of our elements byte size (like char = 1 byte, int = 2 - 4 bytes)
+ * @param size_t nmemb incoming data chunks, specifically the number of elements
+ * @param string *s our string struct
+ * */
 
-/*
- * @param *ptr
- * @param size
- * @param nmemb
- * @param string *s
- */
-size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s)
+size_t WriteFunc(void* ptr, size_t size, size_t nmemb, struct string* s)
 {
+    //Calculate how much space we need to realloc
     size_t new_len = s->len + size * nmemb;
+    //realloc our string to match the size of the size of our incoming data + whatever we already are storing in it
     s->ptr = realloc(s->ptr, new_len + 1);
+    //this failure shouldn't happen - better to be sure though
     if (s->ptr == NULL) {
         fprintf(stderr, "realloc() failed\n");
         exit(EXIT_FAILURE);
     }
+    //copies our data from the ptr, to our string
     memcpy(s->ptr + s->len, ptr, size * nmemb);
+    //makes sure we terminate the string with '\0' as all strings should be
     s->ptr[new_len] = '\0';
+    //updates the length, if we need to realloc more data
     s->len = new_len;
     return size * nmemb;
 }
@@ -616,21 +629,19 @@ void WriteCoopDataToFile(char* Items, SDictionary Dictionary, int Runs)
             printf("Store not found (Not supported by API)\n");
         } else{
             strcpy(IsDigkey, Key);
-        }
-
-
-        if (isdigit(IsDigkey[0]))
-        {
-            if (Runs == 0)
+            if (isdigit(IsDigkey[0]))
             {
-                printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
-                char* c = GetCoopProducts(Key);
-                fputs(c, QFile);
-                fputs("??", QFile);
-                free(c);
-
+                if (Runs == 0)
+                {
+                    printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
+                    char* c = GetCoopProducts(Key);
+                    fputs(c, QFile);
+                    fputs("??", QFile);
+                    free(c);
+                }
             }
         }
+
     }
     fclose(QFile);
     fclose(StoreFile);
@@ -828,8 +839,6 @@ void ReadCoopData(char* Query, node** ProductList)
     FILE* SFile;
     SFile = fopen("stores.txt", "r");
 
-    //product* products = malloc(sizeof(char));
-
     char buffer[20];
 
     for (int i = 0; Query[i] != '\0'; i++)
@@ -862,11 +871,35 @@ void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList)
     {
         if (strstr(AllProducts[i].name, Query) != NULL)
         {
-            insertToList(LinkedList, AllProducts[i]);
+            if (IsProductInList(*LinkedList, AllProducts[i])){
+                printf("1");
+            } else {
+                insertToList(LinkedList, AllProducts[i]);
+            }
+
+            //printf("\nOur product: %s", AllProducts[i]);
         }
     }
-
     free(AllProducts);
+}
+
+int IsProductInList(node* LinkedList, product data)
+{
+    node* current = LinkedList;
+
+    while(current != NULL)
+    {
+        if (strcmp(current->data.ean, data.ean) == 0)
+        {
+            if (strcmp(current->data.store, data.store) == 0)
+            {
+                return 1;
+            }
+        }
+
+        current = current->next;
+    }
+    return 0;
 }
 
 void check_input(char *string) {
@@ -950,7 +983,7 @@ int main()
 
     node* LinkedList = NULL;
 
-    //WriteCoopDataToFile(Product, Dictionary, Runs);
+    WriteCoopDataToFile(Product, Dictionary, Runs);
     ReadCoopData(Product, &LinkedList);
     check_input(Product);
     GetNonCoopProducts(Product, Dictionary, &LinkedList);
