@@ -125,8 +125,9 @@ int scan_input(char* ProductName)
                     //Put the number into our maxItems
                     return x;
                 }
-            } else {
-                printf("Dit input er ikke et tal. Prøv igen :).\n");
+                else {
+                    printf("Dit input er ikke et tal. Prøv igen :).\n");
+                }
             }
         }
 
