@@ -178,32 +178,6 @@ int scan_input(char* ProductName)
         return num;
     }
 
-   /* while (1)
-    {
-        char digit[10];
-        scanf(" %s", digit);
-        int validChecks = 0;
-
-        for (int i = 0; i < strlen(digit); i++)
-        {
-            if (isdigit(digit[i]) == 1)
-            {
-                validChecks++;
-
-                if (validChecks == strlen(digit))
-                {
-                    int x;
-                    //sscanf convers our char to an int
-                    sscanf(digit, "%d", &x);
-                    //Put the number into our maxItems
-                    return x;
-                }
-            }
-            if (i == strlen(digit)-1) {
-                printf("Dit input er ikke et tal. Proev igen :).\n");
-            }
-        } */
-
         while (getchar() != '\n');
 
     }
@@ -394,19 +368,12 @@ char* GetRemaProducts(char query[])
     return response;
 }
 
-void loaded_check(FILE* file) {
-    if (file == NULL) {
-        printf("Failed on loading file!");
-        exit(EXIT_FAILURE);
-    }
-}
-
 void storeChoice() {
     FILE* stores;
     char storeID[5];
     char storeName[25];
 
-    printf("\nProgrammet kan vise dig varer for: Bilka, Fakta, Dagli'Brugsen, Rema1000");
+    printf("\nProgrammet kan vise dig varer for: Bilka, Fakta, Dagli'Brugsen, Rema1000 & Fotex/Foetex");
     printf("\nGrundet problemer med Salling Group og Coop, kan programmet "
         "ikke vise varer for andre butikker i disse kaeder :( !\n\n");
 
@@ -453,78 +420,6 @@ void storeChoice() {
     }
     fclose(stores);
 }
-
-void ItemsChoice()
-{
-    FILE* SLFile;
-    char ProductName[50];
-
-    SLFile = fopen("./ShoppingList.txt", "a+");
-
-    //Loop for entering wanted stores
-    while (1) {
-        printf("Enter product you want to buy, end with ! 'q':");
-        scanf("%[^\n]", &ProductName);
-        while (getchar() != '\n');
-
-        //Breaks loop
-        if (strcasecmp(ProductName, "q") == 0) {
-            break;
-        }
-
-        //Check if entered store already is in list
-        if (DoesProductExist(ProductName) == 1) {
-            printf("\nThe product is already in the list\n");
-        }
-
-        //Prints given store to list
-        else {
-            fprintf(SLFile, "\n%s", ProductName);
-            printf("The product has been added to list\n\n");
-        }
-    }
-    fclose(SLFile);
-
-    //Prints stores present in list file
-    SLFile = fopen("./ShoppingList.txt", "r");
-    int i = 0;
-
-    while (!feof(SLFile)) {
-        ++i;
-        fgets(ProductName, 50, SLFile);
-        printf("Store number %d: %s\n", i, ProductName);
-    }
-    fclose(SLFile);
-}
-
-int DoesProductExist(char curretInput[])
-{
-    FILE* SLFile;
-    int storeExists = 0;
-    char searchString[20];
-    strcpy(searchString, curretInput);
-
-    SLFile = fopen("./ShoppingList.txt", "r");
-
-    char buffer[20];
-
-    while (fgets(buffer, 20, SLFile)) {
-        char* checkForStore = strstr(buffer, searchString);
-        if (checkForStore != NULL) {
-            storeExists = 1;
-            break;
-        }
-        else {
-            storeExists = 0;
-        }
-    }
-    fclose(SLFile);
-
-    //Returns 1 if store is found in list
-    //Returns 0 if store is not found in list
-    return storeExists;
-}
-
 
 //Function for checking if input store is already in list
 int storeCheck(char curretInput[])
@@ -690,10 +585,9 @@ void GetNonCoopProducts(char* Items, SDictionary Dictionary, node** LinkedListHe
         }
         else {
             strcpy(IsDigkey, Key);
-            if (!strcmp(Key, "Rema") || !strcmp(Key, "Rema1000") && !isdigit(IsDigkey[0]))
+            if (!strcasecmp(Key, "Rema") || !strcasecmp(Key, "Rema1000") && !isdigit(IsDigkey[0]))
             {
                 freopen("QueryResults.txt", "w+", QFile);
-                printf("%s Is Rema store\n", IsDigkey);
                 char* c = GetRemaProducts(Items);
                 fputs(c, QFile);
                 rewind(QFile);
@@ -702,7 +596,6 @@ void GetNonCoopProducts(char* Items, SDictionary Dictionary, node** LinkedListHe
             }
             else if (!strcmp(Key, "Fotex")) {
                 freopen("QueryResults.txt", "w+", QFile);
-                printf("%s Is Fotex store\n", IsDigkey);
                 char* c = GetFotexProducts(Items);
                 fputs(c, QFile);
                 rewind(QFile);
@@ -853,6 +746,14 @@ SDictionary InitDictionary()
     Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
     Dictionary.entry[5] = EntryFotex;
 
+    SDictEntry EntryFoetex;
+    strcpy(EntryFoetex.Key, "Foetex");
+    strcpy(EntryFoetex.Value, "Foetex");
+
+    Dictionary.DictLength = 7;
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
+    Dictionary.entry[6] = EntryFoetex;
+
     return Dictionary;
 }
 
@@ -893,12 +794,7 @@ void final_print(struct node* head, int MaxItems)
         printf("|%49s |%14.2lf |%14s |\n", current->data.name, current->data.price, current->data.store);
         current = current->next;
     }
-    /*
-    while (current != NULL || i < MaxItems) {
-        printf("|%49s |%12.2lf |%12s |\n", current->data.name, current->data.price, current->data.store);
-        current = current->next;
-        i++;
-    }*/
+
     printf("____________________________________________________________________________________\n\n");
 }
 
@@ -1097,14 +993,6 @@ void check_input_for_salling(char* string) {
     }
 }
 
-void delay(int seconds) {
-    // Get the current time
-    time_t start = time(NULL);
-
-    // Loop until "seconds" seconds have passed
-    while (time(NULL) - start < seconds);
-}
-
 int main()
 {
     //reset files
@@ -1130,9 +1018,7 @@ int main()
         if (strcasecmp(Product, "end") == 0) {
             return 0;
         }
-        /*Laver et kald for hele shopping listen, hvis du kun vil have et kald, så brug de to funktioner over*/
-        FILE* SLFile;
-        SLFile = fopen("ShoppingList.txt", "r");
+
         int Runs = 0;
 
         node* LinkedList = NULL;
@@ -1144,11 +1030,8 @@ int main()
         Runs++;
         final_print(LinkedList, MaxItems);
         DeleteAllListItems(&LinkedList);
-        delay(1);
-
-
-
     }
+
     free(Dictionary.entry);
 
     return 0;
