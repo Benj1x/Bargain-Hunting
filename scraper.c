@@ -162,14 +162,24 @@ int scan_input(char* ProductName)
     printf("Indtast produktets navn, saasom 'banan yoghurt'. Afslut programmet med 'end'>");
     scanf(" %[^\n]s", ProductName);
 
-    //while ((getchar()) != '\n');
     while (getchar() != '\n');
-    printf("\nHvor mange resultater vil du se for dit produkt?>");
-    while (1)
-    {
-        char* digit;
-        scanf("%s", digit);
 
+    while (1) {
+    printf("\nHvor mange resultater vil du se for dit produkt?>");
+    int num;
+    char term;
+    if(scanf("%d%c", &num, &term) != 2 || term != '\n') {
+        printf("Dit input er ikke et tal. Proev igen :).\n");
+        while (getchar() != '\n');
+        continue;
+    } else {
+        return num;
+    }
+
+   /* while (1)
+    {
+        char digit[10];
+        scanf(" %s", digit);
         int validChecks = 0;
 
         for (int i = 0; i < strlen(digit); i++)
@@ -190,7 +200,7 @@ int scan_input(char* ProductName)
             if (i == strlen(digit)-1) {
                 printf("Dit input er ikke et tal. Proev igen :).\n");
             }
-        }
+        } */
 
         while (getchar() != '\n');
 
@@ -1113,25 +1123,31 @@ int main()
 
     storeChoice();
 
-    int MaxItems = scan_input(Product);
-    /*Laver et kald for hele shopping listen, hvis du kun vil have et kald, så brug de to funktioner over*/
-    FILE* SLFile;
-    SLFile = fopen("ShoppingList.txt", "r");
-    int Runs = 0;
+    while (1) {
+        int MaxItems = scan_input(Product);
+        if (strcasecmp(Product, "end") == 0) {
+            break;
+        }
+        /*Laver et kald for hele shopping listen, hvis du kun vil have et kald, så brug de to funktioner over*/
+        FILE* SLFile;
+        SLFile = fopen("ShoppingList.txt", "r");
+        int Runs = 0;
 
-    node* LinkedList = NULL;
+        node* LinkedList = NULL;
 
-    //WriteCoopDataToFile(Product, Dictionary, Runs);
-    ReadCoopData(Product, &LinkedList);
-    check_input_for_salling(Product);
-    GetNonCoopProducts(Product, Dictionary, &LinkedList);
-    Runs++;
-    final_print(LinkedList, MaxItems);
-    DeleteAllListItems(&LinkedList);
-    delay(1);
+        //WriteCoopDataToFile(Product, Dictionary, Runs);
+        ReadCoopData(Product, &LinkedList);
+        check_input_for_salling(Product);
+        GetNonCoopProducts(Product, Dictionary, &LinkedList);
+        Runs++;
+        final_print(LinkedList, MaxItems);
+        DeleteAllListItems(&LinkedList);
+        delay(1);
 
 
-    free(Dictionary.entry);
+        free(Dictionary.entry);
+    }
+
     return 0;
 }
 
