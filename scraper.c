@@ -1015,7 +1015,9 @@ int main()
 
     while (1) {
         int MaxItems = scan_input(Product);
+
         if (strcasecmp(Product, "end") == 0) {
+            free(Dictionary.entry);
             return 0;
         }
 
