@@ -6,9 +6,16 @@
 #include <locale.h>
 #include <wchar.h>
 
+/**
+ * @Description Enumerator for integer conversions of c-interpretations of danish characters.
+ */
 enum danish_char {
     ae = -90, oe = -72, aa = -91, AE = -122, OE = -104, AA = -123
 };
+
+/**
+ * @Description Enumerator for integer conversions of c-interpretations of miscellaneous characters, such as '©' .
+ */
 
 enum misc_char {
     ö = -74, Ö = -106, ô = -76, Ô = -108, é = -87, É = -119, ä = -92, Ä = -124, ü = -68, Ü = -100, TRADEMARK = -82, SPACE = 32
