@@ -18,7 +18,20 @@ enum danish_char {
  */
 
 enum misc_char {
-    ö = -74, Ö = -106, ô = -76, Ô = -108, é = -87, É = -119, ä = -92, Ä = -124, ü = -68, Ü = -100, TRADEMARK = -82, SPACE = 32
+    ö = -74,
+    Ö = -106,
+    ô = -76,
+    Ô = -108,
+    é = -87,
+    É = -119,
+    ä = -92,
+    Ä = -124,
+    ü = -68,
+    Ü = -100,
+    ñ = -79,
+    Ñ = -111,
+    TRADEMARK = -82,
+    SPACE = 32
 };
 
 
@@ -29,28 +42,18 @@ enum misc_char {
  * @param head: head of linked-list
  */
 
-void salling_scan(FILE* file, node** head) {
+void salling_scan(FILE *file, node **head) {
     int counter = -1;
-    while (1) {
+    while (feof(file) == 0) {
         char b = fgetc(file);
-        if (feof(file)) {
-            break;
-        }
         if (b == '}') {
             counter += 1;
         }
-
     }
-
     rewind(file);
-    while (fgetc(file) != '[') {
-    }
     char c;
-    while (1) {
+    while (feof(file) == 0) {
         c = fgetc(file);
-        if (feof(file)) {
-            break;
-        }
         if (c == '"') {
             char ctgry[100];
             char desc[100];
@@ -72,6 +75,7 @@ void salling_scan(FILE* file, node** head) {
         }
     }
 }
+
 /**
  * @Description
  * Reads a txt-file and parses for rema1000-products, which are then inserted into a linked list.
@@ -79,7 +83,7 @@ void salling_scan(FILE* file, node** head) {
  * @param head: head of linked-list
  */
 
-void rema1000_scan(FILE* file, node** head) {
+void rema1000_scan(FILE *file, node **head) {
     int counter = -4;
     while (1) {
         char b = fgetc(file);
@@ -123,7 +127,8 @@ void rema1000_scan(FILE* file, node** head) {
         }
     }
 }
-void fotex_scan(FILE* file, node** head) {
+
+void fotex_scan(FILE *file, node **head) {
     while (fgetc(file) != '[') {
     }
     char c;
@@ -157,8 +162,7 @@ void fotex_scan(FILE* file, node** head) {
  * @param ProductName: string to contain user input of product name.
  * @return user choice of maximum number of items that are to be shown in the terminal.
  */
-int scan_input(char* ProductName)
-{
+int scan_input(char *ProductName) {
     printf("Indtast produktets navn, saasom 'banan yoghurt'. Afslut programmet med 'end'>");
     scanf(" %[^\n]s", ProductName);
     if (strcasecmp(ProductName, "end") == 0) {
@@ -167,42 +171,42 @@ int scan_input(char* ProductName)
     while (getchar() != '\n');
 
     while (1) {
-    printf("\nHvor mange resultater vil du se for dit produkt?>");
-    int num;
-    char term;
-    if(scanf("%d%c", &num, &term) != 2 || term != '\n') {
-        printf("Dit input er ikke et tal. Proev igen :).\n");
-        while (getchar() != '\n');
-        continue;
-    } else {
-        return num;
-    }
+        printf("\nHvor mange resultater vil du se for dit produkt?>");
+        int num;
+        char term;
+        if (scanf("%d%c", &num, &term) != 2 || term != '\n') {
+            printf("Dit input er ikke et tal. Proev igen :).\n");
+            while (getchar() != '\n');
+            continue;
+        } else {
+            return num;
+        }
 
-   /* while (1)
-    {
-        char digit[10];
-        scanf(" %s", digit);
-        int validChecks = 0;
+        /* while (1)
+         {
+             char digit[10];
+             scanf(" %s", digit);
+             int validChecks = 0;
 
-        for (int i = 0; i < strlen(digit); i++)
-        {
-            if (isdigit(digit[i]) == 1)
-            {
-                validChecks++;
+             for (int i = 0; i < strlen(digit); i++)
+             {
+                 if (isdigit(digit[i]) == 1)
+                 {
+                     validChecks++;
 
-                if (validChecks == strlen(digit))
-                {
-                    int x;
-                    //sscanf convers our char to an int
-                    sscanf(digit, "%d", &x);
-                    //Put the number into our maxItems
-                    return x;
-                }
-            }
-            if (i == strlen(digit)-1) {
-                printf("Dit input er ikke et tal. Proev igen :).\n");
-            }
-        } */
+                     if (validChecks == strlen(digit))
+                     {
+                         int x;
+                         //sscanf convers our char to an int
+                         sscanf(digit, "%d", &x);
+                         //Put the number into our maxItems
+                         return x;
+                     }
+                 }
+                 if (i == strlen(digit)-1) {
+                     printf("Dit input er ikke et tal. Proev igen :).\n");
+                 }
+             } */
 
         while (getchar() != '\n');
 
@@ -219,12 +223,11 @@ int scan_input(char* ProductName)
  *
  */
 
-void check_output_char(char* string)
-{
+void check_output_char(char *string) {
     int len = strlen(string);
     for (int i = 0; i < len; ++i) {
-        char* strB = "Null";
-        switch ((int)string[i]) {
+        char *strB = "Null";
+        switch ((int) string[i]) {
             case ae:
                 string[i - 1] = 'a';
                 string[i] = 'e';
@@ -281,12 +284,18 @@ void check_output_char(char* string)
             case Ü:
                 strB = "U";
                 break;
+            case ñ:
+                strB = "n";
+                break;
+            case Ñ:
+                strB = "N";
+                break;
             case TRADEMARK:
                 strB = "";
                 break;
         }
         if (strcmp(strB, "Null") != 0) {
-            char* strA = string, strC[50];
+            char *strA = string, strC[50];
             strncpy(strC, strA, i - 1);
             strC[i] = '\0';
             strcat(strC, strB);
@@ -301,18 +310,16 @@ void check_output_char(char* string)
  * @param head Head of the linked list.
  * @param data The product struct
  */
-void insertToList(node** head, product data) {
-    node* newnode = malloc(sizeof(node));
+void insertToList(node **head, product data) {
+    node *newnode = malloc(sizeof(node));
     newnode->data = data;
-
 
 
     if (*head == NULL || (*head)->data.price >= newnode->data.price) {
         newnode->next = *head;
         *head = newnode;
-    }
-    else {
-        node* current = *head;
+    } else {
+        node *current = *head;
         while (current->next != NULL && current->next->data.price < newnode->data.price) {
             current = current->next;
         }
@@ -322,8 +329,7 @@ void insertToList(node** head, product data) {
 }
 
 
-char* GetSallingProducts(char* Item)
-{
+char *GetSallingProducts(char *Item) {
     SAPIStruct SProducts;
     strcpy(SProducts.URL, "https://api.sallinggroup.com/v1-beta/product-suggestions/relevant-products?query=");
     strcat(SProducts.URL, Item);
@@ -331,15 +337,13 @@ char* GetSallingProducts(char* Item)
     strcpy(SProducts.PostFields, "Content-Length=20");
     strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
     strcpy(SProducts.KeyTypeAndKey, "Authorization: Bearer dc6422b7-166d-41e8-94c1-6804da7e17d5");
-    char* r = APICall(SProducts);
+    char *r = APICall(SProducts);
 
     return r;
 }
 
-char* GetCoopProducts(char* Stores)
-
-{
-    char* StoreNumbers;
+char *GetCoopProducts(char *Stores) {
+    char *StoreNumbers;
 
     SAPIStruct SProducts;
 
@@ -348,14 +352,13 @@ char* GetCoopProducts(char* Stores)
     strcpy(SProducts.RequestType, "GET");
     strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
     strcpy(SProducts.KeyTypeAndKey, "Ocp-Apim-Subscription-Key: 87d818c340b34764beda02cdd0b5865f");
-    char* r = APICall(SProducts);
+    char *r = APICall(SProducts);
 
     return r;
 
 }
 
-char* GetFotexProducts(char query[])
-{
+char *GetFotexProducts(char query[]) {
     SAPIStruct SProducts;
     /*
     query=bananer
@@ -366,35 +369,36 @@ char* GetFotexProducts(char query[])
 
     char entireQuery[300] = "{\"requests\":[{\"indexName\":\"prod_HD_PRODUCTS\",\"params\":\"query=";
     char rest[200] = "&hitsPerPage=5&"
-        "page=0&"
-        "&attributesToRetrieve=%5B%22name%22%2C%22normalPrice%22%5D\"}]}";
+                     "page=0&"
+                     "&attributesToRetrieve=%5B%22name%22%2C%22normalPrice%22%5D\"}]}";
     strcat(entireQuery, query);
     strcat(entireQuery, rest);
-    strcpy(SProducts.URL, "https://xpq5wkb9jp-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%20for%20vanilla%20JavaScript%203.21.1&x-algolia-application-id=XPQ5WKB9JP&x-algolia-api-key=a8f56e58f6db9e98065593bd33b60ddb");
+    strcpy(SProducts.URL,
+           "https://xpq5wkb9jp-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%20for%20vanilla%20JavaScript%203.21.1&x-algolia-application-id=XPQ5WKB9JP&x-algolia-api-key=a8f56e58f6db9e98065593bd33b60ddb");
     strcpy(SProducts.RequestType, "POST");
     strcpy(SProducts.PostFields, entireQuery);
-    char* response = APICall(SProducts);
+    char *response = APICall(SProducts);
     return response;
 }
 
-char* GetRemaProducts(char query[])
-{
+char *GetRemaProducts(char query[]) {
     SAPIStruct SProducts;
 
     char entireQuery[300] = "{\"requests\":[{\"indexName\":\"aws-prod-products\",\"params\":\"query=";
     char rest[200] = "&hitsPerPage=5000&"
-        "page=0&"
-        "&attributesToRetrieve=%5B%22name%22%2C%22labels%22%2C%22pricing%22%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D\"}]}";
+                     "page=0&"
+                     "&attributesToRetrieve=%5B%22name%22%2C%22labels%22%2C%22pricing%22%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D\"}]}";
     strcat(entireQuery, query);
     strcat(entireQuery, rest);
-    strcpy(SProducts.URL, "https://flwdn2189e-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%20for%20vanilla%20JavaScript%203.21.1&x-algolia-application-id=FLWDN2189E&x-algolia-api-key=fa20981a63df668e871a87a8fbd0caed");
+    strcpy(SProducts.URL,
+           "https://flwdn2189e-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%20for%20vanilla%20JavaScript%203.21.1&x-algolia-application-id=FLWDN2189E&x-algolia-api-key=fa20981a63df668e871a87a8fbd0caed");
     strcpy(SProducts.RequestType, "POST");
     strcpy(SProducts.PostFields, entireQuery);
-    char* response = APICall(SProducts);
+    char *response = APICall(SProducts);
     return response;
 }
 
-void loaded_check(FILE* file) {
+void loaded_check(FILE *file) {
     if (file == NULL) {
         printf("Failed on loading file!");
         exit(EXIT_FAILURE);
@@ -402,13 +406,13 @@ void loaded_check(FILE* file) {
 }
 
 void storeChoice() {
-    FILE* stores;
+    FILE *stores;
     char storeID[5];
     char storeName[25];
 
     printf("\nProgrammet kan vise dig varer for: Bilka, Fakta, Dagli'Brugsen, Rema1000");
     printf("\nGrundet problemer med Salling Group og Coop, kan programmet "
-        "ikke vise varer for andre butikker i disse kaeder :( !\n\n");
+           "ikke vise varer for andre butikker i disse kaeder :( !\n\n");
 
 
     stores = fopen("./stores.txt", "w");
@@ -431,7 +435,7 @@ void storeChoice() {
             printf("\nSame store is already in list\n");
         }
 
-        //Prints given store to list
+            //Prints given store to list
         else {
             fprintf(stores, "%s\n", storeName);
             printf("Given store is added to list\n\n");
@@ -454,9 +458,8 @@ void storeChoice() {
     fclose(stores);
 }
 
-void ItemsChoice()
-{
-    FILE* SLFile;
+void ItemsChoice() {
+    FILE *SLFile;
     char ProductName[50];
 
     SLFile = fopen("./ShoppingList.txt", "a+");
@@ -477,7 +480,7 @@ void ItemsChoice()
             printf("\nThe product is already in the list\n");
         }
 
-        //Prints given store to list
+            //Prints given store to list
         else {
             fprintf(SLFile, "\n%s", ProductName);
             printf("The product has been added to list\n\n");
@@ -497,9 +500,8 @@ void ItemsChoice()
     fclose(SLFile);
 }
 
-int DoesProductExist(char curretInput[])
-{
-    FILE* SLFile;
+int DoesProductExist(char curretInput[]) {
+    FILE *SLFile;
     int storeExists = 0;
     char searchString[20];
     strcpy(searchString, curretInput);
@@ -509,12 +511,11 @@ int DoesProductExist(char curretInput[])
     char buffer[20];
 
     while (fgets(buffer, 20, SLFile)) {
-        char* checkForStore = strstr(buffer, searchString);
+        char *checkForStore = strstr(buffer, searchString);
         if (checkForStore != NULL) {
             storeExists = 1;
             break;
-        }
-        else {
+        } else {
             storeExists = 0;
         }
     }
@@ -527,9 +528,8 @@ int DoesProductExist(char curretInput[])
 
 
 //Function for checking if input store is already in list
-int storeCheck(char curretInput[])
-{
-    FILE* stores;
+int storeCheck(char curretInput[]) {
+    FILE *stores;
     int storeExists = 0;
     char searchString[20];
     strcpy(searchString, curretInput);
@@ -539,12 +539,11 @@ int storeCheck(char curretInput[])
     char buffer[20];
 
     while (fgets(buffer, 20, stores)) {
-        char* checkForStore = strstr(buffer, searchString);
+        char *checkForStore = strstr(buffer, searchString);
         if (checkForStore != NULL) {
             storeExists = 1;
             break;
-        }
-        else {
+        } else {
             storeExists = 0;
         }
     }
@@ -555,9 +554,8 @@ int storeCheck(char curretInput[])
     return storeExists;
 }
 
-char* APICall(SAPIStruct Params)
-{
-    CURL* curl;
+char *APICall(SAPIStruct Params) {
+    CURL *curl;
     CURLcode res;
     /*This will init winsock stuff -> Windows only*/
     curl_global_init(CURL_GLOBAL_ALL);
@@ -565,8 +563,7 @@ char* APICall(SAPIStruct Params)
     curl = curl_easy_init();
 
     struct string s;
-    if (curl)
-    {
+    if (curl) {
         init_string(&s);
         curl_easy_setopt(curl, CURLOPT_CAINFO, "cacert.pem");
         curl_easy_setopt(curl, CURLOPT_CAPATH, "cacert.pem");
@@ -585,7 +582,7 @@ char* APICall(SAPIStruct Params)
         /*Callback will take an argument that is set (This is our string)*/
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
         /*-----------------------------------------------------------*/
-        struct curl_slist* headers = NULL;
+        struct curl_slist *headers = NULL;
         if (Params.KeyTypeAndKey != "") {
             headers = curl_slist_append(headers, Params.KeyTypeAndKey);
         }
@@ -596,10 +593,9 @@ char* APICall(SAPIStruct Params)
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         res = curl_easy_perform(curl);
         /* Check for errors */
-        if (res != CURLE_OK)
-        {
+        if (res != CURLE_OK) {
             fprintf(stderr, "curl_easy_perform() failed: %s\n",
-                curl_easy_strerror(res));
+                    curl_easy_strerror(res));
         }
 
         curl_easy_cleanup(curl);
@@ -615,7 +611,7 @@ char* APICall(SAPIStruct Params)
 /** Initialises our string struct
  * @param string* s, a pointer to the specifc struct we wants to init
  * */
-void init_string(struct string* s) {
+void init_string(struct string *s) {
     //set the length to 0
     s->len = 0;
     s->ptr = malloc(s->len + 1);
@@ -626,6 +622,7 @@ void init_string(struct string* s) {
     //terminate it with '\0', we have to make sure
     s->ptr[0] = '\0';
 }
+
 /** This function recieves all of the data chunks from libcurl + our string struct
  * void* is a void pointer, a void pointer can hold address of any type (like char & int)
  * and can be typecasted to any type
@@ -635,8 +632,7 @@ void init_string(struct string* s) {
  * @param string *s our string struct
  * */
 
-size_t WriteFunc(void* ptr, size_t size, size_t nmemb, struct string* s)
-{
+size_t WriteFunc(void *ptr, size_t size, size_t nmemb, struct string *s) {
     //Calculate how much space we need to realloc
     size_t new_len = s->len + size * nmemb;
     //realloc our string to match the size of the size of our incoming data + whatever we already are storing in it
@@ -661,58 +657,52 @@ size_t WriteFunc(void* ptr, size_t size, size_t nmemb, struct string* s)
  * @param Dictionary SDictionary struct that contains information about stores
  * @param LinkedList The head of the linked list
  */
-void GetNonCoopProducts(char* Items, SDictionary Dictionary, node** LinkedListHead) {
+void GetNonCoopProducts(char *Items, SDictionary Dictionary, node **LinkedListHead) {
 
-    FILE* QFile;
+    FILE *QFile;
     QFile = fopen("QueryResults.txt", "w+");
 
-    FILE* StoreFile;
+    FILE *StoreFile;
     StoreFile = fopen("stores.txt", "r");
 
     char buffer[20];
 
     Items[strcspn(Items, "\n")] = '\0';
 
-    while (fgets(buffer, 15, StoreFile))
-    {
+    while (fgets(buffer, 15, StoreFile)) {
 
         //Fjerner alle \n fra vores buffer, dette gør det muligt at søge på alle linjer, ellers ville search slå fejl for alle udover den sidste
         buffer[strcspn(buffer, "\n")] = '\0';
 
-        char* Key;
+        char *Key;
         char IsDigkey[20];
 
         Key = DictionaryLookup(Dictionary, buffer);
 
-        if (Key == NULL)
-        {
+        if (Key == NULL) {
             printf("Store not found (Not supported by API)\n");
-        }
-        else {
+        } else {
             strcpy(IsDigkey, Key);
-            if (!strcmp(Key, "Rema") || !strcmp(Key, "Rema1000") && !isdigit(IsDigkey[0]))
-            {
+            if (!strcmp(Key, "Rema") || !strcmp(Key, "Rema1000") && !isdigit(IsDigkey[0])) {
                 freopen("QueryResults.txt", "w+", QFile);
                 printf("%s Is Rema store\n", IsDigkey);
-                char* c = GetRemaProducts(Items);
+                char *c = GetRemaProducts(Items);
                 fputs(c, QFile);
                 rewind(QFile);
                 rema1000_scan(QFile, LinkedListHead);
                 free(c);
-            }
-            else if (!strcmp(Key, "Fotex")) {
+            } else if (!strcmp(Key, "Fotex")) {
                 freopen("QueryResults.txt", "w+", QFile);
                 printf("%s Is Fotex store\n", IsDigkey);
-                char* c = GetFotexProducts(Items);
+                char *c = GetFotexProducts(Items);
                 fputs(c, QFile);
                 rewind(QFile);
                 fotex_scan(QFile, LinkedListHead);
                 free(c);
 
-            }
-            else if (!isdigit(IsDigkey[0])) {
+            } else if (!isdigit(IsDigkey[0])) {
                 freopen("QueryResults.txt", "w+", QFile);
-                char* c = GetSallingProducts(Items);
+                char *c = GetSallingProducts(Items);
                 fputs(c, QFile);
                 rewind(QFile);
                 salling_scan(QFile, LinkedListHead);
@@ -725,13 +715,11 @@ void GetNonCoopProducts(char* Items, SDictionary Dictionary, node** LinkedListHe
 }
 
 
-
 /* Deletes all existing items in a given list by freeing the memory, takes the head of the LinkedList as a param */
-void DeleteAllListItems(node** LinkedListHead)
-{
-    node* current = *LinkedListHead;
+void DeleteAllListItems(node **LinkedListHead) {
+    node *current = *LinkedListHead;
     while (current != NULL) {
-        node* next = current->next;
+        node *next = current->next;
         free(current);
         current = next;
     }
@@ -739,39 +727,33 @@ void DeleteAllListItems(node** LinkedListHead)
 }
 
 /*Calls the API's and writes the data to a file*/
-void WriteCoopDataToFile(char* Items, SDictionary Dictionary, int Runs)
-{
-    FILE* QFile;
+void WriteCoopDataToFile(char *Items, SDictionary Dictionary, int Runs) {
+    FILE *QFile;
     QFile = fopen("CoopQueryResults.txt", "a");
 
-    FILE* StoreFile;
+    FILE *StoreFile;
     StoreFile = fopen("stores.txt", "r");
 
     char buffer[20];
 
     Items[strcspn(Items, "\n")] = '\0';
 
-    while (fgets(buffer, 15, StoreFile))
-    {
+    while (fgets(buffer, 15, StoreFile)) {
         //Fjerner alle \n fra vores buffer, dette gør det muligt at søge på alle linjer, ellers ville search slå fejl for alle udover den sidste
         buffer[strcspn(buffer, "\n")] = '\0';
 
         char IsDigkey[20];
-        char* Key;
+        char *Key;
 
         Key = DictionaryLookup(Dictionary, buffer);
 
-        if (Key == NULL)
-        {
+        if (Key == NULL) {
             printf("Store not found (Not supported by API)\n");
-        }
-        else {
+        } else {
             strcpy(IsDigkey, Key);
-            if (isdigit(IsDigkey[0]))
-            {
-                if (Runs == 0)
-                {
-                    char* c = GetCoopProducts(Key);
+            if (isdigit(IsDigkey[0])) {
+                if (Runs == 0) {
+                    char *c = GetCoopProducts(Key);
                     fputs(c, QFile);
                     fputs("??", QFile);
                     free(c);
@@ -785,8 +767,7 @@ void WriteCoopDataToFile(char* Items, SDictionary Dictionary, int Runs)
 }
 
 /*This initializes our dictionary (Gives it all of the entries with keys and values)*/
-SDictionary InitDictionary()
-{
+SDictionary InitDictionary() {
     //Create the dictionary
     SDictionary Dictionary;
     /*https://stackoverflow.com/a/62004489*/
@@ -857,19 +838,15 @@ SDictionary InitDictionary()
 }
 
 /*This is a given, it looks up in our dictionary, this is done with a "Key"*/
-char* DictionaryLookup(SDictionary Dictionary, char* Key)
-{
+char *DictionaryLookup(SDictionary Dictionary, char *Key) {
     //For the size of our dictionary
-    for (int i = 0; i < Dictionary.DictLength; i++)
-    {
+    for (int i = 0; i < Dictionary.DictLength; i++) {
         //If equal, it returns 0, therefor we want !strcmp (Some might be used to it returning 1)
         /*This checks if our key, is equal to the set key, of the dictionary entry*/
-        if (!strcasecmp(Dictionary.entry[i].Key, Key))
-        {
+        if (!strcasecmp(Dictionary.entry[i].Key, Key)) {
             //If they are equal, return the value
             return Dictionary.entry[i].Value;
-        }
-        else {
+        } else {
 
         }
     }
@@ -877,16 +854,14 @@ char* DictionaryLookup(SDictionary Dictionary, char* Key)
     return NULL;
 }
 
-void final_print(struct node* head, int MaxItems)
-{
+void final_print(struct node *head, int MaxItems) {
     printf("\n");
     printf("____________________________________________________________________________________\n");
     printf("|                      Produkt                     |     Price     |     Store     |\n");
     printf("|                                                  |               |               |\n");
-    node* current = head;
+    node *current = head;
 
-    for (int i = 0; i < MaxItems; i++)
-    {
+    for (int i = 0; i < MaxItems; i++) {
         if (current == NULL) {
             break;
         }
@@ -902,9 +877,9 @@ void final_print(struct node* head, int MaxItems)
     printf("____________________________________________________________________________________\n\n");
 }
 
-product* coop_scan(FILE* file, int* counter, char* Store) {
+product *coop_scan(FILE *file, int *counter, char *Store) {
 
-    FILE* XFile;
+    FILE *XFile;
     XFile = fopen("CoopQueryResults.txt", "r");
 
     while (1) {
@@ -919,7 +894,7 @@ product* coop_scan(FILE* file, int* counter, char* Store) {
     }
     fclose(XFile);
 
-    product* products = malloc(sizeof(product) * *counter);
+    product *products = malloc(sizeof(product) * *counter);
 
     char c;
     int i = 0;
@@ -932,8 +907,7 @@ product* coop_scan(FILE* file, int* counter, char* Store) {
         if (c == '?') {
             char c2;
             c2 = fgetc(file);
-            if (c2 == '?')
-            {
+            if (c2 == '?') {
 
                 return products;
             }
@@ -975,51 +949,43 @@ product* coop_scan(FILE* file, int* counter, char* Store) {
     return products;
 }
 
-void ReadCoopData(char* Query, node** ProductList)
-{
-    FILE* QFile;
+void ReadCoopData(char *Query, node **ProductList) {
+    FILE *QFile;
     QFile = fopen("CoopQueryResults.txt", "r");
 
     int ArraySize = 0;
 
-    FILE* SFile;
+    FILE *SFile;
     SFile = fopen("stores.txt", "r");
 
     char buffer[20];
 
-    for (int i = 0; Query[i] != '\0'; i++)
-    {
+    for (int i = 0; Query[i] != '\0'; i++) {
         Query[i] = toupper(Query[i]);
     }
 
     while (fgets(buffer, 50, SFile)) {
         buffer[strcspn(buffer, "\n")] = '\0';
 
-        if (strcasecmp(buffer, "Fakta") == 0)
-        {
+        if (strcasecmp(buffer, "Fakta") == 0) {
             RelevantCoopData(QFile, "Fakta", Query, ProductList);
         }
-        if (strcasecmp(buffer, "Dagli'Brugsen") == 0)
-        {
+        if (strcasecmp(buffer, "Dagli'Brugsen") == 0) {
             RelevantCoopData(QFile, "Dagli'Brugsen", Query, ProductList);
         }
     }
 }
 
-void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList)
-{
+void RelevantCoopData(FILE *QFile, char *Store, char *Query, node **LinkedList) {
     Query[strcspn(Query, "\n")] = '\0';
     int ArrayIndex = 0;
 
-    product* AllProducts = coop_scan(QFile, &ArrayIndex, Store);
+    product *AllProducts = coop_scan(QFile, &ArrayIndex, Store);
 
-    for (int i = 0; i < ArrayIndex; i++)
-    {
-        if (strstr(AllProducts[i].name, Query) != NULL)
-        {
+    for (int i = 0; i < ArrayIndex; i++) {
+        if (strstr(AllProducts[i].name, Query) != NULL) {
             if (IsProductInList(*LinkedList, AllProducts[i])) {
-            }
-            else {
+            } else {
                 insertToList(LinkedList, AllProducts[i]);
             }
         }
@@ -1027,16 +993,12 @@ void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList)
     free(AllProducts);
 }
 
-int IsProductInList(node* LinkedList, product data)
-{
-    node* current = LinkedList;
+int IsProductInList(node *LinkedList, product data) {
+    node *current = LinkedList;
 
-    while (current != NULL)
-    {
-        if (strcmp(current->data.ean, data.ean) == 0)
-        {
-            if (strcmp(current->data.store, data.store) == 0)
-            {
+    while (current != NULL) {
+        if (strcmp(current->data.ean, data.ean) == 0) {
+            if (strcmp(current->data.store, data.store) == 0) {
                 return 1;
             }
         }
@@ -1053,11 +1015,11 @@ int IsProductInList(node* LinkedList, product data)
  * @param string: string with produkt name
  */
 
-void check_input_for_salling(char* string) {
+void check_input_for_salling(char *string) {
     int stringlen = strlen(string);
     for (int i = 0; i < stringlen; ++i) {
-        char* strB = "Null";
-        switch ((int)string[i]) {
+        char *strB = "Null";
+        switch ((int) string[i]) {
             case ae:
                 strB = "%C3%A6";
                 break;
@@ -1077,8 +1039,8 @@ void check_input_for_salling(char* string) {
                 strB = "%C3%85";
                 break;
         }
-        if ((int)string[i] == SPACE) {
-            char* strA = string, strC[50];
+        if ((int) string[i] == SPACE) {
+            char *strA = string, strC[50];
             strncpy(strC, strA, i);
             strC[i] = '\0';
             strcat(strC, "%20");
@@ -1087,7 +1049,7 @@ void check_input_for_salling(char* string) {
         }
 
         if (strcmp(strB, "Null") != 0) {
-            char* strA = string, strC[50];
+            char *strA = string, strC[50];
             strncpy(strC, strA, i);
             strC[i - 1] = '\0';
             strcat(strC, strB);
@@ -1105,14 +1067,13 @@ void delay(int seconds) {
     while (time(NULL) - start < seconds);
 }
 
-int main()
-{
+int main() {
     //reset files
-    FILE* QFile;
+    FILE *QFile;
     QFile = fopen("QueryResults.txt", "w");
     fclose(QFile);
 
-    FILE* SFile;
+    FILE *SFile;
     SFile = fopen("./stores.txt", "w");
     fclose(SFile);
     //QFile = fopen("CoopQueryResults.txt", "w");
@@ -1131,11 +1092,11 @@ int main()
             return 0;
         }
         /*Laver et kald for hele shopping listen, hvis du kun vil have et kald, så brug de to funktioner over*/
-        FILE* SLFile;
+        FILE *SLFile;
         SLFile = fopen("ShoppingList.txt", "r");
         int Runs = 0;
 
-        node* LinkedList = NULL;
+        node *LinkedList = NULL;
 
         //WriteCoopDataToFile(Product, Dictionary, Runs);
         ReadCoopData(Product, &LinkedList);
@@ -1145,7 +1106,6 @@ int main()
         final_print(LinkedList, MaxItems);
         DeleteAllListItems(&LinkedList);
         delay(1);
-
 
 
     }
