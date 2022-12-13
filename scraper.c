@@ -161,7 +161,9 @@ int scan_input(char* ProductName)
 {
     printf("Indtast produktets navn, saasom 'banan yoghurt'. Afslut programmet med 'end'>");
     scanf(" %[^\n]s", ProductName);
-
+    if (strcasecmp(ProductName, "end") == 0) {
+        return 0;
+    }
     while (getchar() != '\n');
 
     while (1) {
@@ -1126,7 +1128,7 @@ int main()
     while (1) {
         int MaxItems = scan_input(Product);
         if (strcasecmp(Product, "end") == 0) {
-            break;
+            return 0;
         }
         /*Laver et kald for hele shopping listen, hvis du kun vil have et kald, så brug de to funktioner over*/
         FILE* SLFile;
@@ -1145,8 +1147,9 @@ int main()
         delay(1);
 
 
-        free(Dictionary.entry);
+
     }
+    free(Dictionary.entry);
 
     return 0;
 }
