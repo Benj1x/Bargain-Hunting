@@ -176,13 +176,12 @@ int scan_input(char* ProductName)
                     int x;
                     //sscanf convers our char to an int
                     sscanf(digit, "%d", &x);
-                    printf("%d", x);
                     //Put the number into our maxItems
                     return x;
                 }
-                else {
-                    printf("Dit input er ikke et tal. Prøv igen :).\n");
-                }
+            }
+            if (i == strlen(digit)-1) {
+                printf("Dit input er ikke et tal. Proev igen :).\n");
             }
         }
 
@@ -694,7 +693,6 @@ void GetNonCoopProducts(char* Items, SDictionary Dictionary, node** LinkedListHe
             }
             else if (!isdigit(IsDigkey[0])) {
                 freopen("QueryResults.txt", "w+", QFile);
-                // printf("%s Is a Salling store\n", IsDigkey);
                 char* c = GetSallingProducts(Items);
                 fputs(c, QFile);
                 rewind(QFile);
@@ -754,7 +752,6 @@ void WriteCoopDataToFile(char* Items, SDictionary Dictionary, int Runs)
             {
                 if (Runs == 0)
                 {
-                    printf("%s (%s) Is a coop store\n", buffer, IsDigkey);
                     char* c = GetCoopProducts(Key);
                     fputs(c, QFile);
                     fputs("??", QFile);
@@ -941,13 +938,13 @@ product* coop_scan(FILE* file, int* counter, char* Store) {
             }
             //Add navn2 to navn
             if (strcmp(ctgry, "Navn2") == 0) {
-                fscanf(file, "%*[^\"]%*c%[^\"]%*c", desc2);
+                fscanf(file, "%*[\"]%*[\"]%s%[^\"]", desc2);
                 if (strcmp(desc2, "\"") == 0) {
                 }
-                else {
+                /*else {
                     //fscanf(file, "%*2s%[^\"]%*c", desc);
                     strcat(products[i].name, desc2);
-                }
+                }*/
             }
             if ((strcmp(ctgry, "Pris") == 0)) {
                 fscanf(file, "%*c%lf", &price);
@@ -1002,13 +999,10 @@ void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList)
         if (strstr(AllProducts[i].name, Query) != NULL)
         {
             if (IsProductInList(*LinkedList, AllProducts[i])) {
-                printf("1");
             }
             else {
                 insertToList(LinkedList, AllProducts[i]);
             }
-
-            //printf("\nOur product: %s", AllProducts[i]);
         }
     }
     free(AllProducts);
