@@ -42,7 +42,6 @@ const char* KardexValue[] = { [Fakta] = "24080",[DagliBrugsen] = "2082" };
 
 char* GetSallingProducts(char* Item);
 
-void delay(int seconds);
 char* GetCoopProducts(char* Stores);
 void WriteCoopDataToFile(char* Items, SDictionary Dictionary, int Runs);
 void storeChoice();
