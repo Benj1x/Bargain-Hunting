@@ -40,7 +40,6 @@ typedef struct node {
     struct node* next;
 } node;
 
-
 char* GetSallingProducts(char* Item);
 void GetNonCoopProducts(char* Items, SDictionary Dictionary, node** LinkedListHead);
 char* GetCoopProducts(char* Stores);
@@ -63,7 +62,6 @@ void salling_scan(FILE* file, node** head);
 
 void insertToList(node** head, product data);
 int scan_input(char* name);
-int DoesProductExist(char curretInput[]);
 void check_output_char(char* string);
 
 void DeleteAllListItems(node** LinkedListHead);

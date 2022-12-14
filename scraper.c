@@ -777,9 +777,6 @@ char* DictionaryLookup(SDictionary Dictionary, char* Key)
             //If they are equal, return the value
             return Dictionary.entry[i].Value;
         }
-        else {
-
-        }
     }
 
     return NULL;
