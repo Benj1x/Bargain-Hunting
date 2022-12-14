@@ -41,13 +41,6 @@ enum misc_char {
  */
 
 void salling_scan(FILE* file, node** head) {
-    int counter = -1;
-    while (feof(file) == 0) {
-        char b = fgetc(file);
-        if (b == '}') {
-            counter += 1;
-        }
-    }
     rewind(file);
     char c;
     while (feof(file) == 0) {
@@ -82,19 +75,6 @@ void salling_scan(FILE* file, node** head) {
  */
 
 void rema1000_scan(FILE* file, node** head) {
-    int counter = -4;
-    while (1) {
-        char b = fgetc(file);
-        if (feof(file)) {
-            break;
-        }
-        if (b == '}') {
-            counter += 1;
-        }
-
-    }
-    counter /= 2;
-
     rewind(file);
     while (fgetc(file) != '[') {
     }
