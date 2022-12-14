@@ -1,10 +1,8 @@
 #include <stdio.h>
-#include "scraper.h"
 #include <stdlib.h>
 #include <string.h>
 #include "include/curl/curl.h"
-#include <locale.h>
-#include <wchar.h>
+#include "scraper.h"
 
 /**
  * @Description Enumerator for integer conversions of c-interpretations of danish characters.
@@ -171,16 +169,17 @@ int scan_input(char* ProductName)
     while (getchar() != '\n');
 
     while (1) {
-    printf("\nHvor mange resultater vil du se for dit produkt?>");
-    int num;
-    char term;
-    if(scanf("%d%c", &num, &term) != 2 || term != '\n') {
-        printf("Dit input er ikke et tal. Proev igen :).\n");
-        while (getchar() != '\n');
-        continue;
-    } else {
-        return num;
-    }
+        printf("\nHvor mange resultater vil du se for dit produkt?>");
+        int num;
+        char term;
+        if (scanf("%d%c", &num, &term) != 2 || term != '\n') {
+            printf("Dit input er ikke et tal. Proev igen :).\n");
+            while (getchar() != '\n');
+            continue;
+        }
+        else {
+            return num;
+        }
 
         while (getchar() != '\n');
 
@@ -288,8 +287,6 @@ void check_output_char(char* string)
 void insertToList(node** head, product data) {
     node* newnode = malloc(sizeof(node));
     newnode->data = data;
-
-
 
     if (*head == NULL || (*head)->data.price >= newnode->data.price) {
         newnode->next = *head;
@@ -1002,61 +999,3 @@ void check_input_for_salling(char* string) {
         }
     }
 }
-
-int main()
-{
-    //reset files
-    FILE* QFile;
-    QFile = fopen("QueryResults.txt", "w");
-    fclose(QFile);
-
-    FILE* SFile;
-    SFile = fopen("./stores.txt", "w");
-    fclose(SFile);
-    //QFile = fopen("CoopQueryResults.txt", "w");
-    //fclose(QFile);
-
-    SDictionary Dictionary = InitDictionary();
-    char Product[50] = "\0";
-
-    printf("Hej, og velkommen til! \nI dette program kan du finde de bedste priser paa dine dagligvare!\n");
-
-    storeChoice();
-
-    while (1) {
-        int MaxItems = scan_input(Product);
-
-        if (strcasecmp(Product, "end") == 0) {
-            free(Dictionary.entry);
-            return 0;
-        }
-
-        int Runs = 0;
-
-        node* LinkedList = NULL;
-
-        //WriteCoopDataToFile(Product, Dictionary, Runs);
-        ReadCoopData(Product, &LinkedList);
-        check_input_for_salling(Product);
-        GetNonCoopProducts(Product, Dictionary, &LinkedList);
-        Runs++;
-        final_print(LinkedList, MaxItems);
-        DeleteAllListItems(&LinkedList);
-    }
-
-    free(Dictionary.entry);
-
-    return 0;
-}
-
-/*
-    while (fgets(buffer, 50, SLFile)) {
-        //We use runs, to make sure we only do the coop call once for each store
-        //WriteCoopDataToFile(buffer, Dictionary, Runs);
-        GetNonCoopProducts(buffer, Dictionary, &LinkedList);
-        ReadCoopData(buffer, &LinkedList);
-        Runs++;
-        final_print(LinkedList);
-        DeleteAllListItems(&LinkedList);
-        delay(1);
-    }*/

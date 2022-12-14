@@ -1,3 +1,6 @@
+#ifndef BARGAIN_HUNTING_SCRAPER_H
+#define BARGAIN_HUNTING_SCRAPER_H
+
 typedef struct {
     char ean[13];
     char name[50];
@@ -37,11 +40,9 @@ typedef struct node {
     struct node* next;
 } node;
 
-typedef enum Store { Fakta = 24080, DagliBrugsen = 2082 } EStore;
-const char* KardexValue[] = { [Fakta] = "24080",[DagliBrugsen] = "2082" };
 
 char* GetSallingProducts(char* Item);
-
+void GetNonCoopProducts(char* Items, SDictionary Dictionary, node** LinkedListHead);
 char* GetCoopProducts(char* Stores);
 void WriteCoopDataToFile(char* Items, SDictionary Dictionary, int Runs);
 void storeChoice();
@@ -72,7 +73,5 @@ void final_print(struct node* head, int MaxItems);
 void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList);
 
 
-#ifndef BARGAIN_HUNTING_SCRAPER_H
-#define BARGAIN_HUNTING_SCRAPER_H
 
 #endif //BARGAIN_HUNTING_SCRAPER_H
