@@ -12,6 +12,6 @@ include_directories( ${CMAKE_SOURCE_DIR}/include )
 link_directories(${CMAKE_SOURCE_DIR}/lib/libcurl.dll.a)
 FIND_PACKAGE(CURL REQUIRED)
 
-add_executable(Bargain_Hunting main.c scraper.c scraper.h)
+add_executable(Bargain_Hunting main.c functions.c functions.h)
 INCLUDE_DIRECTORIES(${CURL_INCLUDE_DIR})
 target_link_libraries(Bargain_Hunting ${CMAKE_SOURCE_DIR}/lib/libcurl.dll.a)

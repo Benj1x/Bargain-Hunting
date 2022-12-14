@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "include/curl/curl.h"
-#include "scraper.h"
+#include "functions.h"
 
 int main()
 {
