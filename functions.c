@@ -200,7 +200,7 @@ void check_output_char(char* string)
 {
     int len = strlen(string);
     for (int i = 0; i < len; ++i) {
-        char* strB = "Null";
+        char* strB = NULL;
         switch ((int)string[i]) {
             case ae:
                 string[i - 1] = 'a';
@@ -268,7 +268,7 @@ void check_output_char(char* string)
                 strB = "";
                 break;
         }
-        if (strcmp(strB, "Null") != 0) {
+        if (strB != NULL) {
             char* strA = string, strC[50];
             strncpy(strC, strA, i - 1);
             strC[i] = '\0';
