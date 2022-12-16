@@ -940,9 +940,9 @@ int IsProductInList(node* LinkedList, product data)
  */
 
 void check_input_for_salling(char* string) {
-    int stringlen = strlen(string);
-    for (int i = 0; i < stringlen; ++i) {
-        char* strB = "Null";
+    int len = strlen(string);
+    for (int i = 0; i < len; ++i) {
+        char* strB = NULL;
         switch ((int)string[i]) {
             case ae:
                 strB = "%C3%A6";
@@ -972,7 +972,7 @@ void check_input_for_salling(char* string) {
             strcpy(string, strC);
         }
 
-        if (strcmp(strB, "Null") != 0) {
+        if (strB != NULL) {
             char* strA = string, strC[50];
             strncpy(strC, strA, i);
             strC[i - 1] = '\0';
