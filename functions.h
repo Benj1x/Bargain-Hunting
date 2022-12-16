@@ -29,7 +29,6 @@ typedef struct Params {
     char PostFields[300];
 } SAPIStruct;
 
-
 typedef struct string {
     char* ptr;
     size_t len;

@@ -298,10 +298,7 @@ char* GetSallingProducts(char* Item)
 }
 
 char* GetCoopProducts(char* Stores)
-
 {
-    char* StoreNumbers;
-
     SAPIStruct SProducts;
 
     strcpy(SProducts.URL, "https://api.cl.coop.dk/productapi/v1/product/");
@@ -312,18 +309,11 @@ char* GetCoopProducts(char* Stores)
     char* r = APICall(SProducts);
 
     return r;
-
 }
 
 char* GetFotexProducts(char query[])
 {
     SAPIStruct SProducts;
-    /*
-    query=bananer
-    &hitsPerPage=4
-    &attributesToRetrieve=%5B%22*%22%5D
-    &facets=%5B%22*%22%5D&analyticsTags=%5B%22ext-alg%23query-category%3Aquery-matched%22%2C%22ext-alg%23auto-filter%3Ahas-filters%22%5D&optionalFacetFilters=%5B%22searchHierachy.lvl2%3Abananer%3Cscore%3D11%3E%22%5D
-    */
 
     char entireQuery[300] = "{\"requests\":[{\"indexName\":\"prod_HD_PRODUCTS\",\"params\":\"query=";
     char rest[200] = "&hitsPerPage=5&"
@@ -443,23 +433,31 @@ char* APICall(SAPIStruct Params)
     CURLcode res;
     /*This will init winsock stuff -> Windows only*/
     curl_global_init(CURL_GLOBAL_ALL);
-    /* get a curl handle */
+    /*Create an "easy handle", which is our handle to a transfer -> Handle part by which a thing is held, carried, or controlled. (manage)*/
     curl = curl_easy_init();
-
+    /*https://curl.se/libcurl/c/curl_easy_setopt.html*/
     struct string s;
     if (curl)
     {
         init_string(&s);
+        /*Then set options in that handle to control the coming transfer*/
+        /*Here we set the path to Certificate Authority (CA) bundle*/
         curl_easy_setopt(curl, CURLOPT_CAINFO, "cacert.pem");
+        /*Here we set the directory holding CA certificates*/
         curl_easy_setopt(curl, CURLOPT_CAPATH, "cacert.pem");
+        /*Here we set the type of HTTP Request (GET, POST, DELETE etc.)*/
         curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, Params.RequestType);
+        /*The URL for this transfer*/
         curl_easy_setopt(curl, CURLOPT_URL, Params.URL);
 
+        /*If relevant for the specific request, we pass a POSTField -> The data to POST. A post sends data to a server to create/update a resource*/
         if (Params.PostFields != "") {
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS, Params.PostFields);
         }
 
+        /*1L tells libCurl to follow all the redirects we may get from the request*/
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+        /*Specify the protocol to use*/
         curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
         /*Set's a callback function (function called by function) to receive incoming data myfunc);*/
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteFunc);
@@ -467,15 +465,20 @@ char* APICall(SAPIStruct Params)
         /*Callback will take an argument that is set (This is our string)*/
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
         /*-----------------------------------------------------------*/
+        /*Creates a LinkedList for our Headers*/
         struct curl_slist* headers = NULL;
+        /*If relevant adds our key type and key to the headers*/
         if (Params.KeyTypeAndKey != "") {
             headers = curl_slist_append(headers, Params.KeyTypeAndKey);
         }
+        /*If relevant adds our 'checkdata' parameter to the headers*/
         if (Params.CheckData != "") {
             headers = curl_slist_append(headers, Params.CheckData);
         }
+        /*Set's our encoding type*/
         headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        /*Passes our headers LinkedList, to curl as headers*/
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         res = curl_easy_perform(curl);
         /* Check for errors */
         if (res != CURLE_OK)
@@ -483,9 +486,12 @@ char* APICall(SAPIStruct Params)
             fprintf(stderr, "curl_easy_perform() failed: %s\n",
                 curl_easy_strerror(res));
         }
-
+        /*Delete the linked list*/
+        curl_slist_free_all(headers);
+        /*Cleanup after easy curl*/
         curl_easy_cleanup(curl);
     }
+    /*Cleanup after curl*/
     curl_global_cleanup();
 
     return s.ptr;
