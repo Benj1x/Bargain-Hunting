@@ -26,6 +26,7 @@ int main()
     printf("Hej, og velkommen til! \nI dette program kan du finde de bedste priser paa dine dagligvare!\n");
 
     storeChoice();
+    int Runs = 0;
 
     while (1) {
         int MaxItems = scan_input(Product);
@@ -34,8 +35,6 @@ int main()
             free(Dictionary.entry);
             return 0;
         }
-
-        int Runs = 0;
 
         node* LinkedList = NULL;
 
