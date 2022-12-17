@@ -11,12 +11,14 @@ int main()
     QFile = fopen("QueryResults.txt", "w");
     fclose(QFile);
 
+    //QFile = fopen("CoopQueryResults.txt", "w");
+    //fclose(QFile);
+    QFile = NULL;
+
     FILE* SFile;
     SFile = fopen("./stores.txt", "w");
     fclose(SFile);
-    //QFile = fopen("CoopQueryResults.txt", "w");
-
-    //fclose(QFile);
+    SFile = NULL;
 
     SDictionary Dictionary = InitDictionary();
     char Product[50] = "\0";

@@ -105,6 +105,7 @@ void rema1000_scan(FILE* file, node** head) {
         }
     }
 }
+
 void fotex_scan(FILE* file, node** head) {
     while (fgetc(file) != '[') {
     }
@@ -132,7 +133,6 @@ void fotex_scan(FILE* file, node** head) {
         }
     }
 }
-
 /**
  * @Description
  * function which asks the user for a desired product name and maximum number of items to be shown.
@@ -496,6 +496,7 @@ char* APICall(SAPIStruct Params)
 
     return s.ptr;
 }
+
 /*________________________________________________________________________________*/
 //All code between the these^^ (Line 492-523) is from stackoverflow - this seems like the only way to really do this
 //https://stackoverflow.com/a/2329792
@@ -609,8 +610,6 @@ void GetNonCoopProducts(char* Items, SDictionary Dictionary, node** LinkedListHe
     fclose(QFile);
     fclose(StoreFile);
 }
-
-
 
 /* Deletes all existing items in a given list by freeing the memory, takes the head of the LinkedList as a param */
 void DeleteAllListItems(node** LinkedListHead)
