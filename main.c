@@ -45,8 +45,4 @@ int main()
         final_print(LinkedList, MaxItems);
         DeleteAllListItems(&LinkedList);
     }
-
-    free(Dictionary.entry);
-
-    return 0;
 }
