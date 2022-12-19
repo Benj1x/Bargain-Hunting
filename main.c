@@ -11,8 +11,8 @@ int main()
     QFile = fopen("QueryResults.txt", "w");
     fclose(QFile);
 
-    //QFile = fopen("CoopQueryResults.txt", "w");
-    //fclose(QFile);
+    QFile = fopen("CoopQueryResults.txt", "w");
+    fclose(QFile);
     QFile = NULL;
 
     FILE* SFile;
