@@ -25,11 +25,11 @@ int main()
 
     printf("Hello, and welcome! \nIn this program you can find the best prices on your groceries!\n");
 
-    storeChoice();
+    StoreChoice();
     int Runs = 0;
 
     while (1) {
-        int MaxItems = scan_input(Product);
+        int MaxItems = ScanInput(Product);
 
         if (strcasecmp(Product, "end") == 0) {
             free(Dictionary.entry);
@@ -40,10 +40,10 @@ int main()
 
         //WriteCoopDataToFile(Product, Dictionary, Runs);
         ReadCoopData(Product, &LinkedList);
-        check_input_for_salling(Product);
+        CheckInputForSalling(Product);
         GetNonCoopProducts(Product, Dictionary, &LinkedList);
         Runs++;
-        final_print(LinkedList, MaxItems);
+        FinalPrint(LinkedList, MaxItems);
         DeleteAllListItems(&LinkedList);
     }
 }
