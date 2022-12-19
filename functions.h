@@ -40,33 +40,33 @@ typedef struct node {
 } node;
 
 char* GetSallingProducts(char* Item);
-void GetNonCoopProducts(char* Items, SDictionary Dictionary, node** LinkedListHead);
-char* GetCoopProducts(char* Stores);
-void WriteCoopDataToFile(char* Items, SDictionary Dictionary, int Runs);
-void storeChoice();
-void insertToList(node** head, product data);
-int storeCheck(char currentInput[]);
+void GetNonCoopProducts(char* Item, SDictionary Dictionary, node** LinkedListHead);
+char* GetCoopProducts(char* Store);
+void WriteCoopDataToFile(char* Item, SDictionary Dictionary, int Runs);
+void StoreChoice();
+void InsertToList(node** head, product data);
+int StoreCheck(char CurrentInput[]);
 char* APICall(SAPIStruct params);
 char* DictionaryLookup(SDictionary Dictionary, char* Key);
 SDictionary InitDictionary();
-void init_string(struct string* s);
+void InitString(struct string* s);
 
 size_t WriteFunc(void* ptr, size_t size, size_t nmemb, struct string* s);
-void check_input_for_salling(char* string);
+void CheckInputForSalling(char* string);
 
 int IsProductInList(node* LinkedList, product data);
-void rema1000_scan(FILE* file, node** head);
-void salling_scan(FILE* file, node** head);
+void Rema1000Scan(FILE* file, node** head);
+void SallingScan(FILE* file, node** head);
 
 
-void insertToList(node** head, product data);
-int scan_input(char* name);
-void check_output_char(char* string);
+void InsertToList(node** head, product data);
+int ScanInput(char* name);
+void CheckOutputChar(char* string);
 
 void DeleteAllListItems(node** LinkedListHead);
 void ReadCoopData(char* Query, node** ProductList);
 
-void final_print(struct node* head, int MaxItems);
+void FinalPrint(struct node* head, int MaxItems);
 void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList);
 
 
