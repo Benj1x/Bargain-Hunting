@@ -141,7 +141,8 @@ void fotex_scan(FILE* file, node** head) {
  */
 int scan_input(char* ProductName)
 {
-    printf("Indtast produktets navn, saasom 'banan yoghurt'. Afslut programmet ved at skrive 'end'>");
+    printf("Input the products name, like 'banan yoghurt'. Once you are done searching for \n products"
+           "you can end the program by typing 'end' and pressing enter>");
     scanf(" %[^\n]s", ProductName);
     if (strcasecmp(ProductName, "end") == 0) {
         return 0;
@@ -149,11 +150,11 @@ int scan_input(char* ProductName)
     while (getchar() != '\n');
 
     while (1) {
-        printf("\nHvor mange resultater vil du se for dit produkt?>");
+        printf("\nHow many results would you like to see for your product?>");
         int num;
         char term;
         if (scanf("%d%c", &num, &term) != 2 || term != '\n') {
-            printf("Dit input er ikke et tal. Proev igen :).\n");
+            printf("Your input isn't a number. Try again :).\n");
             while (getchar() != '\n');
             continue;
         }
@@ -350,9 +351,9 @@ void storeChoice() {
     char storeID[5];
     char storeName[25];
 
-    printf("\nProgrammet kan vise dig varer for: Bilka, Fakta, Dagli'Brugsen, Rema1000 & Fotex/Foetex");
-    printf("\nGrundet problemer med Salling Group og Coop, kan programmet "
-        "ikke vise varer for andre butikker i disse kaeder :( !\n\n");
+    printf("\nThis program kan show you wares for: Bilka, Fakta, Dagli'Brugsen, Rema1000 & Fotex/Foetex");
+    printf("\nDue to problems with Salling Group and Coop, the program "
+        "can not show wares for other stores in these chains :( !\n\n");
 
 
     stores = fopen("./stores.txt", "w");
@@ -360,8 +361,9 @@ void storeChoice() {
     //Loop for entering wanted stores
     while (1) {
         //Loop for avoiding blank inputs
-        while (printf("Skriv et butiksnavn, afslut med 'q'>") && scanf("%[^\n]%*c", storeName) < 1) {
-            printf("please give valid input\n");
+        while (printf("Input a store name, once you are done, press enter type 'q', and press enter again"
+                      ">") && scanf("%[^\n]%*c", storeName) < 1) {
+            printf("Please give a valid input\n");
             while (getchar() != '\n');
         }
 
@@ -575,7 +577,7 @@ void GetNonCoopProducts(char* Items, SDictionary Dictionary, node** LinkedListHe
 
         if (Key == NULL)
         {
-            printf("Store not found (Not supported by API)\n");
+            printf("Store not found\n");
         }
         else {
             strcpy(IsDigkey, Key);
@@ -648,7 +650,7 @@ void WriteCoopDataToFile(char* Items, SDictionary Dictionary, int Runs)
 
         if (Key == NULL)
         {
-            printf("Store not found (Not supported by API)\n");
+            printf("Store not found\n");
         }
         else {
             strcpy(IsDigkey, Key);
@@ -771,7 +773,7 @@ void final_print(struct node* head, int MaxItems)
 {
     printf("\n");
     printf("____________________________________________________________________________________\n");
-    printf("|                      Produkt                     |     Price     |     Store     |\n");
+    printf("|                      Product                     |     Price     |     Store     |\n");
     printf("|                                                  |               |               |\n");
     node* current = head;
 

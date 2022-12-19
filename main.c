@@ -23,7 +23,7 @@ int main()
     SDictionary Dictionary = InitDictionary();
     char Product[50] = "\0";
 
-    printf("Hej, og velkommen til! \nI dette program kan du finde de bedste priser paa dine dagligvare!\n");
+    printf("Hello, and welcome! \nIn this program you can find the best prices on your groceries!\n");
 
     storeChoice();
     int Runs = 0;
