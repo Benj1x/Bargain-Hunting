@@ -357,12 +357,12 @@ void storeChoice() {
 
 
     stores = fopen("./stores.txt", "w");
-
+    printf("List your desired stores by entering a single store name and pressing enter.\nOnce done, type 'q' and press enter.\n\n");
     //Loop for entering wanted stores
     while (1) {
         //Loop for avoiding blank inputs
-        while (printf("Input a store name, once you are done, press enter type 'q', and press enter again"
-            ">") && scanf("%[^\n]%*c", storeName) < 1) {
+        while (printf("Enter store name>"
+            ) && scanf("%[^\n]%*c", storeName) < 1) {
             printf("Please give a valid input\n");
             while (getchar() != '\n');
         }
