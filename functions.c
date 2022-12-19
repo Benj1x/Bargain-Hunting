@@ -142,7 +142,7 @@ void fotex_scan(FILE* file, node** head) {
 int scan_input(char* ProductName)
 {
     printf("Input the products name, like 'banan yoghurt'. Once you are done searching for \n products"
-        "you can end the program by typing 'end' and pressing enter>");
+        " you can end the program by typing 'end' and pressing enter>");
     scanf(" %[^\n]s", ProductName);
     if (strcasecmp(ProductName, "end") == 0) {
         return 0;
