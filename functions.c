@@ -142,7 +142,7 @@ void fotex_scan(FILE* file, node** head) {
 int scan_input(char* ProductName)
 {
     printf("Input the products name, like 'banan yoghurt'. Once you are done searching for \n products"
-           "you can end the program by typing 'end' and pressing enter>");
+        "you can end the program by typing 'end' and pressing enter>");
     scanf(" %[^\n]s", ProductName);
     if (strcasecmp(ProductName, "end") == 0) {
         return 0;
@@ -351,9 +351,9 @@ void storeChoice() {
     char storeID[5];
     char storeName[25];
 
-    printf("\nThis program kan show you wares for: Bilka, Fakta, Dagli'Brugsen, Rema1000 & Fotex/Foetex");
+    printf("\nThis program can show you goods for: Bilka, Fakta, Dagli'Brugsen, Rema1000 & Fotex/Foetex");
     printf("\nDue to problems with Salling Group and Coop, the program "
-        "can not show wares for other stores in these chains :( !\n\n");
+        "can not show goods for other stores in these chains :( !\n\n");
 
 
     stores = fopen("./stores.txt", "w");
@@ -362,7 +362,7 @@ void storeChoice() {
     while (1) {
         //Loop for avoiding blank inputs
         while (printf("Input a store name, once you are done, press enter type 'q', and press enter again"
-                      ">") && scanf("%[^\n]%*c", storeName) < 1) {
+            ">") && scanf("%[^\n]%*c", storeName) < 1) {
             printf("Please give a valid input\n");
             while (getchar() != '\n');
         }
@@ -480,7 +480,7 @@ char* APICall(SAPIStruct Params)
         /*Set's our encoding type*/
         headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
         /*Passes our headers LinkedList, to curl as headers*/
-            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         res = curl_easy_perform(curl);
         /* Check for errors */
         if (res != CURLE_OK)
