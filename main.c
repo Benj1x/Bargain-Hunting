@@ -24,7 +24,7 @@ int main()
     char Product[50] = "\0";
 
     printf("Hello, and welcome! \nIn this program you can find the best prices on your groceries!\n");
-
+    printf("(Please note, this program does not support scandinavian letters)\n");
     StoreChoice();
     int Runs = 0;
 
