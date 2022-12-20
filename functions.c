@@ -306,7 +306,7 @@ char* GetCoopProducts(char* Store)
     strcat(SProducts.URL, Store);
     strcpy(SProducts.RequestType, "GET");
     strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
-    strcpy(SProducts.KeyTypeAndKey, "Ocp-Apim-Subscription-Key: 87d818c340b34764beda02cdd0b5865f");
+    strcpy(SProducts.KeyTypeAndKey, "Ocp-Apim-Subscription-Key: fefba58d42c4456ca7182cc307574653");
     char* r = APICall(SProducts);
 
     return r;

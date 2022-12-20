@@ -38,7 +38,7 @@ int main()
 
         node* LinkedList = NULL;
 
-        //WriteCoopDataToFile(Product, Dictionary, Runs);
+        WriteCoopDataToFile(Product, Dictionary, Runs);
         ReadCoopData(Product, &LinkedList);
         CheckInputForSalling(Product);
         GetNonCoopProducts(Product, Dictionary, &LinkedList);
