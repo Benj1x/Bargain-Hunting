@@ -72,3 +72,4 @@ CMakeCache.txt
 
 # Built Visual Studio Code Extensions
 *.vsix
+cmake-build-debug/stores.txt
