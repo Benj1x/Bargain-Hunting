@@ -351,7 +351,7 @@ void StoreChoice() {
     char storeID[5];
     char storeName[25];
 
-    printf("\nThis program can show you goods for: Bilka, Fakta, Dagli'Brugsen, Rema1000 & Fotex/Foetex");
+    printf("\nThis program can show you goods for: Bilka, Fakta, Dagli'Brugsen, Rema1000, 365 discount/365 & Fotex/Foetex");
     printf("\nDue to problems with Salling Group and Coop, the program "
         "can not show goods for other stores in these chains :( !\n\n");
 
@@ -748,6 +748,22 @@ SDictionary InitDictionary()
     Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
     Dictionary.entry[6] = EntryFoetex;
 
+    SDictEntry Entry365;
+    strcpy(Entry365.Key, "365");
+    strcpy(Entry365.Value, "24161");
+
+    Dictionary.DictLength = 8;
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
+    Dictionary.entry[7] = Entry365;
+
+    SDictEntry Entry365Disc;
+    strcpy(Entry365Disc.Key, "365 discount");
+    strcpy(Entry365Disc.Value, "24161");
+
+    Dictionary.DictLength = 9;
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
+    Dictionary.entry[8] = Entry365Disc;
+
     return Dictionary;
 }
 
@@ -889,6 +905,14 @@ void ReadCoopData(char* Query, node** ProductList)
         if (strcasecmp(buffer, "Dagli'Brugsen") == 0)
         {
             RelevantCoopData(QFile, "Dagli'Brugsen", Query, ProductList);
+        }
+        if (strcasecmp(buffer, "365 discount") == 0)
+        {
+            RelevantCoopData(QFile, "365 Discount", Query, ProductList);
+        }
+        if (strcasecmp(buffer, "365") == 0)
+        {
+            RelevantCoopData(QFile, "365 Discount", Query, ProductList);
         }
     }
 }
