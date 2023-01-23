@@ -460,7 +460,7 @@ char* APICall(SAPIStruct Params)
 
         /*1L tells libCurl to follow all the redirects we may get from the request*/
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-        /*Specify the protocol to use*/
+        /*Specify the protocol to use, HTTPS or rest etc.*/
         curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
         /*Set's a callback function (function called by function) to receive incoming data myfunc);*/
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteFunc);
@@ -474,7 +474,7 @@ char* APICall(SAPIStruct Params)
         if (Params.KeyTypeAndKey != "") {
             headers = curl_slist_append(headers, Params.KeyTypeAndKey);
         }
-        /*Set's our encoding type*/
+        /*Set's our encoding type, decided by the API provider. Could have been multipart/form-data, this is for binary data though*/
         headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
         /*Passes our headers LinkedList, to curl as headers*/
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
