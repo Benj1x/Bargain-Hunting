@@ -25,7 +25,6 @@ typedef struct Params {
     char RequestType[7];
     char URL[250];
     char KeyTypeAndKey[100];
-    char CheckData[300];
     char PostFields[300];
 } SAPIStruct;
 

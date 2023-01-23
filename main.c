@@ -6,7 +6,7 @@
 
 int main()
 {
-    //reset files
+    //Ensure files exist & are reset
     FILE* QFile;
     QFile = fopen("QueryResults.txt", "w");
     fclose(QFile);

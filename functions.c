@@ -290,8 +290,7 @@ char* GetSallingProducts(char* Item)
     strcpy(SProducts.URL, "https://api.sallinggroup.com/v1-beta/product-suggestions/relevant-products?query=");
     strcat(SProducts.URL, Item);
     strcpy(SProducts.RequestType, "GET");
-    strcpy(SProducts.PostFields, "Content-Length=20");
-    strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
+    strcpy(SProducts.PostFields, "");
     strcpy(SProducts.KeyTypeAndKey, "Authorization: Bearer dc6422b7-166d-41e8-94c1-6804da7e17d5");
     char* r = APICall(SProducts);
 
@@ -305,7 +304,7 @@ char* GetCoopProducts(char* Store)
     strcpy(SProducts.URL, "https://api.cl.coop.dk/productapi/v1/product/");
     strcat(SProducts.URL, Store);
     strcpy(SProducts.RequestType, "GET");
-    strcpy(SProducts.CheckData, ""/*"RetailGroup: \"Kvickly\""*/);
+    strcpy(SProducts.PostFields, "");
     strcpy(SProducts.KeyTypeAndKey, "Ocp-Apim-Subscription-Key: fefba58d42c4456ca7182cc307574653");
     char* r = APICall(SProducts);
 
@@ -431,9 +430,11 @@ int StoreCheck(char CurrentInput[])
 
 char* APICall(SAPIStruct Params)
 {
+    /*Creates a handle*/
     CURL* curl;
+    /*An enum representing the error state/code*/
     CURLcode res;
-    /*This will init winsock stuff -> Windows only*/
+    /*This will init libcurls enviroment - CURL_GLOBAL_ALL should be used if you don't know what you are doing */
     curl_global_init(CURL_GLOBAL_ALL);
     /*Create an "easy handle", which is our handle to a transfer -> Handle part by which a thing is held, carried, or controlled. (manage)*/
     curl = curl_easy_init();
@@ -472,10 +473,6 @@ char* APICall(SAPIStruct Params)
         /*If relevant adds our key type and key to the headers*/
         if (Params.KeyTypeAndKey != "") {
             headers = curl_slist_append(headers, Params.KeyTypeAndKey);
-        }
-        /*If relevant adds our 'checkdata' parameter to the headers*/
-        if (Params.CheckData != "") {
-            headers = curl_slist_append(headers, Params.CheckData);
         }
         /*Set's our encoding type*/
         headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
@@ -683,7 +680,6 @@ SDictionary InitDictionary()
     //and will therefor try to realloc an existing block of RAM (which it isn't) and the computer dies.
     Dictionary.entry = NULL;
     /*Creates our entry for Dagli'Brugsen*/
-
     SDictEntry EntryDagliBrugs;
     strcpy(EntryDagliBrugs.Key, "Dagli'Brugsen");
     strcpy(EntryDagliBrugs.Value, "2082");
@@ -691,9 +687,16 @@ SDictionary InitDictionary()
     /*Update the dictionary, first update the length, then update the entry*/
     Dictionary.DictLength = 1;
     Dictionary.DictMaxSize = 10;
-
     Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
     Dictionary.entry[0] = EntryDagliBrugs;
+
+    SDictEntry EntryBilka;
+    strcpy(EntryBilka.Key, "Bilka");
+    strcpy(EntryBilka.Value, "Bilka");
+
+    Dictionary.DictLength = 2;
+    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
+    Dictionary.entry[1] = EntryBilka;
 
     /*Creates our entry for Fakta*/
     SDictEntry EntryFakta;
@@ -701,20 +704,9 @@ SDictionary InitDictionary()
     strcpy(EntryFakta.Value, "24080");
 
     /*Updates our dictonaries length, and adds the new entry to the dictionary*/
-    Dictionary.DictLength = 2;
-    Dictionary.DictMaxSize = 10;
-
-    Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
-    Dictionary.entry[1] = EntryFakta;
-
-    SDictEntry EntryBilka;
-    strcpy(EntryBilka.Key, "Bilka");
-    strcpy(EntryBilka.Value, "Bilka");
-
     Dictionary.DictLength = 3;
-    Dictionary.DictMaxSize = 10;
     Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
-    Dictionary.entry[2] = EntryBilka;
+    Dictionary.entry[2] = EntryFakta;
 
     SDictEntry EntryRema;
     strcpy(EntryRema.Key, "Rema");
@@ -928,7 +920,9 @@ void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList)
     {
         if (strstr(AllProducts[i].name, Query) != NULL)
         {
-            if (IsProductInList(*LinkedList, AllProducts[i])) {
+            if (IsProductInList(*LinkedList, AllProducts[i]))
+            {
+
             }
             else {
                 InsertToList(LinkedList, AllProducts[i]);
