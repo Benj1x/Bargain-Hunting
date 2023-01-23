@@ -844,13 +844,63 @@ product* coop_scan(FILE* file, int* counter, char* Store) {
             }
             //Add navn2 to navn
             if (strcmp(ctgry, "Navn2") == 0) {
-                fscanf(file, "%*[\"]%*[\"]%s%[^\"]", desc2);
+                fscanf(file, "%*2c%1c", desc2);
+                if (strcmp(desc2, "\"") == 0) {
+
+                }
+                else {
+                    CheckOutputChar(desc2);
+                    strcat(products[i].name, desc2);
+                    while (strcmp(desc2, "\"") != 0) {
+                        fscanf(file, "%1c", desc2);
+                        if (strcmp(desc2, "\"") == 0) {
+                            break;
+                        }
+                        CheckOutputChar(desc2);
+                        strcat(products[i].name, desc2);
+                    }
+                }
+
+                //Works, but fakta and dagli'brugsen no longer yields results
+                /*fscanf(file, "%*2c%1c", desc2);
+                if (strcmp(desc2, "\"") == 0) {
+
+                }
+                else {
+                    CheckOutputChar(desc2);
+                    strcat(products[i].name, desc2);
+                    while (strcmp(desc2, "\"") != 0) {
+                        fscanf(file, "%1c", desc2);
+                        if (strcmp(desc2, "\"") == 0) {
+                            break;
+                        }
+                        CheckOutputChar(desc2);
+                        strcat(products[i].name, desc2);
+                    }
+                }*/
+
+                //Barely works
+                /*fscanf(file, "%*[^\"]%*c%[^\"]%*c", desc2);
                 if (strcmp(desc2, "\"") == 0) {
                 }
-                /*else {
+                else {
                     //fscanf(file, "%*2s%[^\"]%*c", desc);
                     strcat(products[i].name, desc2);
                 }*/
+
+                //Works with certain products, but parses incorrectly the rest of the time
+                /*fscanf(file, "%*2c%1c", desc2);
+                if (strcmp(desc2, "\"") == 0) {
+                    strcpy(desc2, "\0");
+                }
+                else {
+                    //fscanf(file, "%*2s%[^\"]%*c", desc);
+                    //strcat(products[i].name, desc2);
+                    strcat(products[i].name, desc2);
+                    fscanf(file, "%[^\"]%*c", desc2);
+                    strcat(products[i].name, desc2);
+                }*/
+
             }
             if ((strcmp(ctgry, "Pris") == 0)) {
                 fscanf(file, "%*c%lf", &price);
