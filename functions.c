@@ -56,7 +56,8 @@ void SallingScan(FILE* file, node** head) {
                 CheckOutputChar(title);
             }
             if (strcmp(ctgry, "description") == 0) {
-                fscanf(file, "%*2s%[^\"]%*c", desc);
+                fscanf(file, "\"%[^\",]", desc);
+
                 CheckOutputChar(desc);
                 if (strcmp(desc, title) == 0){
                     strcpy(desc, "");
@@ -967,15 +968,11 @@ void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList)
         {
             if (IsProductInList(*LinkedList, AllProducts[i]))
             {
-                printf("%s is not %s", AllProducts[i].name, Query);
+
             }
             else {
                 InsertToList(LinkedList, AllProducts[i]);
-                printf("%s is %s", AllProducts[i].name, Query);
             }
-        }
-        else{
-            //printf("%s", AllProducts[i].name);
         }
     }
     free(AllProducts);
