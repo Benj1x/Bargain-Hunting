@@ -46,18 +46,28 @@ void SallingScan(FILE* file, node** head) {
     while (feof(file) == 0) {
         c = fgetc(file);
         if (c == '"') {
+            char title[100];
             char ctgry[100];
             char desc[100];
             double price;
             fscanf(file, "%[^\"]%*c", ctgry);
             if (strcmp(ctgry, "title") == 0) {
+                fscanf(file, "%*2s%[^\"]%*c", title);
+                CheckOutputChar(title);
+            }
+            if (strcmp(ctgry, "description") == 0) {
                 fscanf(file, "%*2s%[^\"]%*c", desc);
                 CheckOutputChar(desc);
+                if (strcmp(desc, title) == 0){
+                    strcpy(desc, "");
+                }
+                //CheckOutputChar(desc);
             }
             if ((strcmp(ctgry, "price") == 0)) {
                 fscanf(file, "%*c%4lf", &price);
                 product newproduct;
-                strcpy(newproduct.name, desc);
+                strcpy(newproduct.name, title);
+                strcpy(newproduct.desc, desc);
                 strcpy(newproduct.store, "Bilka");
                 strcpy(newproduct.ean, "n/a");
                 newproduct.price = price;
