@@ -454,7 +454,8 @@ char* APICall(SAPIStruct Params)
         curl_easy_setopt(curl, CURLOPT_URL, Params.URL);
 
         /*If relevant for the specific request, we pass a POSTField -> The data to POST. A post sends data to a server to create/update a resource*/
-        if (Params.PostFields != "") {
+        //If equal, it returns something different than 0
+        if (strcmp(Params.PostFields, "") != 0) {
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS, Params.PostFields);
         }
 
@@ -471,7 +472,7 @@ char* APICall(SAPIStruct Params)
         /*Creates a LinkedList for our Headers*/
         struct curl_slist* headers = NULL;
         /*If relevant adds our key type and key to the headers*/
-        if (Params.KeyTypeAndKey != "") {
+        if (strcmp(Params.KeyTypeAndKey, "") != 0) {
             headers = curl_slist_append(headers, Params.KeyTypeAndKey);
         }
         /*Set's our encoding type, decided by the API provider. Could have been multipart/form-data, this is for binary data though*/
@@ -858,21 +859,18 @@ product* coop_scan(FILE* file, int* counter, char* Store) {
                 strcpy(products[i].store, Store);
             }
             //Add navn2 to navn
-            if (strcmp(ctgry, "Navn2") == 0) {
-                if (strcmp(ctgry, "\"") == 0){
-                    char c2;
-                    c2 = fgetc(file);
-                    if (c2 == '\"'){
-                        printf("c2 = '");
-                    }
-                    else {
-                        strcpy(c, c2);
-                    }
-                } else{
-                    fscanf(file, "%*2s%[^\"]%*c", desc2);
-                    strcpy(products[i].desc, desc2);
+            /*char navn2[100];
+            char *navn2_pointer = strstr(ctgry, "Navn2");
+            if (navn2_pointer != NULL) {
+                sscanf(navn2_pointer, "Navn2\":\"%[^\"]", navn2);
+                if (strlen(navn2) == 0) {
+                    printf("Navn2 field is empty\n");
+                } else {
+                    printf("Navn2: %s\n", navn2);
                 }
-            }
+            } else {
+                printf("Navn2 field not found in the string\n");
+            }*/
 
 
             if ((strcmp(ctgry, "Pris") == 0)) {
