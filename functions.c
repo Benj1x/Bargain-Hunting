@@ -790,6 +790,13 @@ void FinalPrint(struct node* head, int MaxItems)
         if (current == NULL) {
             break;
         }
+
+        if (strcmp(current->data.desc, "") != 0)
+        {
+            strcat(current->data.name, " ");
+            strcat(current->data.name, current->data.desc);
+        }
+
         printf("|%49s |%14.2lf |%14s |\n", current->data.name, current->data.price, current->data.store);
         current = current->next;
     }
@@ -829,7 +836,6 @@ product* coop_scan(FILE* file, int* counter, char* Store) {
             c2 = fgetc(file);
             if (c2 == '?')
             {
-
                 return products;
             }
         }
@@ -844,6 +850,7 @@ product* coop_scan(FILE* file, int* counter, char* Store) {
                 fscanf(file, "%*2s%[^\"]%*c", ean);
                 strcpy(products[i].ean, ean);
             }
+
             if (strcmp(ctgry, "Navn") == 0) {
                 fscanf(file, "%*2s%[^\"]%*c", desc);
                 CheckOutputChar(desc);
@@ -852,19 +859,28 @@ product* coop_scan(FILE* file, int* counter, char* Store) {
             }
             //Add navn2 to navn
             if (strcmp(ctgry, "Navn2") == 0) {
-                fscanf(file, "%*[\"]%*[\"]%s%[^\"]", desc2);
-                if (strcmp(desc2, "\"") == 0) {
+                if (strcmp(ctgry, "\"") == 0){
+                    char c2;
+                    c2 = fgetc(file);
+                    if (c2 == '\"'){
+                        printf("c2 = '");
+                    }
+                    else {
+                        strcpy(c, c2);
+                    }
+                } else{
+                    fscanf(file, "%*2s%[^\"]%*c", desc2);
+                    strcpy(products[i].desc, desc2);
                 }
-                /*else {
-                    //fscanf(file, "%*2s%[^\"]%*c", desc);
-                    strcat(products[i].name, desc2);
-                }*/
             }
+
+
             if ((strcmp(ctgry, "Pris") == 0)) {
                 fscanf(file, "%*c%lf", &price);
                 products[i].price = price;
                 i += 1;
             }
+            printf("%s %d\n", products[i].name, i);
         }
     }
     return products;
@@ -922,11 +938,15 @@ void RelevantCoopData(FILE* QFile, char* Store, char* Query, node** LinkedList)
         {
             if (IsProductInList(*LinkedList, AllProducts[i]))
             {
-
+                printf("%s is not %s", AllProducts[i].name, Query);
             }
             else {
                 InsertToList(LinkedList, AllProducts[i]);
+                printf("%s is %s", AllProducts[i].name, Query);
             }
+        }
+        else{
+            //printf("%s", AllProducts[i].name);
         }
     }
     free(AllProducts);
