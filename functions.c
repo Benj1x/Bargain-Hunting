@@ -48,7 +48,7 @@ void SallingScan(FILE* file, node** head) {
         if (c == '"') {
             char title[100];
             char ctgry[100];
-            char desc[100];
+            char desc[100] = "";
             double price;
             fscanf(file, "%[^\"]%*c", ctgry);
             if (strcmp(ctgry, "title") == 0) {
@@ -56,7 +56,7 @@ void SallingScan(FILE* file, node** head) {
                 CheckOutputChar(title);
             }
             if (strcmp(ctgry, "description") == 0) {
-                fscanf(file, "\"%[^\",]", desc);
+                fscanf(file, "\"%[^\"]", desc);
 
                 CheckOutputChar(desc);
                 if (strcmp(desc, title) == 0){
