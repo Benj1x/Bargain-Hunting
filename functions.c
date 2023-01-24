@@ -837,6 +837,7 @@ product* coop_scan(FILE* file, int* counter, char* Store) {
             c2 = fgetc(file);
             if (c2 == '?')
             {
+
                 return products;
             }
         }
@@ -851,7 +852,6 @@ product* coop_scan(FILE* file, int* counter, char* Store) {
                 fscanf(file, "%*2s%[^\"]%*c", ean);
                 strcpy(products[i].ean, ean);
             }
-
             if (strcmp(ctgry, "Navn") == 0) {
                 fscanf(file, "%*2s%[^\"]%*c", desc);
                 CheckOutputChar(desc);
@@ -859,26 +859,47 @@ product* coop_scan(FILE* file, int* counter, char* Store) {
                 strcpy(products[i].store, Store);
             }
             //Add navn2 to navn
-            /*char navn2[100];
-            char *navn2_pointer = strstr(ctgry, "Navn2");
-            if (navn2_pointer != NULL) {
+            FILE* NFile;
+            NFile = fopen("CoopQueryResults.txt", "r");
+            long cptr = ftell(file);
+            fseek(NFile, cptr, SEEK_SET);
+            char Navn2Check[200];
+
+            char navn2[100];
+
+
+           if (fgets(Navn2Check, 200 ,NFile) != NULL){
+                char *navn2_pointer = strstr(Navn2Check, "Navn2");
                 sscanf(navn2_pointer, "Navn2\":\"%[^\"]", navn2);
-                if (strlen(navn2) == 0) {
-                    printf("Navn2 field is empty\n");
-                } else {
-                    printf("Navn2: %s\n", navn2);
+                if (navn2_pointer != NULL)
+                {
+                    if (strstr(navn2, "\"\"")) {
+                        strcpy(products[i].desc, "");
+                    } else {
+                        strcpy(products[i].desc, navn2);
+                    }
                 }
-            } else {
-                printf("Navn2 field not found in the string\n");
-            }*/
+            }
 
+            fclose(NFile);
 
+           /*This really doesn't do anything, but if it isn't here, the code breaks - it's probably moving the cursor*/
+           /*DO NOT TOOOOOOUUUUCHHHHHH*/
+            if (strcmp(ctgry, "Navn2") == 0) {
+                fscanf(file, "%*[\"]%*[\"]%s%[^\"]", desc2);
+                if (strcmp(desc2, "\"") == 0) {
+                }
+                /*else {
+                    //fscanf(file, "%*2s%[^\"]%*c", desc);
+                    strcat(products[i].name, desc2);
+                }*/
+            }
+            /*-------------------------------------------------------------------------------------------------------*/
             if ((strcmp(ctgry, "Pris") == 0)) {
                 fscanf(file, "%*c%lf", &price);
                 products[i].price = price;
                 i += 1;
             }
-            printf("%s %d\n", products[i].name, i);
         }
     }
     return products;
