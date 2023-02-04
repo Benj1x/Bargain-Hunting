@@ -606,7 +606,6 @@ void GetNonCoopProducts(char* Item, SDictionary Dictionary, node** LinkedListHea
                 rewind(QFile);
                 fotex_scan(QFile, LinkedListHead);
                 free(c);
-
             }
             else if (!isdigit(IsDigkey[0])) {
                 freopen("QueryResults.txt", "w+", QFile);
@@ -746,7 +745,7 @@ SDictionary InitDictionary()
 
     SDictEntry EntryFoetex;
     strcpy(EntryFoetex.Key, "Foetex");
-    strcpy(EntryFoetex.Value, "Foetex");
+    strcpy(EntryFoetex.Value, "Fotex");
 
     Dictionary.DictLength = 7;
     Dictionary.entry = realloc(Dictionary.entry, Dictionary.DictLength * sizeof(SDictEntry));
