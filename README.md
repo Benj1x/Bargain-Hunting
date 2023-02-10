@@ -1,4 +1,3 @@
-# Windows flags the newest version as the wactac trojan, fix might come
 # P1: Project: Bargain hunting
 Hello and welcome!
 Here are some quick notes about the program:
