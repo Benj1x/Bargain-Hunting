@@ -1,4 +1,4 @@
-# P1: Project: Bargain hunting
+# P1: Project: Bargain hunting (27-04-2023 Coop has broken the API's we use, I will try to keep an eye out for the fix, and the update the program accordingly)
 Hello and welcome!
 Here are some quick notes about the program:
 * **Does not support** Æ, Ø, Å or other special characters 
