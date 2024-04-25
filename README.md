@@ -1,4 +1,4 @@
-# P1: Project: Bargain hunting (27-04-2023 Coop has broken the API's we use, I will try to keep an eye out for the fix, and the update the program accordingly)
+# P1: Project: Bargain hunting (27-04-2023 Coop and Føtex has broken the API's we use. And don't seem to intend on fixing it. Therefore the project does not work)
 Hello and welcome!
 Here are some quick notes about the program:
 * **Does not support** Æ, Ø, Å or other special characters 
